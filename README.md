@@ -23,3 +23,5 @@ if K(j) is a product of exponential cones, one has blk{j,1} = 'e', blk{j,2} = [3
 
 Please refer to test_simple_examples, test_hsd_lqeu and test_hsd_lqeu_against_SDPT3 for more examples of usage.
 
+Please email queries to gaoyuan@u.nus.edu or comment on the webpage. Thank you.
+
