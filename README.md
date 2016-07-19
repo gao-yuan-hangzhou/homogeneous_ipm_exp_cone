@@ -16,6 +16,7 @@ Call:
 [obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b, 1e-8, 500);
 
 ====== What are blk, A_cell, c_cell and b? ======
+
 For j = 1,...,N
 if K(j) is (R_+)^nl or R^nu, one has blk{j,1} = 'l' or 'u' respectively, blk{j,2} = dimension of x(j)
 if K(j) is a product of Lorentz cones, one has blk{j,1} = 'q', blk{j,2} is, say, [5;3;2;5] (each element is the dimension of a single Lorenz cone)
