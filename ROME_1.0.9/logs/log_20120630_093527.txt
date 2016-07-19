@@ -1,0 +1,1259 @@
+
+-------------------------------%%%%%%%%%-------------------------------
+
+Experiment start at 30-Jun-2012 09:35:27 using CPLEX solver
+
+ROME: Robust Optimization Made Easy
+Version: 1.0.9(beta) 
+
+1. Testing Matrix Multiplication ...
+Elapsed time is 2.702188 seconds.
+2. Testing Array Multiplication ...
+Elapsed time is 0.589738 seconds.
+3. Testing Array Division ...
+Elapsed time is 0.172386 seconds.
+4. Testing Addition ...
+Elapsed time is 1.983768 seconds.
+5. Testing Subtraction ...
+Elapsed time is 0.729490 seconds.
+6. Testing Transpose ...
+Elapsed time is 0.058108 seconds.
+7. Testing Summation & Subscripting ...
+Elapsed time is 1.841266 seconds.
+8. Testing Uncertain Variable Matrix Multiplication ...
+Elapsed time is 2.054298 seconds.
+9. Testing Concatenation ...
+Elapsed time is 1.037266 seconds.
+10. Testing Subscripted Assignment...
+Elapsed time is 5.284946 seconds.
+11. Testing Subscripted Deletion...
+Elapsed time is 0.681414 seconds.
+Tests Complete!
+
+Matrix-Matrix Pre-Mult     = 4.346614599825E-014
+Matrix-Matrix Post-Mult    = 8.481380391805E-015
+Matrix-Scalar Pre-Mult     = 0.000000000000E+000
+Matrix-Scalar Post-Mult    = 0.000000000000E+000
+FMat-Matrix Pre-Mult       = 4.346614599825E-014
+FMat-Matrix Post-Mult      = 8.481380391805E-015
+Composite Matrix 1         = 1.612575750532E-012
+Composite Matrix 2         = 1.620832992302E-012
+Vector-Matrix Pre-Mult     = 0.000000000000E+000
+Vector-Matrix Post-Mult    = 4.094300213217E-015
+Vector-Scalar Pre-Mult     = 0.000000000000E+000
+Vector-Scalar Post-Mult    = 0.000000000000E+000
+Vector-Matrix Pre-Mult     = 0.000000000000E+000
+Vector-Matrix Post-Mult    = 3.768221900841E-015
+Vector-Scalar Pre-Mult     = 0.000000000000E+000
+Vector-Scalar Post-Mult    = 0.000000000000E+000
+Scalar-Matrix Pre-Mult     = 0.000000000000E+000
+Scalar-Matrix Post-Mult    = 0.000000000000E+000
+Scalar-Vector Pre-Mult     = 0.000000000000E+000
+Scalar-Vector Post-Mult    = 0.000000000000E+000
+Scalar-Scalar Pre-Mult     = 0.000000000000E+000
+Scalar-Scalar Post-Mult    = 0.000000000000E+000
+Matrix-Matrix Array-Pre-Mult     = 0.000000000000E+000
+Matrix-Matrix Array-Post-Mult    = 0.000000000000E+000
+Matrix-Scalar Array-Pre-Mult     = 0.000000000000E+000
+Matrix-Scalar Array-Post-Mult    = 0.000000000000E+000
+FMat-Matrix Array-Pre-Mult       = 0.000000000000E+000
+FMat-Matrix Array-Post-Mult      = 0.000000000000E+000
+Composite Array Mult 1           = 2.715164711277E-016
+Composite Array Mult 2           = 2.471767355387E-016
+Vector-Vector Array-Pre-Mult     = 0.000000000000E+000
+Vector-Vector Array-Post-Mult    = 0.000000000000E+000
+Vector-Scalar Array-Pre-Mult     = 0.000000000000E+000
+Vector-Scalar Array-Post-Mult    = 0.000000000000E+000
+Vector-Vector Array-Pre-Mult     = 0.000000000000E+000
+Vector-Vector Array-Post-Mult    = 0.000000000000E+000
+Vector-Scalar Array-Pre-Mult     = 0.000000000000E+000
+Vector-Scalar Array-Post-Mult    = 0.000000000000E+000
+Scalar-Matrix Array-Pre-Mult     = 0.000000000000E+000
+Scalar-Matrix Array-Post-Mult    = 0.000000000000E+000
+Scalar-Vector Array-Pre-Mult     = 0.000000000000E+000
+Scalar-Vector Array-Post-Mult    = 0.000000000000E+000
+Scalar-Scalar Array-Pre-Mult     = 0.000000000000E+000
+Scalar-Scalar Array-Post-Mult    = 0.000000000000E+000
+Matrix-Matrix Array-Post-Div    = 1.609095467727E-014
+Matrix-Scalar Array-Post-Div    = 1.993085022746E-015
+FMat-Matrix Array-Post-Div      = 1.609095467727E-014
+FMat-Scalar Array-Post-Div      = 1.993085022746E-015
+Vector-Vector Array-Post-Div    = 3.632065238308E-015
+Vector-Scalar Array-Post-Div    = 6.805778071794E-016
+Vector-Vector Array-Post-Div    = 8.839399178892E-016
+Vector-Scalar Array-Post-Div    = 1.041481514324E-015
+Scalar-Matrix Array-Post-Div    = 2.349691358517E-013
+Scalar-Vector Array-Post-Div    = 8.042222936750E-015
+Scalar-Scalar Array-Post-Div    = 0.000000000000E+000
+Matrix-Matrix Pre-Add     = 0.000000000000E+000
+Matrix-Matrix Post-Add    = 0.000000000000E+000
+Matrix-Scalar Pre-Add     = 0.000000000000E+000
+Matrix-Scalar Post-Add    = 0.000000000000E+000
+FMat-Matrix Pre-Add       = 0.000000000000E+000
+FMat-Matrix Post-Add      = 0.000000000000E+000
+Composite Array Add 1     = 1.508378667547E-015
+Composite Array Add 2     = 1.718541708083E-015
+Matrix-Matrix Dbl-Add1    = 0.000000000000E+000
+Matrix-Matrix Dbl-Add2    = 0.000000000000E+000
+Vector-Vector Pre-Add     = 0.000000000000E+000
+Vector-Vector Post-Add    = 0.000000000000E+000
+Vector-Scalar Pre-Add     = 0.000000000000E+000
+Vector-Scalar Post-Add    = 0.000000000000E+000
+Vector-Vector Dbl-Add1    = 2.658607475875E-014
+Vector-Vector Dbl-Add2    = 2.658607475875E-014
+Vector-Vector Pre-Add     = 0.000000000000E+000
+Vector-Vector Post-Add    = 0.000000000000E+000
+Vector-Scalar Pre-Add     = 0.000000000000E+000
+Vector-Scalar Post-Add    = 0.000000000000E+000
+Vector-Vector Dbl-Add1    = 3.035439897771E-014
+Vector-Vector Dbl-Add2    = 3.035439897771E-014
+Scalar-Matrix Pre-Add     = 0.000000000000E+000
+Scalar-Matrix Post-Add    = 0.000000000000E+000
+Scalar-Vector Pre-Add     = 0.000000000000E+000
+Scalar-Vector Post-Add    = 0.000000000000E+000
+Scalar-Scalar Pre-Add     = 0.000000000000E+000
+Scalar-Scalar Post-Add    = 0.000000000000E+000
+Scalar-Matrix Dbl-Add1    = 0.000000000000E+000
+Scalar-Matrix Dbl-Add2    = 0.000000000000E+000
+Scalar-Vector Dbl-Add1    = 0.000000000000E+000
+Scalar-Vector Dbl-Add2    = 0.000000000000E+000
+Scalar-Vector Dbl-Add3    = 0.000000000000E+000
+Scalar-Vector Dbl-Add4    = 0.000000000000E+000
+Scalar-Scalar Dbl-Add1    = 0.000000000000E+000
+Scalar-Scalar Dbl-Add2    = 0.000000000000E+000
+Matrix-Matrix Pre-Sub     = 0.000000000000E+000
+Matrix-Matrix Post-Sub    = 0.000000000000E+000
+Matrix-Scalar Pre-Sub     = 0.000000000000E+000
+Matrix-Scalar Post-Sub    = 0.000000000000E+000
+FMat-Matrix Pre-Sub       = 0.000000000000E+000
+FMat-Matrix Post-Sub      = 0.000000000000E+000
+Composite Array Sub 1     = 0.000000000000E+000
+Composite Array Sub 2     = 9.356055643012E-016
+Matrix-Matrix Dbl-Sub1    = 0.000000000000E+000
+Matrix-Matrix Dbl-Sub2    = 0.000000000000E+000
+Vector-Vector Pre-Sub     = 0.000000000000E+000
+Vector-Vector Post-Sub    = 0.000000000000E+000
+Vector-Scalar Pre-Sub     = 0.000000000000E+000
+Vector-Scalar Post-Sub    = 0.000000000000E+000
+Vector-Vector Dbl-Sub1    = 2.086746797486E-014
+Vector-Vector Dbl-Sub2    = 2.086746797486E-014
+Vector-Vector Pre-Sub     = 0.000000000000E+000
+Vector-Vector Post-Sub    = 0.000000000000E+000
+Vector-Scalar Pre-Sub     = 0.000000000000E+000
+Vector-Scalar Post-Sub    = 0.000000000000E+000
+Vector-Vector Dbl-Sub1    = 2.774758085844E-014
+Vector-Vector Dbl-Sub2    = 2.774758085844E-014
+Scalar-Matrix Pre-Sub     = 0.000000000000E+000
+Scalar-Matrix Post-Sub    = 0.000000000000E+000
+Scalar-Vector Pre-Sub     = 0.000000000000E+000
+Scalar-Vector Post-Sub    = 0.000000000000E+000
+Scalar-Scalar Pre-Sub     = 0.000000000000E+000
+Scalar-Scalar Post-Sub    = 0.000000000000E+000
+Scalar-Matrix Dbl-Sub1    = 0.000000000000E+000
+Scalar-Matrix Dbl-Sub2    = 0.000000000000E+000
+Scalar-Vector Dbl-Sub1    = 0.000000000000E+000
+Scalar-Vector Dbl-Sub2    = 0.000000000000E+000
+Scalar-Vector Dbl-Sub3    = 0.000000000000E+000
+Scalar-Vector Dbl-Sub4    = 0.000000000000E+000
+Scalar-Scalar Dbl-Sub1    = 0.000000000000E+000
+Scalar-Scalar Dbl-Sub2    = 0.000000000000E+000
+Matrix Real Transpose    = 0.000000000000E+000
+Matrix Herm Transpose    = 0.000000000000E+000
+Vector Real Transpose    = 0.000000000000E+000
+Vector Herm Transpose    = 0.000000000000E+000
+Vector Real Transpose    = 0.000000000000E+000
+Vector Herm Transpose    = 0.000000000000E+000
+Scalar Real Transpose    = 0.000000000000E+000
+Scalar Herm Transpose    = 0.000000000000E+000
+MultiLin Subsref 001    = 0.000000000000E+000
+MultiLin Summing 001    = 0.000000000000E+000
+MultiLin Diffing 001    = 0.000000000000E+000
+MultiLin Subsref 002    = 0.000000000000E+000
+MultiLin Summing 002    = 0.000000000000E+000
+MultiLin Diffing 002    = 0.000000000000E+000
+MultiLin Subsref 003    = 0.000000000000E+000
+MultiLin Summing 003    = 0.000000000000E+000
+MultiLin Diffing 003    = 0.000000000000E+000
+MultiLin Subsref 004    = 0.000000000000E+000
+MultiLin Summing 004    = 0.000000000000E+000
+MultiLin Diffing 004    = 0.000000000000E+000
+MultiLin Subsref 005    = 0.000000000000E+000
+MultiLin Summing 005    = 0.000000000000E+000
+MultiLin Diffing 005    = 0.000000000000E+000
+MultiLin Subsref 006    = 0.000000000000E+000
+MultiLin Summing 006    = 0.000000000000E+000
+MultiLin Diffing 006    = 0.000000000000E+000
+MultiLin Subsref 007    = 0.000000000000E+000
+MultiLin Summing 007    = 0.000000000000E+000
+MultiLin Diffing 007    = 0.000000000000E+000
+MultiLin Subsref 008    = 0.000000000000E+000
+MultiLin Summing 008    = 0.000000000000E+000
+MultiLin Diffing 008    = 0.000000000000E+000
+MultiLin Subsref 009    = 0.000000000000E+000
+MultiLin Summing 009    = 0.000000000000E+000
+MultiLin Diffing 009    = 0.000000000000E+000
+MultiLin Subsref 010    = 0.000000000000E+000
+MultiLin Summing 010    = 0.000000000000E+000
+MultiLin Diffing 010    = 0.000000000000E+000
+MultiLin Subsref 011    = 0.000000000000E+000
+MultiLin Summing 011    = 0.000000000000E+000
+MultiLin Diffing 011    = 0.000000000000E+000
+MultiLin Subsref 012    = 0.000000000000E+000
+MultiLin Summing 012    = 0.000000000000E+000
+MultiLin Diffing 012    = 0.000000000000E+000
+MultiLin Subsref 013    = 0.000000000000E+000
+MultiLin Summing 013    = 0.000000000000E+000
+MultiLin Diffing 013    = 0.000000000000E+000
+MultiLin Subsref 014    = 0.000000000000E+000
+MultiLin Summing 014    = 0.000000000000E+000
+MultiLin Diffing 014    = 0.000000000000E+000
+MultiLin Subsref 015    = 0.000000000000E+000
+MultiLin Summing 015    = 0.000000000000E+000
+MultiLin Diffing 015    = 0.000000000000E+000
+Matrix Subsref 001    = 0.000000000000E+000
+Matrix Summing 001    = 0.000000000000E+000
+Matrix Diffing 001    = 0.000000000000E+000
+Matrix Subsref 002    = 0.000000000000E+000
+Matrix Summing 002    = 0.000000000000E+000
+Matrix Diffing 002    = 0.000000000000E+000
+Matrix Subsref 003    = 0.000000000000E+000
+Matrix Summing 003    = 0.000000000000E+000
+Matrix Diffing 003    = 0.000000000000E+000
+Matrix Subsref 004    = 0.000000000000E+000
+Matrix Summing 004    = 0.000000000000E+000
+Matrix Diffing 004    = 0.000000000000E+000
+Matrix Subsref 005    = 0.000000000000E+000
+Matrix Summing 005    = 0.000000000000E+000
+Matrix Diffing 005    = 0.000000000000E+000
+Matrix Subsref 006    = 0.000000000000E+000
+Matrix Summing 006    = 0.000000000000E+000
+Matrix Diffing 006    = 0.000000000000E+000
+Matrix Subsref 007    = 0.000000000000E+000
+Matrix Summing 007    = 0.000000000000E+000
+Matrix Diffing 007    = 0.000000000000E+000
+Matrix Subsref 008    = 0.000000000000E+000
+Matrix Summing 008    = 0.000000000000E+000
+Matrix Diffing 008    = 0.000000000000E+000
+Matrix Subsref 009    = 0.000000000000E+000
+Matrix Summing 009    = 0.000000000000E+000
+Matrix Diffing 009    = 0.000000000000E+000
+Matrix Subsref 010    = 0.000000000000E+000
+Matrix Summing 010    = 0.000000000000E+000
+Matrix Diffing 010    = 0.000000000000E+000
+Matrix Subsref 011    = 0.000000000000E+000
+Matrix Summing 011    = 0.000000000000E+000
+Matrix Diffing 011    = 0.000000000000E+000
+Matrix Subsref 012    = 0.000000000000E+000
+Matrix Summing 012    = 0.000000000000E+000
+Matrix Diffing 012    = 0.000000000000E+000
+Matrix Subsref 013    = 0.000000000000E+000
+Matrix Summing 013    = 0.000000000000E+000
+Matrix Diffing 013    = 0.000000000000E+000
+Matrix Subsref 014    = 0.000000000000E+000
+Matrix Summing 014    = 0.000000000000E+000
+Matrix Diffing 014    = 0.000000000000E+000
+Matrix Subsref 015    = 0.000000000000E+000
+Matrix Summing 015    = 0.000000000000E+000
+Matrix Diffing 015    = 0.000000000000E+000
+Matrix Subsref 016    = 0.000000000000E+000
+Matrix Summing 016    = 0.000000000000E+000
+Matrix Diffing 016    = 0.000000000000E+000
+Matrix Subsref 017    = 0.000000000000E+000
+Matrix Summing 017    = 0.000000000000E+000
+Matrix Diffing 017    = 0.000000000000E+000
+Matrix Subsref 018    = 0.000000000000E+000
+Matrix Summing 018    = 0.000000000000E+000
+Matrix Diffing 018    = 0.000000000000E+000
+Matrix Subsref 019    = 0.000000000000E+000
+Matrix Summing 019    = 0.000000000000E+000
+Matrix Diffing 019    = 0.000000000000E+000
+Matrix Subsref 020    = 0.000000000000E+000
+Matrix Summing 020    = 0.000000000000E+000
+Matrix Diffing 020    = 0.000000000000E+000
+Matrix Subsref 021    = 0.000000000000E+000
+Matrix Summing 021    = 0.000000000000E+000
+Matrix Diffing 021    = 0.000000000000E+000
+Matrix Subsref 022    = 0.000000000000E+000
+Matrix Summing 022    = 0.000000000000E+000
+Matrix Diffing 022    = 0.000000000000E+000
+Matrix Subsref 023    = 0.000000000000E+000
+Matrix Summing 023    = 0.000000000000E+000
+Matrix Diffing 023    = 0.000000000000E+000
+Matrix Subsref 024    = 0.000000000000E+000
+Matrix Summing 024    = 0.000000000000E+000
+Matrix Diffing 024    = 0.000000000000E+000
+Matrix Subsref 025    = 0.000000000000E+000
+Matrix Summing 025    = 0.000000000000E+000
+Matrix Diffing 025    = 0.000000000000E+000
+Matrix Subsref 026    = 0.000000000000E+000
+Matrix Summing 026    = 0.000000000000E+000
+Matrix Diffing 026    = 0.000000000000E+000
+Matrix Subsref 027    = 0.000000000000E+000
+Matrix Summing 027    = 0.000000000000E+000
+Matrix Diffing 027    = 0.000000000000E+000
+Matrix Subsref 028    = 0.000000000000E+000
+Matrix Summing 028    = 0.000000000000E+000
+Matrix Diffing 028    = 0.000000000000E+000
+Matrix Subsref 029    = 0.000000000000E+000
+Matrix Summing 029    = 0.000000000000E+000
+Matrix Diffing 029    = 0.000000000000E+000
+Matrix Subsref 030    = 0.000000000000E+000
+Matrix Summing 030    = 0.000000000000E+000
+Matrix Diffing 030    = 0.000000000000E+000
+Matrix Subsref 031    = 0.000000000000E+000
+Matrix Summing 031    = 0.000000000000E+000
+Matrix Diffing 031    = 0.000000000000E+000
+Matrix Subsref 032    = 0.000000000000E+000
+Matrix Summing 032    = 0.000000000000E+000
+Matrix Diffing 032    = 0.000000000000E+000
+Matrix Subsref 033    = 0.000000000000E+000
+Matrix Summing 033    = 0.000000000000E+000
+Matrix Diffing 033    = 0.000000000000E+000
+Matrix Subsref 034    = 0.000000000000E+000
+Matrix Summing 034    = 0.000000000000E+000
+Matrix Diffing 034    = 0.000000000000E+000
+Matrix Subsref 035    = 0.000000000000E+000
+Matrix Summing 035    = 0.000000000000E+000
+Matrix Diffing 035    = 0.000000000000E+000
+Matrix Subsref 036    = 0.000000000000E+000
+Matrix Summing 036    = 0.000000000000E+000
+Matrix Diffing 036    = 0.000000000000E+000
+Matrix Subsref 037    = 0.000000000000E+000
+Matrix Summing 037    = 0.000000000000E+000
+Matrix Diffing 037    = 0.000000000000E+000
+Matrix Subsref 038    = 0.000000000000E+000
+Matrix Summing 038    = 0.000000000000E+000
+Matrix Diffing 038    = 0.000000000000E+000
+Matrix Subsref 039    = 0.000000000000E+000
+Matrix Summing 039    = 0.000000000000E+000
+Matrix Diffing 039    = 0.000000000000E+000
+Matrix Subsref 040    = 0.000000000000E+000
+Matrix Summing 040    = 0.000000000000E+000
+Matrix Diffing 040    = 0.000000000000E+000
+Matrix Subsref 041    = 0.000000000000E+000
+Matrix Summing 041    = 0.000000000000E+000
+Matrix Diffing 041    = 0.000000000000E+000
+Matrix Subsref 042    = 0.000000000000E+000
+Matrix Summing 042    = 0.000000000000E+000
+Matrix Diffing 042    = 0.000000000000E+000
+Matrix Subsref 043    = 0.000000000000E+000
+Matrix Summing 043    = 0.000000000000E+000
+Matrix Diffing 043    = 0.000000000000E+000
+Matrix Subsref 044    = 0.000000000000E+000
+Matrix Summing 044    = 0.000000000000E+000
+Matrix Diffing 044    = 0.000000000000E+000
+Matrix Subsref 045    = 0.000000000000E+000
+Matrix Summing 045    = 0.000000000000E+000
+Matrix Diffing 045    = 0.000000000000E+000
+Matrix Subsref 046    = 0.000000000000E+000
+Matrix Summing 046    = 0.000000000000E+000
+Matrix Diffing 046    = 0.000000000000E+000
+Matrix Subsref 047    = 0.000000000000E+000
+Matrix Summing 047    = 0.000000000000E+000
+Matrix Diffing 047    = 0.000000000000E+000
+Matrix Subsref 048    = 0.000000000000E+000
+Matrix Summing 048    = 0.000000000000E+000
+Matrix Diffing 048    = 0.000000000000E+000
+Matrix Subsref 049    = 0.000000000000E+000
+Matrix Summing 049    = 0.000000000000E+000
+Matrix Diffing 049    = 0.000000000000E+000
+Matrix Subsref 050    = 0.000000000000E+000
+Matrix Summing 050    = 0.000000000000E+000
+Matrix Diffing 050    = 0.000000000000E+000
+Matrix Subsref 051    = 0.000000000000E+000
+Matrix Summing 051    = 0.000000000000E+000
+Matrix Diffing 051    = 0.000000000000E+000
+Matrix Subsref 052    = 0.000000000000E+000
+Matrix Summing 052    = 0.000000000000E+000
+Matrix Diffing 052    = 0.000000000000E+000
+Matrix Subsref 053    = 0.000000000000E+000
+Matrix Summing 053    = 0.000000000000E+000
+Matrix Diffing 053    = 0.000000000000E+000
+Matrix Subsref 054    = 0.000000000000E+000
+Matrix Summing 054    = 0.000000000000E+000
+Matrix Diffing 054    = 0.000000000000E+000
+Matrix Subsref 055    = 0.000000000000E+000
+Matrix Summing 055    = 0.000000000000E+000
+Matrix Diffing 055    = 0.000000000000E+000
+Matrix Subsref 056    = 0.000000000000E+000
+Matrix Summing 056    = 0.000000000000E+000
+Matrix Diffing 056    = 0.000000000000E+000
+Matrix Subsref 057    = 0.000000000000E+000
+Matrix Summing 057    = 0.000000000000E+000
+Matrix Diffing 057    = 0.000000000000E+000
+Matrix Subsref 058    = 0.000000000000E+000
+Matrix Summing 058    = 0.000000000000E+000
+Matrix Diffing 058    = 0.000000000000E+000
+Matrix Subsref 059    = 0.000000000000E+000
+Matrix Summing 059    = 0.000000000000E+000
+Matrix Diffing 059    = 0.000000000000E+000
+Matrix Subsref 060    = 0.000000000000E+000
+Matrix Summing 060    = 0.000000000000E+000
+Matrix Diffing 060    = 0.000000000000E+000
+Matrix Subsref 061    = 0.000000000000E+000
+Matrix Summing 061    = 0.000000000000E+000
+Matrix Diffing 061    = 0.000000000000E+000
+Matrix Subsref 062    = 0.000000000000E+000
+Matrix Summing 062    = 0.000000000000E+000
+Matrix Diffing 062    = 0.000000000000E+000
+Matrix Subsref 063    = 0.000000000000E+000
+Matrix Summing 063    = 0.000000000000E+000
+Matrix Diffing 063    = 0.000000000000E+000
+Matrix Subsref 064    = 0.000000000000E+000
+Matrix Summing 064    = 0.000000000000E+000
+Matrix Diffing 064    = 0.000000000000E+000
+Matrix Subsref 065    = 0.000000000000E+000
+Matrix Summing 065    = 0.000000000000E+000
+Matrix Diffing 065    = 0.000000000000E+000
+Matrix Subsref 066    = 0.000000000000E+000
+Matrix Summing 066    = 0.000000000000E+000
+Matrix Diffing 066    = 0.000000000000E+000
+Matrix Subsref 067    = 0.000000000000E+000
+Matrix Summing 067    = 0.000000000000E+000
+Matrix Diffing 067    = 0.000000000000E+000
+Matrix Subsref 068    = 0.000000000000E+000
+Matrix Summing 068    = 0.000000000000E+000
+Matrix Diffing 068    = 0.000000000000E+000
+Matrix Subsref 069    = 0.000000000000E+000
+Matrix Summing 069    = 0.000000000000E+000
+Matrix Diffing 069    = 0.000000000000E+000
+Matrix Subsref 070    = 0.000000000000E+000
+Matrix Summing 070    = 0.000000000000E+000
+Matrix Diffing 070    = 0.000000000000E+000
+Matrix Subsref 071    = 0.000000000000E+000
+Matrix Summing 071    = 0.000000000000E+000
+Matrix Diffing 071    = 0.000000000000E+000
+Matrix Subsref 072    = 0.000000000000E+000
+Matrix Summing 072    = 0.000000000000E+000
+Matrix Diffing 072    = 0.000000000000E+000
+Matrix Subsref 073    = 0.000000000000E+000
+Matrix Summing 073    = 0.000000000000E+000
+Matrix Diffing 073    = 0.000000000000E+000
+Matrix Subsref 074    = 0.000000000000E+000
+Matrix Summing 074    = 0.000000000000E+000
+Matrix Diffing 074    = 0.000000000000E+000
+Matrix Subsref 075    = 0.000000000000E+000
+Matrix Summing 075    = 0.000000000000E+000
+Matrix Diffing 075    = 0.000000000000E+000
+Matrix Subsref 076    = 0.000000000000E+000
+Matrix Summing 076    = 0.000000000000E+000
+Matrix Diffing 076    = 0.000000000000E+000
+Vector Subsref 001    = 0.000000000000E+000
+Vector Summing 001    = 3.552713678801E-015
+Vector Diffing 001    = 0.000000000000E+000
+Vector Subsref 002    = 0.000000000000E+000
+Vector Summing 002    = 8.881784197001E-016
+Vector Diffing 002    = 0.000000000000E+000
+Vector Subsref 003    = 0.000000000000E+000
+Vector Summing 003    = 0.000000000000E+000
+Vector Diffing 003    = 0.000000000000E+000
+Vector Subsref 004    = 0.000000000000E+000
+Vector Summing 004    = 1.065814103640E-014
+Vector Diffing 004    = 0.000000000000E+000
+Vector Subsref 005    = 0.000000000000E+000
+Vector Summing 005    = 0.000000000000E+000
+Vector Diffing 005    = 0.000000000000E+000
+Vector Subsref 006    = 0.000000000000E+000
+Vector Summing 006    = 1.065814103640E-014
+Vector Diffing 006    = 0.000000000000E+000
+Vector Subsref 007    = 0.000000000000E+000
+Vector Summing 007    = 3.552713678801E-015
+Vector Diffing 007    = 0.000000000000E+000
+Vector Subsref 008    = 0.000000000000E+000
+Vector Summing 008    = 7.105427357601E-015
+Vector Diffing 008    = 0.000000000000E+000
+Vector Subsref 009    = 0.000000000000E+000
+Vector Summing 009    = 3.552713678801E-015
+Vector Diffing 009    = 0.000000000000E+000
+Vector Subsref 010    = 0.000000000000E+000
+Vector Summing 010    = 7.105427357601E-015
+Vector Diffing 010    = 0.000000000000E+000
+Vector Subsref 011    = 0.000000000000E+000
+Vector Summing 011    = 7.105427357601E-015
+Vector Diffing 011    = 0.000000000000E+000
+Vector Subsref 012    = 0.000000000000E+000
+Vector Summing 012    = 0.000000000000E+000
+Vector Diffing 012    = 0.000000000000E+000
+Vector Subsref 013    = 0.000000000000E+000
+Vector Summing 013    = 2.131628207280E-014
+Vector Diffing 013    = 0.000000000000E+000
+Vector Subsref 014    = 0.000000000000E+000
+Vector Summing 014    = 1.776356839400E-015
+Vector Diffing 014    = 0.000000000000E+000
+Vector Subsref 015    = 0.000000000000E+000
+Vector Summing 015    = 1.776356839400E-015
+Vector Diffing 015    = 0.000000000000E+000
+Vector Subsref 016    = 0.000000000000E+000
+Vector Summing 016    = 3.552713678801E-015
+Vector Diffing 016    = 0.000000000000E+000
+Vector Subsref 017    = 0.000000000000E+000
+Vector Summing 017    = 3.552713678801E-015
+Vector Diffing 017    = 0.000000000000E+000
+Vector Subsref 018    = 0.000000000000E+000
+Vector Summing 018    = 0.000000000000E+000
+Vector Diffing 018    = 0.000000000000E+000
+Vector Subsref 019    = 0.000000000000E+000
+Vector Summing 019    = 3.552713678801E-015
+Vector Diffing 019    = 0.000000000000E+000
+Vector Subsref 020    = 0.000000000000E+000
+Vector Summing 020    = 0.000000000000E+000
+Vector Diffing 020    = 0.000000000000E+000
+Vector Subsref 021    = 0.000000000000E+000
+Vector Summing 021    = 4.440892098501E-016
+Vector Diffing 021    = 0.000000000000E+000
+Vector Subsref 022    = 0.000000000000E+000
+Vector Summing 022    = 0.000000000000E+000
+Vector Diffing 022    = 0.000000000000E+000
+Vector Subsref 023    = 0.000000000000E+000
+Vector Summing 023    = 8.881784197001E-016
+Vector Diffing 023    = 0.000000000000E+000
+Vector Subsref 024    = 0.000000000000E+000
+Vector Summing 024    = 0.000000000000E+000
+Vector Diffing 024    = 0.000000000000E+000
+Vector Subsref 025    = 0.000000000000E+000
+Vector Summing 025    = 1.776356839400E-015
+Vector Diffing 025    = 0.000000000000E+000
+Vector Subsref 026    = 0.000000000000E+000
+Vector Summing 026    = 0.000000000000E+000
+Vector Diffing 026    = 0.000000000000E+000
+Vector Subsref 027    = 0.000000000000E+000
+Vector Summing 027    = 0.000000000000E+000
+Vector Diffing 027    = 0.000000000000E+000
+Vector Subsref 028    = 0.000000000000E+000
+Vector Summing 028    = 7.105427357601E-015
+Vector Diffing 028    = 0.000000000000E+000
+Vector Subsref 029    = 0.000000000000E+000
+Vector Summing 029    = 4.440892098501E-016
+Vector Diffing 029    = 0.000000000000E+000
+Vector Subsref 030    = 0.000000000000E+000
+Vector Summing 030    = 7.105427357601E-015
+Vector Diffing 030    = 0.000000000000E+000
+Vector Subsref 031    = 0.000000000000E+000
+Vector Summing 031    = 4.440892098501E-016
+Vector Diffing 031    = 0.000000000000E+000
+Vector Subsref 032    = 0.000000000000E+000
+Vector Summing 032    = 3.552713678801E-015
+Vector Diffing 032    = 0.000000000000E+000
+Vector Subsref 033    = 0.000000000000E+000
+Vector Summing 033    = 1.421085471520E-014
+Vector Diffing 033    = 0.000000000000E+000
+Vector Subsref 034    = 0.000000000000E+000
+Vector Summing 034    = 3.552713678801E-015
+Vector Diffing 034    = 0.000000000000E+000
+Vector Subsref 035    = 0.000000000000E+000
+Vector Summing 035    = 3.552713678801E-015
+Vector Diffing 035    = 0.000000000000E+000
+Vector Subsref 036    = 0.000000000000E+000
+Vector Summing 036    = 1.776356839400E-015
+Vector Diffing 036    = 0.000000000000E+000
+Vector Subsref 037    = 0.000000000000E+000
+Vector Summing 037    = 0.000000000000E+000
+Vector Diffing 037    = 0.000000000000E+000
+Vector Subsref 038    = 0.000000000000E+000
+Vector Summing 038    = 7.105427357601E-015
+Vector Diffing 038    = 0.000000000000E+000
+Vector Subsref 039    = 0.000000000000E+000
+Vector Summing 039    = 0.000000000000E+000
+Vector Diffing 039    = 0.000000000000E+000
+Vector Subsref 040    = 0.000000000000E+000
+Vector Summing 040    = 1.776356839400E-015
+Vector Diffing 040    = 0.000000000000E+000
+Vector Subsref 041    = 0.000000000000E+000
+Vector Summing 041    = 3.552713678801E-015
+Vector Diffing 041    = 0.000000000000E+000
+Vector Subsref 042    = 0.000000000000E+000
+Vector Summing 042    = 7.105427357601E-015
+Vector Diffing 042    = 0.000000000000E+000
+Vector Subsref 043    = 0.000000000000E+000
+Vector Summing 043    = 7.105427357601E-015
+Vector Diffing 043    = 0.000000000000E+000
+Vector Subsref 044    = 0.000000000000E+000
+Vector Summing 044    = 0.000000000000E+000
+Vector Diffing 044    = 0.000000000000E+000
+Vector Subsref 045    = 0.000000000000E+000
+Vector Summing 045    = 0.000000000000E+000
+Vector Diffing 045    = 0.000000000000E+000
+Vector Subsref 046    = 0.000000000000E+000
+Vector Summing 046    = 0.000000000000E+000
+Vector Diffing 046    = 0.000000000000E+000
+Vector Subsref 047    = 0.000000000000E+000
+Vector Summing 047    = 7.105427357601E-015
+Vector Diffing 047    = 0.000000000000E+000
+Vector Subsref 048    = 0.000000000000E+000
+Vector Summing 048    = 0.000000000000E+000
+Vector Diffing 048    = 0.000000000000E+000
+Vector Subsref 049    = 0.000000000000E+000
+Vector Summing 049    = 0.000000000000E+000
+Vector Diffing 049    = 0.000000000000E+000
+Vector Subsref 050    = 0.000000000000E+000
+Vector Summing 050    = 0.000000000000E+000
+Vector Diffing 050    = 0.000000000000E+000
+Vector Subsref 001    = 0.000000000000E+000
+Vector Summing 001    = 3.552713678801E-015
+Vector Diffing 001    = 0.000000000000E+000
+Vector Subsref 002    = 0.000000000000E+000
+Vector Summing 002    = 3.552713678801E-015
+Vector Diffing 002    = 0.000000000000E+000
+Vector Subsref 003    = 0.000000000000E+000
+Vector Summing 003    = 0.000000000000E+000
+Vector Diffing 003    = 0.000000000000E+000
+Vector Subsref 004    = 0.000000000000E+000
+Vector Summing 004    = 0.000000000000E+000
+Vector Diffing 004    = 0.000000000000E+000
+Vector Subsref 005    = 0.000000000000E+000
+Vector Summing 005    = 3.552713678801E-015
+Vector Diffing 005    = 0.000000000000E+000
+Vector Subsref 006    = 0.000000000000E+000
+Vector Summing 006    = 7.105427357601E-015
+Vector Diffing 006    = 0.000000000000E+000
+Vector Subsref 007    = 0.000000000000E+000
+Vector Summing 007    = 1.065814103640E-014
+Vector Diffing 007    = 0.000000000000E+000
+Vector Subsref 008    = 0.000000000000E+000
+Vector Summing 008    = 1.065814103640E-014
+Vector Diffing 008    = 0.000000000000E+000
+Vector Subsref 009    = 0.000000000000E+000
+Vector Summing 009    = 0.000000000000E+000
+Vector Diffing 009    = 0.000000000000E+000
+Vector Subsref 010    = 0.000000000000E+000
+Vector Summing 010    = 3.552713678801E-015
+Vector Diffing 010    = 0.000000000000E+000
+Vector Subsref 011    = 0.000000000000E+000
+Vector Summing 011    = 1.065814103640E-014
+Vector Diffing 011    = 0.000000000000E+000
+Vector Subsref 012    = 0.000000000000E+000
+Vector Summing 012    = 0.000000000000E+000
+Vector Diffing 012    = 0.000000000000E+000
+Vector Subsref 013    = 0.000000000000E+000
+Vector Summing 013    = 3.552713678801E-015
+Vector Diffing 013    = 0.000000000000E+000
+Vector Subsref 014    = 0.000000000000E+000
+Vector Summing 014    = 7.105427357601E-015
+Vector Diffing 014    = 0.000000000000E+000
+Vector Subsref 015    = 0.000000000000E+000
+Vector Summing 015    = 7.105427357601E-015
+Vector Diffing 015    = 0.000000000000E+000
+Vector Subsref 016    = 0.000000000000E+000
+Vector Summing 016    = 0.000000000000E+000
+Vector Diffing 016    = 0.000000000000E+000
+Vector Subsref 017    = 0.000000000000E+000
+Vector Summing 017    = 7.105427357601E-015
+Vector Diffing 017    = 0.000000000000E+000
+Vector Subsref 018    = 0.000000000000E+000
+Vector Summing 018    = 2.131628207280E-014
+Vector Diffing 018    = 0.000000000000E+000
+Vector Subsref 019    = 0.000000000000E+000
+Vector Summing 019    = 0.000000000000E+000
+Vector Diffing 019    = 0.000000000000E+000
+Vector Subsref 020    = 0.000000000000E+000
+Vector Summing 020    = 5.329070518201E-015
+Vector Diffing 020    = 0.000000000000E+000
+Vector Subsref 021    = 0.000000000000E+000
+Vector Summing 021    = 1.776356839400E-015
+Vector Diffing 021    = 0.000000000000E+000
+Vector Subsref 022    = 0.000000000000E+000
+Vector Summing 022    = 0.000000000000E+000
+Vector Diffing 022    = 0.000000000000E+000
+Vector Subsref 023    = 0.000000000000E+000
+Vector Summing 023    = 0.000000000000E+000
+Vector Diffing 023    = 0.000000000000E+000
+Vector Subsref 024    = 0.000000000000E+000
+Vector Summing 024    = 0.000000000000E+000
+Vector Diffing 024    = 0.000000000000E+000
+Vector Subsref 025    = 0.000000000000E+000
+Vector Summing 025    = 0.000000000000E+000
+Vector Diffing 025    = 0.000000000000E+000
+Vector Subsref 026    = 0.000000000000E+000
+Vector Summing 026    = 0.000000000000E+000
+Vector Diffing 026    = 0.000000000000E+000
+Vector Subsref 027    = 0.000000000000E+000
+Vector Summing 027    = 0.000000000000E+000
+Vector Diffing 027    = 0.000000000000E+000
+Vector Subsref 028    = 0.000000000000E+000
+Vector Summing 028    = 7.105427357601E-015
+Vector Diffing 028    = 0.000000000000E+000
+Vector Subsref 029    = 0.000000000000E+000
+Vector Summing 029    = 3.552713678801E-015
+Vector Diffing 029    = 0.000000000000E+000
+Vector Subsref 030    = 0.000000000000E+000
+Vector Summing 030    = 0.000000000000E+000
+Vector Diffing 030    = 0.000000000000E+000
+Vector Subsref 031    = 0.000000000000E+000
+Vector Summing 031    = 7.105427357601E-015
+Vector Diffing 031    = 0.000000000000E+000
+Vector Subsref 032    = 0.000000000000E+000
+Vector Summing 032    = 1.776356839400E-015
+Vector Diffing 032    = 0.000000000000E+000
+Vector Subsref 033    = 0.000000000000E+000
+Vector Summing 033    = 3.552713678801E-015
+Vector Diffing 033    = 0.000000000000E+000
+Vector Subsref 034    = 0.000000000000E+000
+Vector Summing 034    = 7.105427357601E-015
+Vector Diffing 034    = 0.000000000000E+000
+Vector Subsref 035    = 0.000000000000E+000
+Vector Summing 035    = 8.881784197001E-016
+Vector Diffing 035    = 0.000000000000E+000
+Vector Subsref 036    = 0.000000000000E+000
+Vector Summing 036    = 7.105427357601E-015
+Vector Diffing 036    = 0.000000000000E+000
+Vector Subsref 037    = 0.000000000000E+000
+Vector Summing 037    = 8.881784197001E-016
+Vector Diffing 037    = 0.000000000000E+000
+Vector Subsref 038    = 0.000000000000E+000
+Vector Summing 038    = 1.776356839400E-015
+Vector Diffing 038    = 0.000000000000E+000
+Vector Subsref 039    = 0.000000000000E+000
+Vector Summing 039    = 1.421085471520E-014
+Vector Diffing 039    = 0.000000000000E+000
+Vector Subsref 040    = 0.000000000000E+000
+Vector Summing 040    = 0.000000000000E+000
+Vector Diffing 040    = 0.000000000000E+000
+Vector Subsref 041    = 0.000000000000E+000
+Vector Summing 041    = 0.000000000000E+000
+Vector Diffing 041    = 0.000000000000E+000
+Vector Subsref 042    = 0.000000000000E+000
+Vector Summing 042    = 7.105427357601E-015
+Vector Diffing 042    = 0.000000000000E+000
+Vector Subsref 043    = 0.000000000000E+000
+Vector Summing 043    = 3.552713678801E-015
+Vector Diffing 043    = 0.000000000000E+000
+Vector Subsref 044    = 0.000000000000E+000
+Vector Summing 044    = 8.881784197001E-016
+Vector Diffing 044    = 0.000000000000E+000
+Vector Subsref 045    = 0.000000000000E+000
+Vector Summing 045    = 1.776356839400E-015
+Vector Diffing 045    = 0.000000000000E+000
+Vector Subsref 046    = 0.000000000000E+000
+Vector Summing 046    = 0.000000000000E+000
+Vector Diffing 046    = 0.000000000000E+000
+Vector Subsref 047    = 0.000000000000E+000
+Vector Summing 047    = 8.881784197001E-016
+Vector Diffing 047    = 0.000000000000E+000
+Vector Subsref 048    = 0.000000000000E+000
+Vector Summing 048    = 0.000000000000E+000
+Vector Diffing 048    = 0.000000000000E+000
+Vector Subsref 049    = 0.000000000000E+000
+Vector Summing 049    = 0.000000000000E+000
+Vector Diffing 049    = 0.000000000000E+000
+Vector Subsref 050    = 0.000000000000E+000
+Vector Summing 050    = 3.552713678801E-015
+Vector Diffing 050    = 0.000000000000E+000
+Pure Rand Insert1       = 0.000000000000E+000
+Pure Rand Insert2       = 0.000000000000E+000
+Pure Certain Insert1    = 0.000000000000E+000
+Pure Certain Insert2    = 0.000000000000E+000
+Rand*Certain Inner Insert1    = 2.353672812205E-014
+Certain*Rand Inner Insert1    = 2.353672812205E-014
+Rand*Certain Inner Insert2    = 2.352415620192E-014
+Certain*Rand Inner Insert2    = 2.352415620192E-014
+Rand*Certain Inner Insert3    = 2.598206534598E-014
+Certain*Rand Inner Insert3    = 2.598206534598E-014
+Rand*Certain Inner Insert4    = 2.108371694204E-014
+Certain*Rand Inner Insert4    = 2.108371694204E-014
+Rand*Certain Outer Insert1    = 3.043226417356E-014
+Certain*Rand Outer Insert1    = 3.043226417356E-014
+Rand*Certain Outer Insert2    = 2.701289205786E-014
+Certain*Rand Outer Insert2    = 2.701289205786E-014
+Rand*Certain Outer Insert3    = 3.135156595619E-014
+Certain*Rand Outer Insert3    = 3.135156595619E-014
+Rand*Certain Outer Insert4    = 2.579160635415E-014
+Certain*Rand Outer Insert4    = 2.579160635415E-014
+Matrix-Matrix Cat 1A    = 0.000000000000E+000
+Matrix-Matrix Cat 1B    = 0.000000000000E+000
+Matrix-Matrix Cat 1C    = 0.000000000000E+000
+Matrix-Matrix Cat 2A    = 0.000000000000E+000
+Matrix-Matrix Cat 2B    = 0.000000000000E+000
+Matrix-Matrix Cat 2C    = 0.000000000000E+000
+Matrix-Matrix Cat 3A    = 0.000000000000E+000
+Matrix-Matrix Cat 3B    = 0.000000000000E+000
+Matrix-Matrix Cat 3C    = 0.000000000000E+000
+Matrix-Matrix Cat 4A    = 0.000000000000E+000
+Matrix-Matrix Cat 4B    = 0.000000000000E+000
+Matrix-Matrix Cat 4C    = 0.000000000000E+000
+Matrix-Matrix Vertcat 1    = 0.000000000000E+000
+Matrix-Matrix Vertcat 2    = 0.000000000000E+000
+Matrix-Matrix Horzcat 1    = 0.000000000000E+000
+Matrix-Matrix Horzcat 2    = 0.000000000000E+000
+Matrix-Matrix Reshape 1    = 0.000000000000E+000
+Matrix-Matrix Reshape 2    = 0.000000000000E+000
+Matrix-Matrix Reshape 3    = 0.000000000000E+000
+Matrix-Matrix Reshape 4    = 0.000000000000E+000
+Matrix-Matrix Reshape 5    = 0.000000000000E+000
+Matrix-Matrix Reshape 6    = 0.000000000000E+000
+Matrix-Matrix Reshape 7    = 0.000000000000E+000
+Matrix-Matrix Repmat 1    = 0.000000000000E+000
+Matrix-Matrix Repmat 2    = 0.000000000000E+000
+Matrix-Matrix Repmat 3    = 0.000000000000E+000
+Matrix-Matrix Repmat 4    = 0.000000000000E+000
+Matrix-Matrix Repmat 5    = 0.000000000000E+000
+Matrix-Matrix Repmat 6    = 0.000000000000E+000
+N-Dims SubsAsgn 001 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 002 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 003 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 004 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 005 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 006 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 007 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 008 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 009 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 010 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 011 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 012 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 013 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 014 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 015 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 016 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 017 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 018 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 019 (E)    = 0.000000000000E+000
+N-Dims SubsAsgn 020 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 001 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 002 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 003 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 004 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 005 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 006 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 007 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 008 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 009 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 010 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 011 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 012 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 013 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 014 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 015        = 0.000000000000E+000
+Matrix SubsAsgn 016        = 0.000000000000E+000
+Matrix SubsAsgn 017 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 018        = 0.000000000000E+000
+Matrix SubsAsgn 019 (E)    = 0.000000000000E+000
+Matrix SubsAsgn 020        = 0.000000000000E+000
+Vector SubsAsgn 001 (E)    = 0.000000000000E+000
+Vector SubsAsgn 002        = 0.000000000000E+000
+Vector SubsAsgn 003        = 0.000000000000E+000
+Vector SubsAsgn 004        = 0.000000000000E+000
+Vector SubsAsgn 005        = 0.000000000000E+000
+Vector SubsAsgn 006        = 0.000000000000E+000
+Vector SubsAsgn 007 (E)    = 0.000000000000E+000
+Vector SubsAsgn 008 (E)    = 0.000000000000E+000
+Vector SubsAsgn 009 (E)    = 0.000000000000E+000
+Vector SubsAsgn 010 (E)    = 0.000000000000E+000
+Vector SubsAsgn 011        = 0.000000000000E+000
+Vector SubsAsgn 012 (E)    = 0.000000000000E+000
+Vector SubsAsgn 013        = 0.000000000000E+000
+Vector SubsAsgn 014        = 0.000000000000E+000
+Vector SubsAsgn 015        = 0.000000000000E+000
+Vector SubsAsgn 016 (E)    = 0.000000000000E+000
+Vector SubsAsgn 017 (E)    = 0.000000000000E+000
+Vector SubsAsgn 018 (E)    = 0.000000000000E+000
+Vector SubsAsgn 019        = 0.000000000000E+000
+Vector SubsAsgn 020 (E)    = 0.000000000000E+000
+N-Dims Delete 001         = 0.000000000000E+000
+N-Dims Delete 002         = 0.000000000000E+000
+N-Dims Delete 003         = 0.000000000000E+000
+N-Dims Delete 004         = 0.000000000000E+000
+N-Dims Delete 005         = 0.000000000000E+000
+N-Dims Delete 006         = 0.000000000000E+000
+N-Dims Delete 007         = 0.000000000000E+000
+N-Dims Delete 008         = 0.000000000000E+000
+N-Dims Delete 009         = 0.000000000000E+000
+N-Dims Delete 010         = 0.000000000000E+000
+N-Dims Delete 011         = 0.000000000000E+000
+N-Dims Delete 012         = 0.000000000000E+000
+N-Dims Delete 013         = 0.000000000000E+000
+N-Dims Delete 014 (e)     = 0.000000000000E+000
+N-Dims Delete 015         = 0.000000000000E+000
+N-Dims Delete 016         = 0.000000000000E+000
+N-Dims Delete 017         = 0.000000000000E+000
+N-Dims Delete 018         = 0.000000000000E+000
+N-Dims Delete 019         = 0.000000000000E+000
+N-Dims Delete 020         = 0.000000000000E+000
+Matrix Delete 001         = 0.000000000000E+000
+Matrix Delete 002         = 0.000000000000E+000
+Matrix Delete 003         = 0.000000000000E+000
+Matrix Delete 004         = 0.000000000000E+000
+Matrix Delete 005         = 0.000000000000E+000
+Matrix Delete 006         = 0.000000000000E+000
+Matrix Delete 007         = 0.000000000000E+000
+Matrix Delete 008         = 0.000000000000E+000
+Matrix Delete 009 (e)     = 0.000000000000E+000
+Matrix Delete 010         = 0.000000000000E+000
+Matrix Delete 011         = 0.000000000000E+000
+Matrix Delete 012         = 0.000000000000E+000
+Matrix Delete 013         = 0.000000000000E+000
+Matrix Delete 014         = 0.000000000000E+000
+Matrix Delete 015         = 0.000000000000E+000
+Matrix Delete 016 (e)     = 0.000000000000E+000
+Matrix Delete 017         = 0.000000000000E+000
+Matrix Delete 018         = 0.000000000000E+000
+Matrix Delete 019         = 0.000000000000E+000
+Matrix Delete 020         = 0.000000000000E+000
+Vector Delete 001         = 0.000000000000E+000
+Vector Delete 002         = 0.000000000000E+000
+Vector Delete 003         = 0.000000000000E+000
+Vector Delete 004         = 0.000000000000E+000
+Vector Delete 005         = 0.000000000000E+000
+Vector Delete 006         = 0.000000000000E+000
+Vector Delete 007         = 0.000000000000E+000
+Vector Delete 008         = 0.000000000000E+000
+Vector Delete 009         = 0.000000000000E+000
+Vector Delete 010         = 0.000000000000E+000
+Vector Delete 011         = 0.000000000000E+000
+Vector Delete 012 (e)     = 0.000000000000E+000
+Vector Delete 013         = 0.000000000000E+000
+Vector Delete 014         = 0.000000000000E+000
+Vector Delete 015         = 0.000000000000E+000
+Vector Delete 016         = 0.000000000000E+000
+Vector Delete 017         = 0.000000000000E+000
+Vector Delete 018         = 0.000000000000E+000
+Vector Delete 019         = 0.000000000000E+000
+Vector Delete 020         = 0.000000000000E+000
+
+Net Error: 0.000000
+
+Testing Variable Statistics ... 
+Net Error 1 = 0.00
+Net Error 2 = 0.00
+Net Error 3 = 0.00
+
+Testing Powers from 1 to 29, skip = 2 ...
+Power Test Complete, Net Error = 0.000. Average time taken = 2.27 secs
+Power Test B Complete, Net Error = 0.000. Average time taken = 2.27 secs
+
+Testing Exponential ...
+Exp Test Complete. Net Error = 0.000, Average Time taken = 0.29 secs
+
+Testing Power Cone ...
+Power Cone Test Complete. Net Error = 0.000000, Average Time taken = 0.10 secs
+
+Testing Exponential Cone Part 1...
+Exp Cone Test Part 1 Complete. Net Error = 0.001311, Average Time taken = 0.14 secs
+
+Testing Exponential Cone Part 2...
+Exp Cone Test Part 2 Complete
+
+Testing Beaver Creek Model ...
+Solution = (24, 8), Obj = 1360, time taken = 0.0678631
+
+Begin Changing Constraint 1 RHS from 35.00 to 10.00: 
+Iter 01, pRHS = 35.0000: Solution = (27.000, 4.000), Obj = 1280.00
+Iter 02, pRHS = 33.6842: Solution = (27.789, 2.947), Obj = 1258.95
+Iter 03, pRHS = 32.3684: Solution = (28.579, 1.895), Obj = 1237.89
+Iter 04, pRHS = 31.0526: Solution = (29.368, 0.842), Obj = 1216.84
+Iter 05, pRHS = 29.7368: Solution = (29.737, 0.000), Obj = 1189.47
+Iter 06, pRHS = 28.4211: Solution = (28.421, 0.000), Obj = 1136.84
+Iter 07, pRHS = 27.1053: Solution = (27.105, 0.000), Obj = 1084.21
+Iter 08, pRHS = 25.7895: Solution = (25.789, 0.000), Obj = 1031.58
+Iter 09, pRHS = 24.4737: Solution = (24.474, 0.000), Obj = 978.95
+Iter 10, pRHS = 23.1579: Solution = (23.158, 0.000), Obj = 926.32
+Iter 11, pRHS = 21.8421: Solution = (21.842, 0.000), Obj = 873.68
+Iter 12, pRHS = 20.5263: Solution = (20.526, 0.000), Obj = 821.05
+Iter 13, pRHS = 19.2105: Solution = (19.211, 0.000), Obj = 768.42
+Iter 14, pRHS = 17.8947: Solution = (17.895, 0.000), Obj = 715.79
+Iter 15, pRHS = 16.5789: Solution = (16.579, 0.000), Obj = 663.16
+Iter 16, pRHS = 15.2632: Solution = (15.263, 0.000), Obj = 610.53
+Iter 17, pRHS = 13.9474: Solution = (13.947, 0.000), Obj = 557.89
+Iter 18, pRHS = 12.6316: Solution = (12.632, 0.000), Obj = 505.26
+Iter 19, pRHS = 11.3158: Solution = (11.316, 0.000), Obj = 452.63
+Iter 20, pRHS = 10.0000: Solution = (10.000, 0.000), Obj = 400.00
+All Complete, time taken = 0.425969
+
+Begin Changing Constraint 2 x-coefficient from 4.00 to 10.00: 
+Iter 01, qXCoeff = 4.0000: Solution = (24.000, 8.000), Obj = 1360.00
+Iter 02, qXCoeff = 4.2500: Solution = (21.818, 9.091), Obj = 1327.27
+Iter 03, qXCoeff = 4.5000: Solution = (20.000, 10.000), Obj = 1300.00
+Iter 04, qXCoeff = 4.7500: Solution = (18.462, 10.769), Obj = 1276.92
+Iter 05, qXCoeff = 5.0000: Solution = (17.143, 11.429), Obj = 1257.14
+Iter 06, qXCoeff = 5.2500: Solution = (16.000, 12.000), Obj = 1240.00
+Iter 07, qXCoeff = 5.5000: Solution = (15.000, 12.500), Obj = 1225.00
+Iter 08, qXCoeff = 5.7500: Solution = (14.118, 12.941), Obj = 1211.76
+Iter 09, qXCoeff = 6.0000: Solution = (13.333, 13.333), Obj = 1200.00
+Iter 10, qXCoeff = 6.2500: Solution = (12.632, 13.684), Obj = 1189.47
+Iter 11, qXCoeff = 6.5000: Solution = (12.000, 14.000), Obj = 1180.00
+Iter 12, qXCoeff = 6.7500: Solution = (11.429, 14.286), Obj = 1171.43
+Iter 13, qXCoeff = 7.0000: Solution = (10.909, 14.545), Obj = 1163.64
+Iter 14, qXCoeff = 7.2500: Solution = (10.435, 14.783), Obj = 1156.52
+Iter 15, qXCoeff = 7.5000: Solution = (10.000, 15.000), Obj = 1150.00
+Iter 16, qXCoeff = 7.7500: Solution = (9.600, 15.200), Obj = 1144.00
+Iter 17, qXCoeff = 8.0000: Solution = (9.231, 15.385), Obj = 1138.46
+Iter 18, qXCoeff = 8.2500: Solution = (8.889, 15.556), Obj = 1133.33
+Iter 19, qXCoeff = 8.5000: Solution = (8.571, 15.714), Obj = 1128.57
+Iter 20, qXCoeff = 8.7500: Solution = (8.276, 15.862), Obj = 1124.14
+Iter 21, qXCoeff = 9.0000: Solution = (8.000, 16.000), Obj = 1120.00
+Iter 22, qXCoeff = 9.2500: Solution = (7.742, 16.129), Obj = 1116.13
+Iter 23, qXCoeff = 9.5000: Solution = (7.500, 16.250), Obj = 1112.50
+Iter 24, qXCoeff = 9.7500: Solution = (7.273, 16.364), Obj = 1109.09
+Iter 25, qXCoeff = 10.0000: Solution = (7.059, 16.471), Obj = 1105.88
+All Complete, time taken = 0.492232
+
+Begin Changing Constraint 2 x-coefficient from 4.00 to 10.00 and Constraint 2 y-coefficient from 3.00 to 15.00: 
+Iter 01, qXCoeff = 4.0000, pYCoeff = 3.0000: Solution = (24.000, 8.000), Obj = 1360.00
+Iter 02, qXCoeff = 4.0000, pYCoeff = 6.0000: Solution = (30.000, 0.000), Obj = 1200.00
+Iter 03, qXCoeff = 4.0000, pYCoeff = 9.0000: Solution = (30.000, 0.000), Obj = 1200.00
+Iter 04, qXCoeff = 4.0000, pYCoeff = 12.0000: Solution = (30.000, 0.000), Obj = 1200.00
+Iter 05, qXCoeff = 4.0000, pYCoeff = 15.0000: Solution = (30.000, 0.000), Obj = 1200.00
+Iter 06, qXCoeff = 5.5000, pYCoeff = 3.0000: Solution = (15.000, 12.500), Obj = 1225.00
+Iter 07, qXCoeff = 5.5000, pYCoeff = 6.0000: Solution = (0.000, 20.000), Obj = 1000.00
+Iter 08, qXCoeff = 5.5000, pYCoeff = 9.0000: Solution = (21.818, 0.000), Obj = 872.73
+Iter 09, qXCoeff = 5.5000, pYCoeff = 12.0000: Solution = (21.818, 0.000), Obj = 872.73
+Iter 10, qXCoeff = 5.5000, pYCoeff = 15.0000: Solution = (21.818, 0.000), Obj = 872.73
+Iter 11, qXCoeff = 7.0000, pYCoeff = 3.0000: Solution = (10.909, 14.545), Obj = 1163.64
+Iter 12, qXCoeff = 7.0000, pYCoeff = 6.0000: Solution = (0.000, 20.000), Obj = 1000.00
+Iter 13, qXCoeff = 7.0000, pYCoeff = 9.0000: Solution = (17.143, 0.000), Obj = 685.71
+Iter 14, qXCoeff = 7.0000, pYCoeff = 12.0000: Solution = (17.143, 0.000), Obj = 685.71
+Iter 15, qXCoeff = 7.0000, pYCoeff = 15.0000: Solution = (17.143, 0.000), Obj = 685.71
+Iter 16, qXCoeff = 8.5000, pYCoeff = 3.0000: Solution = (8.571, 15.714), Obj = 1128.57
+Iter 17, qXCoeff = 8.5000, pYCoeff = 6.0000: Solution = (0.000, 20.000), Obj = 1000.00
+Iter 18, qXCoeff = 8.5000, pYCoeff = 9.0000: Solution = (0.000, 13.333), Obj = 666.67
+Iter 19, qXCoeff = 8.5000, pYCoeff = 12.0000: Solution = (14.118, 0.000), Obj = 564.71
+Iter 20, qXCoeff = 8.5000, pYCoeff = 15.0000: Solution = (14.118, 0.000), Obj = 564.71
+Iter 21, qXCoeff = 10.0000, pYCoeff = 3.0000: Solution = (7.059, 16.471), Obj = 1105.88
+Iter 22, qXCoeff = 10.0000, pYCoeff = 6.0000: Solution = (0.000, 20.000), Obj = 1000.00
+Iter 23, qXCoeff = 10.0000, pYCoeff = 9.0000: Solution = (0.000, 13.333), Obj = 666.67
+Iter 24, qXCoeff = 10.0000, pYCoeff = 12.0000: Solution = (0.000, 10.000), Obj = 500.00
+Iter 25, qXCoeff = 10.0000, pYCoeff = 15.0000: Solution = (12.000, 0.000), Obj = 480.00
+
+Summary: 
+Worst-case(qXCoeff, pYCoeff) = (10.0000, 15.0000) 
+Worst-case Sol (X, Y) = (12.000, 0.000) 
+Worst-case Objective = 480.00
+All Complete, time taken = 0.497492
+
+Robust Solution = (12, 0), Obj = 480, time taken = 0.204751
+
+Testing Sudoku Model ... 
+Elapsed time is 1.656532 seconds.
+Elapsed time is 1.629439 seconds.
+Elapsed time is 1.625471 seconds.
+Elapsed time is 1.795821 seconds.
+Error 1 = 0
+Error 2 = 0
+Error 3 = 0
+
+Testing Norm Minimization ... 
+Error vs old = 1.15018e-006, Time Taken = 0.737893
+
+Testing Simple SOCP Model ... 
+SOCP 1: Error = 1.24607e-011, time taken = 0.0439961 secs
+SOCP 2: Error = 3.24665e-011, time taken = 0.0369163 secs
+SOCP 3: Error = 2.25535e-011, time taken = 0.0795149 secs
+SOCP 4: Error = 8.34398e-009, time taken = 0.0478725 secs
+SOCP 5: Error = 5.56168e-011, time taken = 0.0392924 secs
+
+Testing Drug Example ... 
+Primal Solve... 
+Diff in Drug: 0
+Diff in Raw : 0
+Diff in Obj : 4.54747e-013
+
+Testing Warehouse Example...
+1. Solving using LDR... 
+E(Obj) = 830.50, Time = 0.5699 secs
+
+2. Solving under perfect information ... 
+Iter   1, PI Obj = 823.19, LDR Obj = 824.44, Eff = 99.8484% Time = 0.0898 secs
+Iter   2, PI Obj = 834.50, LDR Obj = 835.21, Eff = 99.9153% Time = 0.0730 secs
+Iter   3, PI Obj = 830.11, LDR Obj = 831.13, Eff = 99.8780% Time = 0.0746 secs
+Iter   4, PI Obj = 833.90, LDR Obj = 834.62, Eff = 99.9137% Time = 0.0741 secs
+Iter   5, PI Obj = 828.96, LDR Obj = 830.78, Eff = 99.7816% Time = 0.0737 secs
+Iter   6, PI Obj = 832.11, LDR Obj = 832.30, Eff = 99.9773% Time = 0.0764 secs
+Iter   7, PI Obj = 829.76, LDR Obj = 831.29, Eff = 99.8161% Time = 0.0739 secs
+Iter   8, PI Obj = 830.62, LDR Obj = 832.29, Eff = 99.8002% Time = 0.0742 secs
+Iter   9, PI Obj = 829.99, LDR Obj = 831.35, Eff = 99.8372% Time = 0.0747 secs
+Iter  10, PI Obj = 822.98, LDR Obj = 824.85, Eff = 99.7737% Time = 0.0742 secs
+Iter  11, PI Obj = 830.58, LDR Obj = 831.24, Eff = 99.9209% Time = 0.0742 secs
+Iter  12, PI Obj = 830.03, LDR Obj = 831.40, Eff = 99.8343% Time = 0.0753 secs
+Iter  13, PI Obj = 825.49, LDR Obj = 827.02, Eff = 99.8157% Time = 0.0761 secs
+Iter  14, PI Obj = 829.32, LDR Obj = 830.48, Eff = 99.8607% Time = 0.0746 secs
+Iter  15, PI Obj = 831.29, LDR Obj = 832.02, Eff = 99.9123% Time = 0.0741 secs
+Iter  16, PI Obj = 822.06, LDR Obj = 823.30, Eff = 99.8494% Time = 0.0742 secs
+Iter  17, PI Obj = 831.85, LDR Obj = 833.42, Eff = 99.8117% Time = 0.0746 secs
+Iter  18, PI Obj = 826.62, LDR Obj = 827.42, Eff = 99.9032% Time = 0.0741 secs
+Iter  19, PI Obj = 824.46, LDR Obj = 826.06, Eff = 99.8061% Time = 0.0741 secs
+Iter  20, PI Obj = 831.89, LDR Obj = 833.79, Eff = 99.7714% Time = 0.0738 secs
+
+Testing Price of Robustness ... 
+
+Using L1 Norm ...
+Iter   1, Gamma = 0.0 
+Iter   2, Gamma = 5.0 
+Iter   3, Gamma = 10.0 
+Iter   4, Gamma = 15.0 
+Iter   5, Gamma = 20.0 
+Iter   6, Gamma = 25.0 
+Iter   7, Gamma = 30.0 
+Iter   8, Gamma = 35.0 
+Iter   9, Gamma = 40.0 
+Iter  10, Gamma = 45.0 
+Iter  11, Gamma = 50.0 
+Iter  12, Gamma = 55.0 
+Iter  13, Gamma = 60.0 
+Iter  14, Gamma = 65.0 
+Iter  15, Gamma = 70.0 
+Iter  16, Gamma = 75.0 
+Iter  17, Gamma = 80.0 
+Iter  18, Gamma = 85.0 
+Iter  19, Gamma = 90.0 
+Iter  20, Gamma = 95.0 
+Iter  21, Gamma = 100.0 
+Iter  22, Gamma = 105.0 
+Iter  23, Gamma = 110.0 
+Iter  24, Gamma = 115.0 
+Iter  25, Gamma = 120.0 
+Iter  26, Gamma = 125.0 
+Iter  27, Gamma = 130.0 
+Iter  28, Gamma = 135.0 
+Iter  29, Gamma = 140.0 
+Iter  30, Gamma = 145.0 
+Iter  31, Gamma = 150.0 
+
+Using Beta ...
+Iter   1, Gamma = 0.0 
+Iter   2, Gamma = 5.0 
+Iter   3, Gamma = 10.0 
+Iter   4, Gamma = 15.0 
+Iter   5, Gamma = 20.0 
+Iter   6, Gamma = 25.0 
+Iter   7, Gamma = 30.0 
+Iter   8, Gamma = 35.0 
+Iter   9, Gamma = 40.0 
+Iter  10, Gamma = 45.0 
+Iter  11, Gamma = 50.0 
+Iter  12, Gamma = 55.0 
+Iter  13, Gamma = 60.0 
+Iter  14, Gamma = 65.0 
+Iter  15, Gamma = 70.0 
+Iter  16, Gamma = 75.0 
+Iter  17, Gamma = 80.0 
+Iter  18, Gamma = 85.0 
+Iter  19, Gamma = 90.0 
+Iter  20, Gamma = 95.0 
+Iter  21, Gamma = 100.0 
+Iter  22, Gamma = 105.0 
+Iter  23, Gamma = 110.0 
+Iter  24, Gamma = 115.0 
+Iter  25, Gamma = 120.0 
+Iter  26, Gamma = 125.0 
+Iter  27, Gamma = 130.0 
+Iter  28, Gamma = 135.0 
+Iter  29, Gamma = 140.0 
+Iter  30, Gamma = 145.0 
+Iter  31, Gamma = 150.0 
+
+Using Direct Dual ...
+Iter   1, Gamma = 0.0 
+Iter   2, Gamma = 5.0 
+Iter   3, Gamma = 10.0 
+Iter   4, Gamma = 15.0 
+Iter   5, Gamma = 20.0 
+Iter   6, Gamma = 25.0 
+Iter   7, Gamma = 30.0 
+Iter   8, Gamma = 35.0 
+Iter   9, Gamma = 40.0 
+Iter  10, Gamma = 45.0 
+Iter  11, Gamma = 50.0 
+Iter  12, Gamma = 55.0 
+Iter  13, Gamma = 60.0 
+Iter  14, Gamma = 65.0 
+Iter  15, Gamma = 70.0 
+Iter  16, Gamma = 75.0 
+Iter  17, Gamma = 80.0 
+Iter  18, Gamma = 85.0 
+Iter  19, Gamma = 90.0 
+Iter  20, Gamma = 95.0 
+Iter  21, Gamma = 100.0 
+Iter  22, Gamma = 105.0 
+Iter  23, Gamma = 110.0 
+Iter  24, Gamma = 115.0 
+Iter  25, Gamma = 120.0 
+Iter  26, Gamma = 125.0 
+Iter  27, Gamma = 130.0 
+Iter  28, Gamma = 135.0 
+Iter  29, Gamma = 140.0 
+Iter  30, Gamma = 145.0 
+Iter  31, Gamma = 150.0 
+L1   method, robust err = 0.00, expected err = 0.00
+Beta method, robust err = 0.00, expected err = 0.00
+Dual method, robust err = 0.00, expected err = 0.00
+
+Testing Simple Inventory Example (Segregation)...
+
+Test  0: Sensitivity to segregated mean:
+Iter  0, NoSegSupp, Obj = 104.60, Err = 1.768
+Iter  1, SegSupp  , Obj = 104.60, Err = 34.321
+
+Test  1: Sensitivity to segregated mean:
+Iter  0, NoSegMean,      Obj = 104.60, Err = 0.000
+Iter  1, SegMean = 15.0, Obj = 104.30, Err = 0.000
+Iter  2, SegMean = 14.0, Obj = 104.36, Err = 0.000
+Iter  3, SegMean = 13.0, Obj = 104.42, Err = 0.000
+Iter  4, SegMean = 12.0, Obj = 104.48, Err = 0.000
+Iter  5, SegMean = 11.0, Obj = 104.54, Err = 0.000
+Iter  6, SegMean = 10.0, Obj = 104.60, Err = 0.000
+Iter  7, SegMean =  9.0, Obj = 104.54, Err = 0.000
+Iter  8, SegMean =  8.0, Obj = 104.48, Err = 0.000
+Iter  9, SegMean =  7.0, Obj = 104.42, Err = 0.000
+Iter 10, SegMean =  6.0, Obj = 104.36, Err = 0.000
+Iter 11, SegMean =  5.0, Obj = 104.30, Err = 0.000
+Average Time = 0.131 secs
+
+Test  2: Sensitivity to segregated covariance:
+Iter  0, NoSegCovar,     Obj = 108.74, Err = 0.000
+Iter  1, SegBeta = 0.80, Obj = 108.66, Err = 0.001
+Iter  2, SegBeta = 0.75, Obj = 108.69, Err = 0.001
+Iter  3, SegBeta = 0.70, Obj = 108.71, Err = 0.000
+Iter  4, SegBeta = 0.65, Obj = 108.72, Err = 0.000
+Iter  5, SegBeta = 0.60, Obj = 108.73, Err = 0.000
+Iter  6, SegBeta = 0.55, Obj = 108.74, Err = 0.000
+Iter  7, SegBeta = 0.50, Obj = 108.74, Err = 0.000
+Iter  8, SegBeta = 0.45, Obj = 108.74, Err = 0.000
+Iter  9, SegBeta = 0.40, Obj = 108.73, Err = 0.000
+Iter 10, SegBeta = 0.35, Obj = 108.72, Err = 0.000
+Iter 11, SegBeta = 0.30, Obj = 108.71, Err = 0.000
+Iter 12, SegBeta = 0.25, Obj = 108.69, Err = 0.000
+Iter 13, SegBeta = 0.20, Obj = 108.66, Err = 0.000
+Average Time = 0.150 secs
+
+Begin BDLDR test for N = 1 ... 
+
+Using LDR
+LDR Obj = Inf, time = 0.15 secs
+
+Using DLDR
+DLDR Obj = 1.0000, Err = 0.0000, time = 0.34 secs
+
+Using Direct DLDR
+DLDR Obj = 1.0000, Err = 0.0000, time = 0.06 secs
+
+Using BDLDR
+BDLDR Obj = 0.7071, Err = 0.0000, time = 0.33 secs
+
+Using Direct BDLDR
+BDLDR Obj = 0.7071, Err = 0.0000, time = 0.07 secs
+
+Using Dual Solution (N = 1)
+Dual BDLDR Obj = 0.6180, time = 0.08 secs
+
+Using BDLDR with Tighter Bound
+BDLDR Obj = 0.6180, Err = 0.0000, time = 0.27 secs
+
+Testing Project Management Example...
+Iter (1, 1): C = 8.00, beta = 0.10
+{??? Operation terminated by user during ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\@rome_var\minus.m',126,0)">rome_var.minus at 126</a>
+
+In ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\@rome_var\le.m',18,0)">rome_var.le at 18</a>
+out_var_obj = B - A;
+
+In ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\rome_supp_bound.m',28,0)">rome_supp_bound at 28</a>
+rome_constraint(y <= Rhs);
+
+In ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\+RomeTest\solve_project_mgt_sdldr.m',99,0)">solve_project_mgt_sdldr at 99</a>
+g = rome_supp_bound(-r1) + rome_covar_bound(-r2);     % MTD 2
+
+In ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\+RomeTest\model_test_project_mgt.m',95,0)">model_test_project_mgt at 95</a>
+        [min_time_sdldr, x_val_sdldr, y_val_sdldr] = solve_project_mgt_sdldr(C_arr(ii), beta_arr(jj), W, H, a, b, c,
+        z_pos_mean);
+
+In ==> <a href="matlab: opentoline('D:\Learning\Development\ROME_1.0.9\rome_full_test.m',35,0)">rome_full_test at 35</a>
+    model_test_project_mgt;
+} 
+exit
