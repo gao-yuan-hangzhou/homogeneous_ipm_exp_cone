@@ -35,6 +35,10 @@ a single Lorenz cone)
 
 if K(j) is a product of exponential cones, one has blk{j,1} = 'e', blk{j,2} = [3;3;...;3], length(blk{j,2}) = number of exponential cones in the product
 
+c{1}, ..., c{N} corresponds to c(1), ..., c(N) such that c'x = c(1)'x(1) + ... + c(n)'x(n)
+
+b is the right hand side vector of Ax = b, or A(1)x(1)+...+A(n)x(N) = b
+
 Please refer to test_simple_examples, test_hsd_lqeu and test_hsd_lqeu_against_SDPT3 for more examples of usage.
 
 Please email queries to gaoyuan@u.nus.edu or comment on the webpage. Thank you.
