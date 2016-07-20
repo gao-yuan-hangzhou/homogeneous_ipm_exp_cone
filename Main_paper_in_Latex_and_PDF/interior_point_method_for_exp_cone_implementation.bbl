@@ -1,0 +1,42 @@
+\begin{thebibliography}{1}
+
+\bibitem{Boyd_Vander_Convex_Opt_Book}
+S.~Boyd and L.~Vandenberghe.
+\newblock {\em Convex Optimization}, chapter~5.
+\newblock Cambridge University Press, 2009.
+
+\bibitem{Robert_thesis}
+P.~R. Charles.
+\newblock {\em Cones and interior-point algorithms for structured convex
+  optimization involving powers and exponentials}.
+\newblock PhD thesis, Universite catholique de Louvain and Ecole Polytechnique
+  de Louvain, 2007.
+
+\bibitem{Freund_behavior_HSD}
+R.M. Freund.
+\newblock On the behavior of the homogeneous self-dual model for conic convex
+  optimization.
+\newblock 106:527--545, 2005.
+
+\bibitem{Akle_thesis}
+S.~A. Serrano.
+\newblock {\em Algorithms for unsymmetric cone optimization and an
+  implementation for problems with the exponential cone}.
+\newblock PhD thesis, Stanford University, 2015.
+
+\bibitem{Skarjaa_and_Ye}
+A.~Skarjaa and Y.~Ye.
+\newblock A homogeneous interior-point algorithm for nonsymmetric convex conic
+  optimization.
+\newblock {\em Mathematical Programming, Series A}, 150:391–422, 2015.
+
+\bibitem{SDPT3_2010}
+K.C. Toh, M.J. Todd, and R.H. T\"{u}t\"{u}nc\"{u}.
+\newblock On the implementation and usage of sdpt3 – a matlab software
+  package for semidefinite-quadratic-linear programming, version 4.0.
+
+\bibitem{CVX}
+L.~Vandenberghe.
+\newblock The cvxopt linear and quadratic cone program solvers.
+
+\end{thebibliography}
