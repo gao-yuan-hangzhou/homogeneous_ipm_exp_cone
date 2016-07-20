@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[11pt]{article}
 \usepackage{graphicx,amsmath,amsthm, amssymb,setspace}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper, total={6in, 8.5in}]{geometry}
@@ -269,16 +269,15 @@ Next we set the iterate $(x^0,y^0, z^0, \tau^0, \kappa^0, \theta^0)$ such that $
 	Suppose $f_1, \cdots , f_N$ are LHSCB for proper cones $\mathcal{K}_1, \cdots, \mathcal{K}_N$ respectively, then $f: \mathcal{K}_1 \times\cdots\times \mathcal{K}_N \rightarrow \mathbb{R}$ defined by $f([x_1;\cdots; x_N]) = f_1(x_1) + \cdots + f_N(x_N)$ is a LHSCB for $\mathcal{K}_1 \times \cdots \times \mathcal{K}_N$.
 \end{prop}
 
-Since we have found analytic expressions for the LHSCB for the nonnegative orthant, the Lorentz cone, the exponential cone and its dual cone, we have found a LHSCB $f$ for the product cone $\mathcal{K}$.
+Since we have found analytic expressions for the LHSCB for the nonnegative orthant, the Lorentz cone, the exponential cone and its dual cone, we have obtained a LHSCB $f$ for the product cone $\mathcal{K}$ and a LHSCB $f^*$ for $\mathcal{K}^*$. Note that we choose the second pair of barrier functions $\tilde{f}_{\exp}$ for $\mathcal{K}_{\exp}$ and $\tilde{f}^*_{\exp}$ for $\mathcal{K}_{\exp}$. The reason is that the barrier function for the dual exponential cone $\tilde{f}_{\exp}^*$, whose gradient and Hessian will be frequently evaluated in the implementation, takes a slightly simpler expression than $f_{\exp}^*$.
+Denote the gradient and Hessian of $f$ as $g$ and $H$, and those of $f^*$ and $g^*$ and $H^*$ respectively. \\
 
-\begin{align*}
-x^0 = [x_1^0;\cdots;x_N^0] \in \left(\interior\left(\mathcal{K}_{\exp}\right)\right)^N,\ \
-z^0 = [z_1^0;\cdots; z_N^0] \in \left(\interior\left(\mathcal{P}_{\exp}\right)\right)^N.
-\end{align*}
-We will adopt the initialization strategy for $x^0$ and $z^0$ in \cite{Akle_thesis}, which is to find $\iota^0 \in \mathcal{K}_{\exp}$ such that $\iota^0 =  -\tilde{g}(\iota)$ and set $x_i^0 = z_i^0 = \iota^0$, $i = 1,\cdots, N$. Such $\iota^0$ will also satisfy $\iota^0 \in \interior \left(\mathcal{P}_{\exp}\right)$ and $\iota^0 = -\tilde{g}^*(\iota^0)$. It turns out that $\iota^0 =   (-1.0151, 1.2590, 0.5560)^T$ sufficies. In other words, $\iota^0 \in \interior \left(\mathcal{K}_{\exp}\right)$ and $||\iota^0 + \tilde{g}(\iota)|| \approx 0$. Compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$. Set the initial central-path parameter $\mu^0 = \theta^0$.
+Similar to the initialization strategy in \cite{Akle_thesis}, we find $x^0 \in \mathcal{K}$ such that $x^0 = -g(x^0)$. By the property of LHSCB (see 10.2.2 in \cite{Robert_thesis}), the vector $z^0=x^0$ will also satisfy $z^0 = -g^*(z^0)$. For $\mathcal{K}$ defined above, let $\iota_l = (1,\cdots,1)^T \in \mathbb{R}^{n_l}$, $\iota_q = [\iota_{q_1}; \cdots; \iota_{q_s}]$ where $\iota_{q_j} = (1,0,\cdots, 0)^T \in \mathbb{R}^{n_{q_j}}$, $\iota_e = [\iota^0_e; \cdots; \iota^0_e]\in \mathbb{R}^{n_e}$ where $\iota_e^0 = (-1.0151, 1.2590, 0.5560)^T$ and set
+\[x^0 = z^0 = [\iota_l; \iota_q; \iota_e].\]
+Note that $\iota^0 \in \interior \left(\mathcal{K}_{\exp}\right)$ and $||\iota^0 + \tilde{g}(\iota^0)|| \approx 0$. Also compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$ to fully construct (HSD).
 
 \subsection{A typical iteration}\label{A_typical_iteration}
-Henthforth the current and next iterates are denoted as  $(x,y, \tau, z,\kappa, \theta)$ and  $(x^+, y^+ \tau^+, z^+,\kappa^+, \theta^+)$ respectively. Similarly we also use $(\cdot)^+$ to denote the updated values of the parameters for the next iteration. Similar to Algorithm 6 in Chapter 10 of \cite{Akle_thesis}, we set the \textit{central-path parameter} $\mu = \theta$,  the \textit{central-path proximity measure} \[\Omega(x,z,\tau,\kappa) = (\nu+1) \log\left(\frac{x^T z + \tau\kappa}{\nu+1}\right) + (\nu+1)+ f(x)+f^*(z) - \log(\tau) - \log(\kappa)\] 
+Henceforth the current and next iterates are denoted as  $(x,y, \tau, z,\kappa, \theta)$ and  $(x^+, y^+, \tau^+, z^+,\kappa^+, \theta^+)$ respectively. Similarly we also use $(\cdot)^+$ to denote the updated values of the parameters for the next iteration. Similar to Algorithm 6 in Chapter 10 of \cite{Akle_thesis}, we set the \textit{central-path parameter} $\mu = \theta$,  the \textit{central-path proximity measure} \[\Omega(x,z,\tau,\kappa) = (\nu+1) \log\left(\frac{x^T z + \tau\kappa}{\nu+1}\right) + (\nu+1)+ f(x)+f^*(z) - \log(\tau) - \log(\kappa)\] 
 and the \textit{neighborhood threshold} $\bar{\Omega} = \Omega(x^0,z^0,\tau^0,\kappa^0)+1$. 
 Solve the following system for the \textit{predictor search direction} $(\Delta x, \Delta y, \Delta z, \Delta \tau, \Delta \kappa, \Delta \theta)$.
 \begin{align}
@@ -472,7 +471,7 @@ Similarly, \eqref{shsd_corrector_direction} can be written compactly as $\bar G 
 -\left(1-\sigma\right)R \\ -\tau\kappa +\sigma \mu - \Delta \tau_p \Delta \kappa_p\\ -x - \sigma\mu g^*(z)
 \end{bmatrix}.
 \end{align}
-Find $\alpha_{\max}' = \max \left\{\alpha > 0 \mid \Omega(x+\alpha\Delta x,z+\alpha\Delta z,\tau+\alpha\Delta\tau,\kappa+\alpha\Delta\kappa)\leq \bar\Omega\right\}$. Set the step-length $\alpha' = 0.98\alpha_{\max}'$. Update the iterate $(x^+,y^+,z^+, \tau^+, \kappa^+) = (x,y,z,\tau,\kappa) + \alpha' (\Delta x, \Delta y, \Delta z, \Delta \tau, \Delta \kappa)$. Repeat until a termination condition is met.
+Find $\alpha_{\max}' = \max \left\{\alpha > 0 \mid \Omega(x+\alpha\Delta x,z+\alpha\Delta z,\tau+\alpha\Delta\tau,\kappa+\alpha\Delta\kappa)\leq \bar\Omega\right\}$. Set the step-length $\alpha' = 0.98\alpha_{\max}'$. Update the iterate \[(x^+,y^+,z^+, \tau^+, \kappa^+) = (x,y,z,\tau,\kappa) + \alpha' (\Delta x, \Delta y, \Delta z, \Delta \tau, \Delta \kappa).\] Repeat until a termination condition is met.
 \subsection{Termination conditions}
 We are interested in either a solution or a certificate of infeasibility of (PD). Similar to Section 5.4 in \cite{Skarjaa_and_Ye}, there are 3 possibilities. 
 \begin{enumerate}
