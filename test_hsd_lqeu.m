@@ -3,7 +3,6 @@ addpath ./subroutines % All subroutines are in the folder "subroutines"
 % We generate (feasible) instances of conic programs with 
 % linear, second-order and exponential cone constraints
 % to test hsd_lqe.m
-
 % Choose whether to assure feasibility of the generated instance
 ensure_feasibility = true;
 % Example: Suppose one has 

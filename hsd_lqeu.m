@@ -39,6 +39,7 @@ t_begin = cputime;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First of all, convert all 'u' into 'l' using the simplest scheme x = x_pos - x_neg
+% and keep track of the original indices of 'u'
 indices_of_u = zeros(size(blk,1),1);
 for k = 1:size(blk,1)
     if blk{k,1} == 'u'
@@ -168,7 +169,7 @@ for it_count =1:max_iter_count
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
         disp(['Initial density of G_bar = ' num2str(nnz(G_bar)/numel(G_bar))]);
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-        disp('  theta       sigma        dtheta        alpha         tau         kappa       iter_no');
+        disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
     elseif rem(it_count,5) == 0
         fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma, full(dtheta), alpha, tau, kappa, it_count);
     end
