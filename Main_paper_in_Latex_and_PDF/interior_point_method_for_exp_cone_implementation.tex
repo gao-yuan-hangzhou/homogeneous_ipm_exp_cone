@@ -274,12 +274,12 @@ Denote the gradient and Hessian of $f$ as $g$ and $H$, and those of $f^*$ and $g
 
 Similar to the initialization strategy in \cite{Akle_thesis}, we find $x^0 \in \mathcal{K}$ such that $x^0 = -g(x^0)$. By the property of LHSCB (see 10.2.2 in \cite{Robert_thesis}), the vector $z^0=x^0$ will also satisfy $z^0 = -g^*(z^0)$. For $\mathcal{K}$ defined above, let $\iota_l = (1,\cdots,1)^T \in \mathbb{R}^{n_l}$, $\iota_q = [\iota_{q_1}; \cdots; \iota_{q_s}]$ where $\iota_{q_j} = (1,0,\cdots, 0)^T \in \mathbb{R}^{n_{q_j}}$, $\iota_e = [\iota^0_e; \cdots; \iota^0_e]\in \mathbb{R}^{n_e}$ where $\iota_e^0 = (-1.0151, 1.2590, 0.5560)^T$ and set
 \[x^0 = z^0 = [\iota_l; \iota_q; \iota_e].\]
-Note that $\iota^0 \in \interior \left(\mathcal{K}_{\exp}\right)$ and $||\iota^0 + \tilde{g}(\iota^0)|| \approx 0$. Also compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$ to fully construct (HSD).
+Note that $\iota^0 \in \interior \left(\mathcal{K}_{\exp}\right)$, $\iota^0 \in \interior\left(\mathcal{P}_{\exp}\right)$ and $||\iota^0 + \tilde{g}(\iota^0)|| \approx 0$. Also compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$ to fully construct (HSD).
 
 \subsection{A typical iteration}\label{A_typical_iteration}
-Henceforth the current and next iterates are denoted as  $(x,y, \tau, z,\kappa, \theta)$ and  $(x^+, y^+, \tau^+, z^+,\kappa^+, \theta^+)$ respectively. Similarly we also use $(\cdot)^+$ to denote the updated values of the parameters for the next iteration. Similar to Algorithm 6 in Chapter 10 of \cite{Akle_thesis}, we set the \textit{central-path parameter} $\mu = \theta$,  the \textit{central-path proximity measure} \[\Omega(x,z,\tau,\kappa) = (\nu+1) \log\left(\frac{x^T z + \tau\kappa}{\nu+1}\right) + (\nu+1)+ f(x)+f^*(z) - \log(\tau) - \log(\kappa)\] 
-and the \textit{neighborhood threshold} $\bar{\Omega} = \Omega(x^0,z^0,\tau^0,\kappa^0)+1$. 
-Solve the following system for the \textit{predictor search direction} $(\Delta x, \Delta y, \Delta z, \Delta \tau, \Delta \kappa, \Delta \theta)$.
+Henceforth the current and next iterates are denoted as  $(x,y, \tau, z,\kappa, \theta)$ and  $(x^+, y^+, \tau^+, z^+,\kappa^+, \theta^+)$ respectively. \\
+
+First, solve the following system for the \textit{predictor search direction} $(\Delta x_p, \Delta y_p, \Delta z_p, \Delta \tau_p, \Delta \kappa_p, \Delta \theta_p)$
 \begin{align}
 & \begin{bmatrix}
 0 & -A & b & -\bar b\ \\ 
@@ -314,9 +314,11 @@ I & 0 & \theta H^*(z) & 0 & 0 & 0
 \end{bmatrix}. \label{G_bar_etc_predictor_system_def}
 \end{align} 
 
-Set the \textit{maximum step-length} based on the predictor search direction and the neighborhood characterization
-\[\alpha_p = \max\left\{ \alpha >0 \mid \Omega(x+\alpha \Delta x_p, z+\alpha \Delta z_p, \tau + \alpha \Delta \tau_p, \kappa + \alpha \Delta \kappa_p) \leq \bar{\Omega} \right\}. \]
-Alternatively, one may find sufficiently large $\alpha_p>0$ such that $x + \alpha_p \Delta x_p \in \interior \left(\mathcal{K}_{\exp}\right)$, $z + \alpha_p \Delta z_p \in \interior \left(\mathcal{P}_{\exp}\right)$, $\tau + \alpha_p \Delta \tau_p > 0$, $\kappa + \alpha_p \Delta \kappa_p > 0$. Set $\sigma = \max\left\{(1-\alpha_p)^3, 0\right\}$. \\
+Set the \textit{maximum step-length} based on the predictor search direction and the conic constraints
+\[\alpha_p = \max\left\{ \alpha > 0 \mid [x; y; z; \tau;\kappa] + \alpha [\Delta x_p; \Delta y_p; \Delta z_p; \Delta \tau_p; \Delta \kappa_p] \in \mathcal{K} \times \mathbb{R}^m \times \mathcal{K}^* \times \mathbb{R}_+ \times \mathbb{R}_+
+ \right\}. \]
+
+Set $\sigma = \max\left\{(1-\alpha_p)^3, 0\right\}$. \\
 
 Solve the following system for the (combined) search direction $(\Delta x, \Delta y, \Delta z, \Delta \tau, \Delta \kappa, \Delta \theta)$.
 \begin{align}
@@ -335,7 +337,7 @@ A^T & 0 & -c & \bar c \\
 0\\0\\0\\0
 \end{bmatrix} \label{combined_system_1}\\[1ex]
 & \tau \Delta \kappa + \kappa \Delta \tau = - \tau \kappa + \sigma \theta - \Delta \tau_p \Delta \kappa_p \label{combined_system_2}\\[1ex]
-& \mu H^*(z)\Delta z + \Delta x = -x - \sigma \theta g^*(z). \label{combined_system_3}
+& \theta H^*(z)\Delta z + \Delta x = -x - \sigma \theta g^*(z). \label{combined_system_3}
 \end{align}
 Note that similarly \eqref{combined_system_1} - \eqref{combined_system_3} can be written as $\bar G \Delta \bar x = \bar R$, where $\bar G$ is defined in \eqref{G_bar_etc_predictor_system_def} and 
 \[\Delta \bar x =  \begin{bmatrix}

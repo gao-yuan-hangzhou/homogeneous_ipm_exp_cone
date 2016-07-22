@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  20 JUL 2016 17:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 JUL 2016 20:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -578,19 +578,39 @@ Underfull \hbox (badness 10000) in paragraph at lines 272--274
  []
 
 
-Overfull \hbox (27.4262pt too wide) in paragraph at lines 280--280
+Overfull \hbox (27.4262pt too wide) in paragraph at lines 280--281
 \OT1/cmr/m/n/10.95 Henceforth the cur-rent and next it-er-ates are de-noted as 
 $(\OML/cmm/m/it/10.95 x; y; ^^\; z; ^^T; ^^R\OT1/cmr/m/n/10.95 )$ and $(\OML/cm
 m/m/it/10.95 x[]; y[]; ^^\[]; z[]; ^^T[]; ^^R[]\OT1/cmr/m/n/10.95 )$
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--281
+
+ []
+
+
+Overfull \hbox (39.29889pt too wide) in paragraph at lines 282--283
+[]\OT1/cmr/m/n/10.95 First, solve the fol-low-ing sys-tem for the \OT1/cmr/m/it
+/10.95 pre-dic-tor search di-rec-tion $\OT1/cmr/m/n/10.95 (^^A\OML/cmm/m/it/10.
+95 x[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/10.95 y[]; \OT1/cmr/m/n/10.95 ^^A\O
+ML/cmm/m/it/10.95 z[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/10.95 ^^\[]; \OT1/cm
+r/m/n/10.95 ^^A\OML/cmm/m/it/10.95 ^^T[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/1
+0.95 ^^R[]\OT1/cmr/m/n/10.95 )$ 
+ []
+
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 318--320
+Overfull \hbox (0.45564pt too wide) detected at line 319
+\OML/cmm/m/it/10.95 [] \OT1/cmr/m/n/10.95 = [] [] \OML/cmm/m/it/10.95 :
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 321--322
 
  []
 
 [9] [10]
-Overfull \hbox (37.42163pt too wide) in paragraph at lines 453--454
+Overfull \hbox (37.42163pt too wide) in paragraph at lines 455--456
 \OT1/cmr/m/n/10.95 Note that the max-i-mum is at-tained due to the com-pact-nes
 s of the set. Set $\OML/cmm/m/it/10.95 ^^[ \OT1/cmr/m/n/10.95 = [] []$.
  []
@@ -622,7 +642,7 @@ s/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts
 ype1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/ty
 pe1/public/amsfonts/symbols/msbm10.pfb>
 Output written on interior_point_method_for_exp_cone_implementation.pdf (13 pag
-es, 218512 bytes).
+es, 217981 bytes).
 PDF statistics:
  107 PDF objects out of 1000 (max. 8388607)
  76 compressed objects within 1 object stream

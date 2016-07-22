@@ -139,7 +139,7 @@ for it_count =1:max_iter_count
     G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
     G3 = [speye(dim_x), sparse(dim_x, m), theta*H_dual(z, dimension_info), sparse(dim_x,3)];
     G_bar = [G1; G2; G3];
-    R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x];
+    R_bar_p = [sparse(m+dim_x+2,1); theta/dim_x-tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
     pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
     % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 
     dtau_p = pred_dir(2*dim_x+m+1); dkappa_p = pred_dir(2*dim_x+m+2); % dtheta_p = pred_dir(2*Nt+m+3);
@@ -150,7 +150,7 @@ for it_count =1:max_iter_count
     sigma = min(1,(1-alpha_p)^3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve for the combined search direction
-    R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
+    R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)]; %R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
     comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
     % dx = comb_dir(1:Nt); dy = comb_dir(Nt+1:Nt+m); dz = comb_dir(Nt+m+1:2*Nt+m); dtau = comb_dir(2*Nt+m+1); dkappa = comb_dir(2*Nt+m+2); 
     dtheta = comb_dir(2*dim_x+m+3);
@@ -203,7 +203,7 @@ for it_count =1:max_iter_count
         if is_dual_infeasible
             disp(['cTx = ' num2str(c'*x) ' < 0']);
             display('The problem is dual infeasible. See the info structure returned for a certificate.');
-            % x_cert = x; c_vector = c; save('dual_infeas_cert.mat', 'x_cert', 'c_vector');
+            
             idx_l = 1; idx_q = Nl+1; idx_e = Nl+sum(Nq)+1;
             for k = 1:size(blk,1)
                 if blk{k,1} == 'l'

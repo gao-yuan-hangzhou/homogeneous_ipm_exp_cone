@@ -31,7 +31,7 @@ disp('Portfolio Allocation under the Entropic Satisficing Measure');
 % ahigh(1) = alow(1)
 
 % Generate problem input
-n = 500; p = rand(n,1); q = 1-p; vlow = 100 - 50*rand(n,1); vhigh = 100 + 50*rand(n,1);
+n = 50; p = rand(n,1); q = 1-p; vlow = 100 - 50*rand(n,1); vhigh = 100 + 50*rand(n,1);
 % Calculate E(V(i))
 
 % save('large_input.mat', 'n', 'p', 'q', 'vlow', 'vhigh');

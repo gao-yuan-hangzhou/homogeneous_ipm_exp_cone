@@ -1,5 +1,6 @@
-function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_HKM_Search_Direction_UNDER_CONSTRUCTION(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
-format long;
+function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
+format long; 
+addpath ./subroutines 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This function solves problems of the following form
 % min sum_j (c(j)'x(j)) s.t. sum_j (A(j)x(j)) = b, x(j) in K(j) (or free), j=1,2,...,N
@@ -33,7 +34,6 @@ format long;
 % blk{6,1} = 'u'; blk{6,2} = 9;                       At{6} is a sparse 23-by-9 matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % All subroutines are in the folder "subroutines"
-addpath ./subroutines 
 % Get the current CPU time at the beginning
 t_begin = cputime;
 
@@ -65,8 +65,6 @@ for k = 1:size(blk,1)
 end;
 % Compute the total dimension of x = [xl; xq; xe]
 dim_x = Nl + sum(Nq) + 3*Ne;
-% Define v, the parameter for the logarithmic barrier for the product cone K
-v_barrier_param = Nl + length(Nq) + 3*Ne;
 % Define structure dimension_info that contains Nl, Nq and Ne
 dimension_info.l = Nl; dimension_info.q = Nq; dimension_info.e = Ne; dimension_info.m = m;
 % Construct A = [Al, Aq, Ae]
@@ -111,8 +109,10 @@ id_e = repmat(exp_cone_center,Ne,1);
 x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 tau = 1; kappa = 1; theta0 = 1.0; theta = theta0;
 % Compute the auxiliary parameters which completely define (HSD)
-b_bar = (b*tau - A*x)/theta; c_bar = (c*tau - A'*y - z)/theta; 
-g_bar = (c'*x - b'*y + kappa)/theta; alpha_bar = (x'*z + tau*kappa)/theta;
+b_bar = (b*tau - A*x)/theta; 
+c_bar = (c*tau - A'*y - z)/theta; 
+g_bar = (c'*x - b'*y + kappa)/theta; 
+alpha_bar = (x'*z + tau*kappa)/theta;
 
 % Formualte part of the coefficient matrix for the predictor search direction
 % Note that the system for the predictor search direction can be compactly written as
@@ -136,26 +136,11 @@ end
 for it_count =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Form G_bar, R_bar_p and solve for the predictor search direction
-    % G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
-    % G3 = [speye(dim_x), sparse(dim_x, m), theta*H_dual(z, dimension_info), sparse(dim_x,3)];
-    % G_bar = [G1; G2; G3];
-    % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x];
-    
-    % Find the HKM-like search direction pred_dir = [dx; dy; dz; dtau; dkappa]
-    A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
-    y_hat = [y; tau; theta]; % y_hat has dimension (m+2)
-    B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
-    Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
-    Rd_hat = -A_hat'*y_hat - z;
-    mu_xz = x'*z/(v_barrier_param+1);
-    Rc = [Rc_l; Rc_q; Rc_e];
-    mu_hat = (x'*z +tau*kappa)/(v_barrier_param+1);
-    H_matrix = H_dual(z, dimension_info);
-    % Solve equation (28) in http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf
-    LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
-    RHS_Schur_comp_eq = 
-    
-    % pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
+    G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
+    G3 = [speye(dim_x), sparse(dim_x, m), theta*H_dual(z, dimension_info), sparse(dim_x,3)];
+    G_bar = [G1; G2; G3];
+    R_bar_p = [sparse(m+dim_x+2,1); theta-tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
+    pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
     % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 
     dtau_p = pred_dir(2*dim_x+m+1); dkappa_p = pred_dir(2*dim_x+m+2); % dtheta_p = pred_dir(2*Nt+m+3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +150,7 @@ for it_count =1:max_iter_count
     sigma = min(1,(1-alpha_p)^3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve for the combined search direction
-    R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
+    R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x-sigma*theta*g_dual(z, dimension_info) + 1/alpha_bar*Mehrotra_correction_term(pred_dir, dimension_info)]; %R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
     comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
     % dx = comb_dir(1:Nt); dy = comb_dir(Nt+1:Nt+m); dz = comb_dir(Nt+m+1:2*Nt+m); dtau = comb_dir(2*Nt+m+1); dkappa = comb_dir(2*Nt+m+2); 
     dtheta = comb_dir(2*dim_x+m+3);
@@ -178,7 +163,6 @@ for it_count =1:max_iter_count
     % alpha = 0.98*find_alpha_max(x_bar, comb_dir, dimension_info);
     % x = x+alpha*dx; y = y + alpha*dy; z = z + alpha*dz; tau = tau + alpha*dtau; kappa = kappa + alpha*dkappa; theta = theta+alpha*dtheta;
     x_bar = x_bar + alpha*comb_dir;
-    % disp([num2str(theta,5) ' | ' num2str(sigma,5) ' | ' num2str(dtheta,5) ' | ' num2str(alpha,5) ' | '  num2str(tau,5) ' | ' num2str(kappa,5) ' | ' num2str(nnz(G_bar)/numel(G_bar))]);
     if it_count == 1
         disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
@@ -218,7 +202,7 @@ for it_count =1:max_iter_count
         if is_dual_infeasible
             disp(['cTx = ' num2str(c'*x) ' < 0']);
             display('The problem is dual infeasible. See the info structure returned for a certificate.');
-            % x_cert = x; c_vector = c; save('dual_infeas_cert.mat', 'x_cert', 'c_vector');
+            
             idx_l = 1; idx_q = Nl+1; idx_e = Nl+sum(Nq)+1;
             for k = 1:size(blk,1)
                 if blk{k,1} == 'l'
@@ -301,6 +285,7 @@ result_info.relative_dual_infeasibility = norm(A'*y+z-c*tau,Inf)/max(1,norm([A',
 result_info.terminal_tau = tau;
 result_info.terminal_kappa = kappa;
 result_info.terminal_theta = theta;
+result_info.total_iter_count = it_count;
 % Print total running time
 disp(['Total CPU time elapsed = ' num2str(cputime-t_begin) ' seconds']);
 % End of function
