@@ -50,7 +50,7 @@ for k = 1:size(blk,1)
     end
 end
 
-if ~isempty(indices_of_u)
+if sum(indices_of_u) > 0
     disp('Unrestricted block(s) detected and converted into linear block(s)!');
 end
 
@@ -145,15 +145,20 @@ for it_count =1:max_iter_count
     A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
     y_hat = [y; tau; theta]; % y_hat has dimension (m+2)
     B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
+    mu_xz = x'*z/(dim_x+1);
+    mu_hat = (x'*z +tau*kappa)/(dim_x+1);
     Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
-    Rd_hat = -A_hat'*y_hat - z;
-    mu_xz = x'*z/(v_barrier_param+1);
-    Rc = [Rc_l; Rc_q; Rc_e];
-    mu_hat = (x'*z +tau*kappa)/(v_barrier_param+1);
+    Rd = -A_hat'*y_hat - z;
+    Rc = -x; % In theory, should set Rc = [Rc_l; Rc_q; Rc_e]
+    Rt = mu_hat/tau - kappa;
     H_matrix = H_dual(z, dimension_info);
     % Solve equation (28) in http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf
-    LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
-    RHS_Schur_comp_eq = 
+    LHS_Schur_comp_eq = A_hat*H_matrix*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
+    RHS_Schur_comp_eq = Rp_hat + A_hat*(H_matrix*Rd-Rc) + [sparse(m,1); Rt; 0];
+    dy_hat_pred = LHS_Schur_comp_eq \ RHS_Schur_comp_eq;
+    % dy_pred = dy_hat_pred(1:m); dtau_pred = dy_hat_pred(m+1); dtheta_pred = dy_hat_pred(m+2);
+    
+    
     
     % pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
     % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 

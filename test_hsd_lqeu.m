@@ -45,7 +45,7 @@ end
 %save('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 load('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 
-[obj_val, x_return,y_return,z_return, info] = hsd_lqeu_NT_Mehrotra(blk, A_cell, c_cell, b, 1e-8, 1000);
+%[obj_val, x_return,y_return,z_return, info] = hsd_lqeu_NT_Mehrotra(blk, A_cell, c_cell, b, 1e-8, 1000);
 [obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b, 1e-8, 1000);
 
 % Check certificate of dual infeasibility

@@ -50,7 +50,7 @@ for k = 1:size(blk,1)
     end
 end
 
-if ~isempty(indices_of_u)
+if sum(indices_of_u) > 0
     disp('Unrestricted block(s) detected and converted into linear block(s)!');
 end
 
