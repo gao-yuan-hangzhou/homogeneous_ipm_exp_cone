@@ -39,7 +39,7 @@
           dX{p} = EinvRc{p}-tmp;
        end
     end
-    dy  = dy2(1:m); 
+    dy = dy2(1:m); 
     par.dtau = dy2(m+1); 
     par.dtheta = dy2(m+2);
     par.dkap = (par.mu./par.tau - par.kap) - par.kap*(par.dtau/par.tau); 

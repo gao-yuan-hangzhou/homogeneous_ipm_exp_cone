@@ -1,3 +1,4 @@
+addpath ./subroutines
 ensure_feasibility = true;
 clear blk; clear c_cell; clear A_cell; m = 18;
 blk{1,1} = 'u'; blk{1,2} = 2; A_cell{1} = sprandn(m,sum(blk{1,2}),0.05); c_cell{1} = randn(blk{1,2},1);
@@ -7,7 +8,8 @@ blk{4,1} = 'q'; blk{4,2} = max(2,randi(50,5,1)); A_cell{4} = sprandn(m, sum(blk{
 if ensure_feasibility
     clear A_cell c_cell; [A_cell, c_cell, b] = generate_random_feasible_instance(blk,m);
 end
-%save('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
+
+save('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 load('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 
-hsd_lqeu_HKM_Search_Direction_UNDER_CONSTRUCTION(blk, A_cell, c_cell, b);
+hsd_lqeu_HKM(blk, A_cell, c_cell, b);

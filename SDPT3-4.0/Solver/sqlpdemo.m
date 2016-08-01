@@ -14,7 +14,7 @@
 %%*****************************************************************
   
    function  sqlpdemo; 
-
+   graph = @(params) graph_SDPT3(params);
    randn('seed',0); rand('seed',0); 
    feas = input('using feasible starting point? [yes = 1, no = 0] ');
    if (feas)
@@ -45,8 +45,8 @@
        elseif (eg == 3); 
           disp('******** Max-cut *********');
           N = 10;
-          B = graph(N); 
-          [blk,At,C,b,X0,y0,Z0] = maxcut(B,feas); 
+          B = graph(N);
+          [blk,At,C,b,X0,y0,Z0] = maxcut(B,feas);
           text = 'Maxcut'; 
        elseif (eg == 4); 
           disp('********* ETP ***********')

@@ -28,8 +28,18 @@ end
 [obj_sdpt3,x_sdpt3,y_sdpt3,z_sdpt3,info_sdpt3,runhist_sdpt3] = sdpt3(blk,A_cell,c_cell,b);
 
 % Solve the instance using hsd_lqe
-[obj_lqe, x_lqe, y_lqe, z_lqe, info_lqe] = hsd_lqeu(blk, A_cell, c_cell,b);
+[obj_lqeu, x_lqeu, y_lqeu, z_lqeu, info_lqeu] = hsd_lqeu(blk, A_cell, c_cell,b);
 
 % Compare the (primal and dual) objective values
 display(obj_sdpt3);
-display(obj_lqe);
+display(obj_lqeu);
+% Check objective value
+if strcmp(info_lqeu.solution_status, 'optimal')
+    bTy = b'*y_lqeu; cTx = 0;
+    for k = 1:size(blk,1)
+        cTx = cTx + c_cell{k}' * x_lqeu{k};
+    end
+    disp('Check hsd_lqeu optimal solutions in cell arrays.');
+    display(['bTy = ' num2str(bTy)]);
+    display(['cTx = ' num2str(cTx)]);
+end
