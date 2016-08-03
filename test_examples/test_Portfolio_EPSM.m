@@ -1,3 +1,4 @@
+addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 clear;
 disp('Portfolio Allocation under the Entropic Satisficing Measure');
 % Portfolio_EPSM_example

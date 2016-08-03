@@ -1,5 +1,4 @@
-addpath ./subroutines % All subroutines are in the folder "subroutines"
-clear blk A_cell c_cell
+addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']); addpath([fileparts(pwd), '/cvx']);
 
 % Set the number of exponential cones, i.e. dimension of x = 3*Ne
 Ne = 200; Nl = 150; Nq = max(2,randi(50,100,1));
@@ -15,6 +14,7 @@ blk{3,1} = 'q'; blk{3,2} = Nq;
 disp(['dual optimal solution by hsd_lueq = ' num2str(opt_sol(1))]);
 
 % Solve the problem using CVX
+% cvx_setup
 cvx_clear
 cvx_tic
 cvx_begin

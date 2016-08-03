@@ -1,3 +1,4 @@
+addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 while(1)
 % Example 1
 % Covnert a log optimization problem into a standard conic program

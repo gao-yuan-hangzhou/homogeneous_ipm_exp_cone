@@ -1,5 +1,6 @@
 function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_HKM(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
+addpath([fileparts(pwd), '/subroutines']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This function solves problems of the following form
 % min sum_j (c(j)'x(j)) s.t. sum_j (A(j)x(j)) = b, x(j) in K(j) (or free), j=1,2,...,N
@@ -33,7 +34,6 @@ format long;
 % blk{6,1} = 'u'; blk{6,2} = 9;                       At{6} is a sparse 23-by-9 matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % All subroutines are in the folder "subroutines"
-addpath ./subroutines/
 % Get the current CPU time at the beginning
 t_begin = cputime;
 
@@ -121,6 +121,7 @@ end
 
 result_info.solution_status = 'undetermined';
 
+% Set the default max number of iterations
 if nargin < 6
     max_iter_count = 500;
 end
@@ -141,6 +142,8 @@ for it_count =1:max_iter_count
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
     Rt = mu_hat/tau - kappa;
     H = H_dual(z, dimension_info); % In the future, H = blkdiag([H_HKM_linear; H_HKM_soc; H_exp])
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
     LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
     h_nat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
@@ -159,7 +162,8 @@ for it_count =1:max_iter_count
     % Set sigma (parameter for the system for the combined search direction)
     sigma = max(0,min(1,(1-alpha_p)^3));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27)
+    % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
+    % the above sigma (centering parameter)
     Rclprime = sigma*mu_xz * 1./z(1:Nl);
     Rcqprime = zeros(sum(Nq),1);
     for kk = 1:length(Nq)

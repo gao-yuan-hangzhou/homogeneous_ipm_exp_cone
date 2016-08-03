@@ -1,4 +1,5 @@
-addpath ./subroutines
+addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
+
 ensure_feasibility = true;
 clear blk; clear c_cell; clear A_cell; m = 18;
 blk{1,1} = 'u'; blk{1,2} = 2; A_cell{1} = sprandn(m,sum(blk{1,2}),0.05); c_cell{1} = randn(blk{1,2},1);

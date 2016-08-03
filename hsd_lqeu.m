@@ -1,5 +1,6 @@
 function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
+addpath([fileparts(pwd), '/subroutines']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This function solves problems of the following form
 % min sum_j (c(j)'x(j)) s.t. sum_j (A(j)x(j)) = b, x(j) in K(j) (or free), j=1,2,...,N
@@ -33,7 +34,6 @@ format long;
 % blk{6,1} = 'u'; blk{6,2} = 9;                       At{6} is a sparse 23-by-9 matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % All subroutines are in the folder "subroutines"
-addpath ./subroutines 
 % Get the current CPU time at the beginning
 t_begin = cputime;
 

@@ -1,5 +1,4 @@
-addpath ./subroutines
-run ./SDPT3-4.0/startup.m;
+addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']); run([fileparts(pwd), '/SDPT3-4.0/startup.m' ]);
 
 % We generate (feasible) instances of conic programs with 
 % LINEAR and SECOND-ORDER cone constraints
