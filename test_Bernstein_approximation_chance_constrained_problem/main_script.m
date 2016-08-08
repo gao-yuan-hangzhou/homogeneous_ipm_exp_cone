@@ -1,6 +1,7 @@
 addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 
 % Paper reference: 
+% https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
 n = 5; q = 2;
