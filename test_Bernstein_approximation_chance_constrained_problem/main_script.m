@@ -1,6 +1,6 @@
 addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
-% Bernstein approximation vs Scenario approach on a toy example
-% as in the paper of Nemirovski and Shapiro
+
+% Paper reference: 
 
 % Set the number of risky assets and number of underlying factors
 n = 5; q = 2;
@@ -23,24 +23,6 @@ end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
 mu = -1 + (2*log_E_eta+1).^(1/2); sigma = mu;
-
-% The original problem is
-% max{(tau - 1)|x>=0, tau free} 
-% s.t. P(tau>sum(r(j)x(j),j=0:n_risky_assets))<=alpha, sum(x(j),j=0:n_risky_assets)<=1
-% The problem is equivalent to 
-% max{(tau - 1)|x,tau>=0} 
-% s.t. P(F(xBar,xi)<=0)>=1-alpha, where xBar = [tau; x0; x(1:n)], xi = [eta(1:n); zeta(1:q)]
-% F(xBar,xi) = g_0(x) + sum(eta(j)*xg_j(x),j=1:n) + sum(zeta(l)*h_l(x),l=1:q), 
-% where g_j(xBar) = -x(j), h_l(xBar) = -sum(gamma(j,l)*x(j),j=1:n)
-
-% The Bernstein approximation of the above problem is (converted into a minimization problem)
-% min{-tau+1|xBar>=0}
-% s.t. g_0(xBar)+sum(t*logMGF_j(t^(-1)*g_j(xBar)),j=1:d)+s <= 0, t>=0, s >= 0, x>=0
-
-% Now we write the above problem into a standard conic form
-% d = n + q, 
-% For j = 1,...,d, xi(j) are discrete random variables (approximating LN) 
-% with finite support, P(xi(j)=v(j,k)) = p(j,k), k = 1,...,N(j)
 
 % Total number of random variables
 d = n+q;
@@ -65,15 +47,15 @@ N_total_discretized_points = sum(N);
 blk{1,1} = 'u'; blk{1,2} = 1;                                          % tau free
 blk{2,1} = 'l'; blk{2,2} = n+2;                                        % x0, x(1), ... x(n), sx all >= 0               
 blk{3,1} = 'u'; blk{3,2} = d+1;                                        % g0, g(1), ..., g(d) all free              
-blk{4,1} = 'l'; blk{4,2} = 2;                                          % t>=0, s0>=0
+blk{4,1} = 'l'; blk{4,2} = 1;                                          % t0>=0
 blk{5,1} = 'u'; blk{5,2} = d;                                          % s(1), ..., s(d) free
 blk{6,1} = 'e'; blk{6,2} = 3*ones(N_total_discretized_points,1);       % [w(j,k); u(j,k); t(j,k)] in K_exp
 
 % Total dimension of the decision vector
-total_dim_dec_vec = 1 + (n+2) + (d+1) + 2 + d + 3*N_total_discretized_points;
+total_dim_dec_vec = 1+(n+2)+(d+1)+1+d+sum(blk{6,2});
 
 % The objective function is 
-% min -tau <=> originally, max (tau - 1)
+% min -tau
 c_cell{1} = -1;
 for k = 2:6
     c_cell{k} = zeros(sum(blk{k,2}), 1);
