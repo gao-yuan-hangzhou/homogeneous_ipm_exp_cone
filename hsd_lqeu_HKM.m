@@ -128,7 +128,7 @@ end
 
 % The main loop
 for it_count =1:max_iter_count
-    %disp(['(<x,z> + tau*kappa) - alpha_bar*theta = ' num2str(x'*z+tau*kappa - alpha_bar*theta)]);
+    % disp(['(<x,z> + tau*kappa) - alpha_bar*theta = ' num2str(x'*z+tau*kappa - alpha_bar*theta)]);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find the HKM-like search direction pred_dir = [dx; dy; dz; dtau; dkappa]
     % as in SDPT3 Guide: http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf
@@ -141,7 +141,7 @@ for it_count =1:max_iter_count
     Rd = -A_hat'*y_hat - z;
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
     Rt = mu_hat/tau - kappa;
-    H = H_dual(z, dimension_info); % In the future, H = blkdiag([H_HKM_linear; H_HKM_soc; H_exp])
+    H = theta*H_dual(z, dimension_info); % In the future, H = blkdiag(H_HKM_linear, H_HKM_soc, H_exp)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
@@ -162,6 +162,7 @@ for it_count =1:max_iter_count
     % Set sigma (parameter for the system for the combined search direction)
     sigma = max(0,min(1,(1-alpha_p)^3));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
     Rclprime = sigma*mu_xz * 1./z(1:Nl);
@@ -181,19 +182,21 @@ for it_count =1:max_iter_count
     dtheta = dy_hat(m+2);
     dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
     dx = Rc - H*dz; % 3rd equation of (27)
-    dkappa = Rt- (kappa/tau)*dtau; % 4th equation of (27)
+    dkappa = Rt  - (kappa/tau)*dtau; % 4th equation of (27)
     comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);
     alpha = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
-    
     % alpha = max(1-alpha_p, 0.8)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p,alpha_p)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = 0.98*find_alpha_max(x_bar, comb_dir, dimension_info);
     % x = x+alpha*dx; y = y + alpha*dy; z = z + alpha*dz; tau = tau + alpha*dtau; kappa = kappa + alpha*dkappa; theta = theta+alpha*dtheta;
     x_bar = x_bar + alpha*comb_dir;
-    % disp([num2str(theta,5) ' | ' num2str(sigma,5) ' | ' num2str(dtheta,5) ' | ' num2str(alpha,5) ' | '  num2str(tau,5) ' | ' num2str(kappa,5) ' | ' num2str(nnz(G_bar)/numel(G_bar))]);
+    % Extract x, y, z, tau, theta, kappa
+    x = x_bar(1:dim_x); y = x_bar(dim_x+1:dim_x+m); z = x_bar(dim_x+m+1:2*dim_x+m);  
+    tau = x_bar(2*dim_x+m+1); kappa = x_bar(2*dim_x+m+2); theta = x_bar(2*dim_x+m+3);
+    % Display some running information
     if it_count == 1
         disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
@@ -205,9 +208,6 @@ for it_count =1:max_iter_count
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Termination conditions (from Section 5.4. in http://web.stanford.edu/~yyye/nonsymmhsdimp.pdf)
-    % Extract x, y, z, tau, theta, kappa
-    x = x_bar(1:dim_x); y = x_bar(dim_x+1:dim_x+m); z = x_bar(dim_x+m+1:2*dim_x+m);  
-    tau = x_bar(2*dim_x+m+1); kappa = x_bar(2*dim_x+m+2); theta = x_bar(2*dim_x+m+3);
     % Check the 7 inequalities P, D, G, A, T, K, M
     bool_P = norm(A*x-tau*b,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
     bool_D = norm(A'*y+z-c*tau,Inf) <= rel_eps*max(1,norm([A',speye(dim_x),-c], Inf)); 

@@ -96,7 +96,6 @@ if sprank(U_A) < sprank(U_full)
     display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
 elseif sprank(U_A) < m
     display('Error: A is not FULL ROW RANK!');
-    return;
 else
     disp('Ok: A has full row rank and Ax = b');
 end

@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  7 AUG 2016 19:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  8 AUG 2016 00:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**interior_point_method_for_exp_cone_implementation.tex
-(./interior_point_method_for_exp_cone_implementation.tex
+**bernstein_example.tex
+(./bernstein_example.tex
 LaTeX2e <2015/01/01>
 Babel <3.9l> and hyphenation patterns for 79 languages loaded.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
@@ -387,42 +387,34 @@ LaTeX Info: Redefining \cite on input line 302.
 LaTeX Info: Redefining \nocite on input line 332.
 Package: cite 2015/02/27  v 5.5
 )
-\c@defin=\count103
-\c@assumption=\count104
-\c@lemma=\count105
-\c@example=\count106
-\c@prop=\count107
-\c@thm=\count108
-\c@cor=\count109
+(./bernstein_example.aux)
+\openout1 = `bernstein_example.aux'.
 
-(./interior_point_method_for_exp_cone_implementation.aux)
-\openout1 = `interior_point_method_for_exp_cone_implementation.aux'.
-
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
 
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count110
+\scratchcounter=\count103
 \scratchdimen=\dimen122
 \scratchbox=\box28
-\nofMPsegments=\count111
-\nofMParguments=\count112
+\nofMPsegments=\count104
+\nofMParguments=\count105
 \everyMPshowfont=\toks29
-\MPscratchCnt=\count113
+\MPscratchCnt=\count106
 \MPscratchDim=\dimen123
-\MPnumerator=\count114
-\makeMPintoPDFobject=\count115
+\MPnumerator=\count107
+\makeMPintoPDFobject=\count108
 \everyMPtoPDFconversion=\toks30
 ) (/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
@@ -502,150 +494,55 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 26.
+LaTeX Font Info:    Try loading font information for U+msa on input line 13.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 26.
+LaTeX Font Info:    Try loading font information for U+msb on input line 13.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+Underfull \hbox (badness 10000) in paragraph at lines 34--35
 
-LaTeX Warning: No \author given.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
-
- []
-
-
-Overfull \hbox (39.2283pt too wide) in paragraph at lines 56--57
-[]\OT1/cmr/m/n/10.95 The pos-i-tive or-thant, the Lorenz cone and the pos-i-tiv
-e semidef-i-nite cone $\OMS/cmsy/m/n/10.95 S[] \OT1/cmr/m/n/10.95 = []$,
  []
 
 [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 76--77
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 100--101
-
- []
-
-[2] [3]
-Overfull \hbox (26.45128pt too wide) in paragraph at lines 147--149
-\OT1/cmr/m/n/10.95 As such, $[](\OML/cmm/m/it/10.95 x; y; z\OT1/cmr/m/n/10.95 )
- = \OML/cmm/m/it/10.95 f[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 B\OT1/cmr/m/n
-/10.95 (\OML/cmm/m/it/10.95 x; y; z\OT1/cmr/m/n/10.95 ))$ is a LH-SCB for $\OMS
-/cmsy/m/n/10.95 K[]$ \OT1/cmr/m/n/10.95 and $[](\OML/cmm/m/it/10.95 u; v; w\OT1
-/cmr/m/n/10.95 ) = \OML/cmm/m/it/10.95 f[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.
-95 B[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 u; v; w\OT1/cmr/m/n/10.95 ))$
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 156--158
-
- []
-
-[4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 240--241
-
- []
-
-[6]
-Overfull \hbox (37.0383pt too wide) detected at line 257
-\OML/cmm/m/it/10.95 A \OT1/cmr/m/n/10.95 = [] \OML/cmm/m/it/10.95 ;   x \OT1/cm
-r/m/n/10.95 = [] \OML/cmm/m/it/10.95 ;   c \OT1/cmr/m/n/10.95 = [] \OML/cmm/m/i
-t/10.95 ;   z \OT1/cmr/m/n/10.95 = [] \OML/cmm/m/it/10.95 ;   \OMS/cmsy/m/n/10.
-95 K \OT1/cmr/m/n/10.95 = \OML/cmm/m/it/10.95 K[] \OMS/cmsy/m/n/10.95 ^^B [] ^^
-B \OML/cmm/m/it/10.95 K[];   \OMS/cmsy/m/n/10.95 K[] \OT1/cmr/m/n/10.95 = \OML/
-cmm/m/it/10.95 K[] \OMS/cmsy/m/n/10.95 ^^B [] ^^B \OML/cmm/m/it/10.95 K[]:
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--266
-
- []
-
-[7]
-Underfull \hbox (badness 10000) in paragraph at lines 272--274
-
- []
-
-
-Overfull \hbox (27.4262pt too wide) in paragraph at lines 280--281
-\OT1/cmr/m/n/10.95 Henceforth the cur-rent and next it-er-ates are de-noted as 
-$(\OML/cmm/m/it/10.95 x; y; ^^\; z; ^^T; ^^R\OT1/cmr/m/n/10.95 )$ and $(\OML/cm
-m/m/it/10.95 x[]; y[]; ^^\[]; z[]; ^^T[]; ^^R[]\OT1/cmr/m/n/10.95 )$
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 280--281
-
- []
-
-
-Overfull \hbox (39.29889pt too wide) in paragraph at lines 282--283
-[]\OT1/cmr/m/n/10.95 First, solve the fol-low-ing sys-tem for the \OT1/cmr/m/it
-/10.95 pre-dic-tor search di-rec-tion $\OT1/cmr/m/n/10.95 (^^A\OML/cmm/m/it/10.
-95 x[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/10.95 y[]; \OT1/cmr/m/n/10.95 ^^A\O
-ML/cmm/m/it/10.95 z[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/10.95 ^^\[]; \OT1/cm
-r/m/n/10.95 ^^A\OML/cmm/m/it/10.95 ^^T[]; \OT1/cmr/m/n/10.95 ^^A\OML/cmm/m/it/1
-0.95 ^^R[]\OT1/cmr/m/n/10.95 )$ 
- []
-
-[8]
-Overfull \hbox (0.45564pt too wide) detected at line 319
-\OML/cmm/m/it/10.95 [] \OT1/cmr/m/n/10.95 = [] [] \OML/cmm/m/it/10.95 :
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
-
- []
-
-[9] [10]
-Overfull \hbox (37.42163pt too wide) in paragraph at lines 455--456
-\OT1/cmr/m/n/10.95 Note that the max-i-mum is at-tained due to the com-pact-nes
-s of the set. Set $\OML/cmm/m/it/10.95 ^^[ \OT1/cmr/m/n/10.95 = [] []$.
- []
-
-[11] [12] (./interior_point_method_for_exp_cone_implementation.bbl) [13]
-(./interior_point_method_for_exp_cone_implementation.aux) ) 
+(./bernstein_example.bbl [2]) [3] (./bernstein_example.aux) ) 
 Here is how much of TeX's memory you used:
- 3349 strings out of 493089
- 44716 string characters out of 6134842
- 128451 words of memory out of 5000000
- 6763 multiletter control sequences out of 15000+600000
- 14282 words of font info for 53 fonts, out of 8000000 for 9000
+ 3257 strings out of 493089
+ 43344 string characters out of 6134842
+ 116861 words of memory out of 5000000
+ 6678 multiletter control sequences out of 15000+600000
+ 11391 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,21n,31p,975b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/
-2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2
-015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/20
-15/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/201
-5/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2015
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2015/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2015/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2015/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2015/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/ty
-pe1/public/amsfonts/symbols/msbm10.pfb>
-Output written on interior_point_method_for_exp_cone_implementation.pdf (13 pag
-es, 218305 bytes).
+ 38i,11n,31p,443b,207s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texliv
+e/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive
+/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/
+2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2
+015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/20
+15/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2015/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2015/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2015/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2015/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/
+type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on bernstein_example.pdf (3 pages, 157945 bytes).
 PDF statistics:
- 107 PDF objects out of 1000 (max. 8388607)
- 76 compressed objects within 1 object stream
+ 74 PDF objects out of 1000 (max. 8388607)
+ 53 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

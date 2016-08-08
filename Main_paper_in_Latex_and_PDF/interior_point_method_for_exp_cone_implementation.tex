@@ -8,7 +8,7 @@
 \newtheorem{defin}{Definition}
 \newtheorem{assumption}{Assumption} 
 \theoremstyle{plain}
-\newtheorem{lemma}{Lemma}%[section]
+\newtheorem{lemma}{Lemma}%[section5]
 \newtheorem{example}{Example}
 \newtheorem{prop}{Proposition}
 \newtheorem{thm}{Theorem}
@@ -20,7 +20,7 @@
 \def\rank{\protect{\textnormal{rank}}}
 \def\diagonal{\protect{\textnormal{diag}}}
 
-\title{An interior point method for conic programming with exponential cone constraints}
+\title{Design and implementation of interior point methods for conic programming involving exponential cone constraints}
 
 \begin{document}
 \maketitle
@@ -250,13 +250,13 @@ For implementation purpose, we will adopt the standard form in \cite{SDPT3_2010}
 &\quad\quad y \in \mathbb{R}^m,\ z_i \in K_i^*, \forall i \\[1ex]
 \end{split} \quad\quad\quad\quad\quad\quad\quad \text{(PD$'$)}
 \end{align*}
-where $x_i, c_i \in \mathbb{R}^{n_i}$, $A_i \in \mathbb{R}^{m\times n_i}$, $b \in \mathbb{R}^m$ and $n = \sum_{i=1}^N n_i \geq m$. Each $K_i$ is one of the following: (i) the nonnegative orthant $\mathbb{R}_+^{n_i}$, (ii) product of Lorentz cones $\mathcal{Q}^{q_1}\times \cdots \times \mathcal{Q}^{q_{k_i}}$, $\sum_{j=1}^{k_i} q_j = n_i$, (iii) product of the exponential cone  $\left(\mathcal{K}_{\exp}\right)^{k_i}$, $3k_i = n_i$ or (iv) $\mathbb{R}^n_i$. Note that we define (which is consistent with the definition of dual cone) $\left(\mathbb{R}^k\right)^* = \left\{ y \in \mathbb{R}^k \mid y^T x \geq 0,\ \forall x \in \mathbb{R}^k  \right\} = \left\{0\right\}^k$. To write (PD$'$) into (PD), one simply let
+where $x_i, c_i \in \mathbb{R}^{n_i}$, $A_i \in \mathbb{R}^{m\times n_i}$, $b \in \mathbb{R}^m$ and $n = \sum_{i=1}^N n_i \geq m$. Each $K_i$ is one of the following: (i) the nonnegative orthant $\mathbb{R}_+^{n_i}$, (ii) product of Lorentz cones $\mathcal{Q}^{q_1}\times \cdots \times \mathcal{Q}^{q_{k_i}}$, $\sum_{j=1}^{k_i} q_j = n_i$, (iii) product of the exponential cone  $\left(\mathcal{K}_{\exp}\right)^{k_i}$, $3k_i = n_i$ or (iv) $\mathbb{R}^{n_i}$. Note that we define (which is consistent with the definition of dual cone) $\left(\mathbb{R}^k\right)^* = \left\{ y \in \mathbb{R}^k \mid y^T x \geq 0,\ \forall x \in \mathbb{R}^k  \right\} = \left\{0\right\}^k$. To write (PD$'$) (without any $K_i = \mathbb{R}^{n_i}$) into (PD), one simply let
 \[  A = \begin{bmatrix} A_1,\ \hdots,\  A_N \end{bmatrix},\ \
 x = \begin{bmatrix} x_1 \\ \vdots\\ x_N \end{bmatrix},\ \ 
 c = \begin{bmatrix} c_1 \\ \vdots \\c_N \end{bmatrix},\ \
 z = \begin{bmatrix} z_1 \\ \vdots \\ z_N \end{bmatrix},\ \ \mathcal{K} = K_1 \times \cdots \times K_N,\ \ \mathcal{K}^* = K_1^* \times \cdots \times K_N^*.\]
 
-For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted $[M_1; \cdots ; M_L]$.
+For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted $[M_1; \cdots ; M_L]$. Processing of unrestricted variables ($x_i \in \mathbb{R}^{n_i}$) will be described in the following section.
 
 \section{A homogeneous interior-point algorithm}
 Next we describe the algorithm for solving (HSD) (and hence find either a solution to (PD) or certificates of infeasibility) in detail. Henceforth the gradients of the barriers for $\mathcal{K}$ and $\mathcal{K}^*$ will be denoted as $g$ and $g^*$ (in particular, $\mathcal{K}_{\exp}$ and $\mathcal{P}_{\exp}$) respectively, and the Hessians $H$ and $H^*$ respectively.

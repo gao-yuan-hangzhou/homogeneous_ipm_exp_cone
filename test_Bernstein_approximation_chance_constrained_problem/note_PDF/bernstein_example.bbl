@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+
+\bibitem{Gao_Yuan_thesis}
+Y.~Gao.
+\newblock Design and implementation of homogeneous interior-point methods for
+  conic programming involving exponential cone constraints, 2006.
+
+\bibitem{Nemirovsky_and_Shapiro}
+A.~Nemirovsky and A.~Shapiro.
+\newblock Convex approximation of chance constrained programs.
+\newblock {\em SIAM Journal on Optimization}, 17(4):969--996, 2006.
+
+\end{thebibliography}

@@ -1,9 +1,14 @@
-function discrete_pmf = xi_hat(mu, sigma, eps_th, Del_resol)
+function discrete_pmf = xi_hat_discrete_LN(mu, sigma, eps_th, Del_resol)
 % For xi ~ LN(mu, sigma^2), generate xi_hat represented by [v(1:N), p(1:N)] where 
 % p(i) = P(xi_hat = v(i)) and p(1)+...+p(N) = 1, which is a 
 % discrete approximation of the lognormal random variable xi.
 % The apprixmation scheme ensures that 0<xi_hat <= xi, and 
 % P(xi_hat/xi >= exp(-Del_resol)) >= 1 - eps_th.
+
+if nargin <= 2
+    eps_th = 1e-6; 
+    Del_resol = 0.0025;
+end
 
 % Return a structure array containing vals and prob_masses
 % such that P(xi = vals(k)) = prob_masses(k)
