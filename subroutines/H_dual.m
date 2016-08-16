@@ -6,6 +6,7 @@ if length(z)~=dimension_info.l+sum(dimension_info.q) + 3*dimension_info.e
     display('Error: In H_dual(z, dimension_info), length of x does NOT match dimension_info!');
 end
 Nl = dimension_info.l; Nq = dimension_info.q; Ne = dimension_info.e;
+
 % Calculate H_l, H_q and H_e
 H_l = H_linear_sparse_diagonal(z(1:Nl));
 H_q = sparse(sum(Nq),sum(Nq)); for k = 1:length(Nq) H_q(1+sum(Nq(1:k-1)):sum(Nq(1:k)), 1+sum(Nq(1:k-1)):sum(Nq(1:k))) = H_lorentz(z(Nl+1+sum(Nq(1:k-1)):Nl+sum(Nq(1:k)))); end;

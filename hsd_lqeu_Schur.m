@@ -1,4 +1,4 @@
-function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_HKM(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
+function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
 addpath([fileparts(pwd), '/subroutines']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,16 +66,20 @@ end;
 % Compute the total dimension of x = [xl; xq; xe]
 dim_x = Nl + sum(Nq) + 3*Ne;
 % Define v, the parameter for the logarithmic barrier for the product cone K
-v = Nl + length(Nq) + 3*Ne;
+v_param = Nl + length(Nq) + 3*Ne;
 % Define structure dimension_info that contains Nl, Nq and Ne
 dimension_info.l = Nl; dimension_info.q = Nq; dimension_info.e = Ne; dimension_info.m = m;
 % Construct A = [Al, Aq, Ae]
 Al = sparse(m,0); Aq = sparse(m,0); Ae = sparse(m,0);
 for k=1:size(blk,1)
-    if blk{k,1} == 'l' Al = [Al, A_cell{k}];
-    elseif blk{k,1} == 'q' Aq = [Aq, A_cell{k}];
-    elseif blk{k,1} == 'e' Ae = [Ae, A_cell{k}];
-    else disp(['Error: blk{' num2str(k) ',1} is not one of l, q or e!']);
+    if blk{k,1} == 'l' 
+        Al = [Al, A_cell{k}];
+    elseif blk{k,1} == 'q' 
+        Aq = [Aq, A_cell{k}];
+    elseif blk{k,1} == 'e' 
+        Ae = [Ae, A_cell{k}];
+    else
+        disp(['Error: blk{' num2str(k) ',1} is not one of l, q or e!']);
     end;
 end;
 A = [Al, Aq, Ae];
@@ -83,35 +87,41 @@ A = [Al, Aq, Ae];
 % Contruct c = [cl; cq; ce]
 cl = sparse(0,1); cq = sparse(0,1); ce = sparse(0,1);
 for k=1:size(blk,1)
-    if blk{k,1} == 'l' cl = [cl; c_cell{k}];
-    elseif blk{k,1} == 'q' cq = [cq; c_cell{k}];
-    elseif blk{k,1} == 'e' ce = [ce; c_cell{k}];
+    if blk{k,1} == 'l' 
+        cl = [cl; c_cell{k}];
+    elseif blk{k,1} == 'q' 
+        cq = [cq; c_cell{k}];
+    elseif blk{k,1} == 'e' 
+        ce = [ce; c_cell{k}];
     else display('Error: blk{k,1} is not one of l, q or e!');
     end;
 end;
 c = [cl; cq; ce];
 
 % Check whether Ax=b has a solution
-disp('Check whether A has full row rank and Ax=b has a solution...');
-[~, U_A] = lu(A); [~,U_full] = lu([A,b]);
-if sprank(U_A) < sprank(U_full)
-    display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
-elseif sprank(U_A) < m
-    display('Error: A is not FULL ROW RANK!');
-    return;
-else
-    disp('Ok: A has full row rank and Ax = b');
-end
+% disp('Check whether A has full row rank and Ax=b has a solution...');
+% [~, U_A] = lu(A); [~,U_full] = lu([A,b]);
+% if sprank(U_A) < sprank(U_full)
+%     display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
+% elseif sprank(U_A) < m
+%     display('Error: A is not FULL ROW RANK!');
+%     return;
+% else
+%     disp('Ok: A has full row rank and Ax = b');
+% end
 
 % Now initialize (x, y, z, tau, kappa, theta)
 exp_cone_center = [-1.0151; 1.2590; 0.5560];
 id_l = ones(Nl,1);
-id_q = zeros(sum(Nq),1); for k = 1:length(Nq) id_q(sum(Nq(1:k-1))+1) = 1; end;
+id_q = zeros(sum(Nq),1); 
+for k = 1:length(Nq) 
+    id_q(sum(Nq(1:k-1))+1) = 1; 
+end;
 id_e = repmat(exp_cone_center,Ne,1);
 x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 tau = 1; kappa = 1; theta0 = 1.0; theta = theta0;
 % Compute the auxiliary parameters which completely define (HSD)
-b_bar = (b*tau - A*x)/theta; c_bar = (c*tau - A'*y - z)/theta; 
+b_bar = (b*tau - A*x)/theta; c_bar = (c*tau - A'*y - z)/theta;
 g_bar = (c'*x - b'*y + kappa)/theta; alpha_bar = (x'*z + tau*kappa)/theta;
 
 % Set the default relative accuracy
@@ -135,13 +145,14 @@ for it_count =1:max_iter_count
     A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
     y_hat = [y; tau; theta]; % y_hat has dimension (m+2)
     B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
-    mu_xz = x'*z/v;
-    mu_hat = (x'*z +tau*kappa)/(v+1);
+    % mu_xz = x'*z/v; mu_hat = theta;
+    mu_hat = (x'*z +tau*kappa)/(v_param+1);
     Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
     Rd = -A_hat'*y_hat - z;
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
     Rt = mu_hat/tau - kappa;
-    H = theta*H_dual(z, dimension_info); % In the future, H = blkdiag(H_HKM_linear, H_HKM_soc, H_exp)
+    H = mu_hat*H_dual(z, dimension_info);
+    %H = H_dual_NT(x,z,mu_hat, dimension_info);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
@@ -156,25 +167,16 @@ for it_count =1:max_iter_count
     dkappa_pred = Rt - (kappa/tau) * dtau_pred; % 4th equation of (27)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Compute alpha_p (approximately)
-    x_bar = [x;y;z;tau;kappa;theta];
+    x_bar = [x; y; z; tau; kappa; theta];
     pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
     alpha_p = find_alpha_max(x_bar, pred_dir, dimension_info);
     % Set sigma (parameter for the system for the combined search direction)
-    sigma = max(0,min(1,(1-alpha_p)^3));
+    sigma_param = (1-alpha_p)^3;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
-    Rclprime = sigma*mu_xz * 1./z(1:Nl);
-    Rcqprime = zeros(sum(Nq),1);
-    for kk = 1:length(Nq)
-        current_subvector_indices = (sum(Nq(1:kk-1))+1:sum(Nq(1:kk)));
-        zq_curr = z(Nl+current_subvector_indices);
-        zq_curr_soc_inv = [zq_curr(1); -zq_curr(2:end)]/(zq_curr(1)^2 - zq_curr(2:end)'*zq_curr(2:end));
-        Rcqprime(current_subvector_indices) = sigma*mu_xz * zq_curr_soc_inv;
-    end
-    Rceprime = sparse(3*Ne,1);
-    Rc = [Rclprime; Rcqprime; Rceprime] - x;
+    Rc = -x - sigma_param*mu_hat*g_dual(z, dimension_info);
     h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     dy_hat = LHS_Schur_comp_eq \ h_hat;
     dy = dy_hat(1:m);
@@ -182,7 +184,7 @@ for it_count =1:max_iter_count
     dtheta = dy_hat(m+2);
     dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
     dx = Rc - H*dz; % 3rd equation of (27)
-    dkappa = Rt  - (kappa/tau)*dtau; % 4th equation of (27)
+    dkappa = Rt - (kappa/tau)*dtau; % 4th equation of (27)
     comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
@@ -203,8 +205,8 @@ for it_count =1:max_iter_count
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
         disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
     end
-    if true %rem(it_count,5) == 0
-        fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma, full(dtheta), alpha, tau, kappa, it_count);
+    if rem(it_count,5) == 0
+        fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma_param, full(dtheta), alpha, tau, kappa, it_count);
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Termination conditions (from Section 5.4. in http://web.stanford.edu/~yyye/nonsymmhsdimp.pdf)
@@ -302,6 +304,7 @@ for k = 1:size(blk,1)
         z_return{k} = z_final(idx_e:idx_e + sum(blk{k,2})-1); 
         idx_e = idx_e + sum(blk{k,2});
     end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 % End of the main loop    
 end
 % Assign y_return

@@ -27,7 +27,7 @@ where $\alpha \in [0,1]$ is a given constant. The assumptions are
 	\item For $1\leq j \leq n$ and $1\leq l \leq q$, one has $r_j = \eta_j + \sum_{l=1}^q \gamma_{jl}\zeta_l$ where $\eta_j \sim \mathcal{LN}(\mu_j, \sigma_j^2)$ (the individual noises) and $\zeta_l \sim \mathcal{LN}(\nu_l, \theta_l^2)$. All $\eta_j$ and $\zeta_l$ are independent of each other.
 	\item One has $\nu_l = 0$, $\theta_l=0.1$ for all $l$, $\mu_j = \sigma_j$ for all $j$, $\sum_{l=1}^q \gamma_{jl} \exp \left(\nu_l + \dfrac{\theta_l^2}{2}\right) = \dfrac{\rho_j}{2}$ for all $j$ and $\sum_{j=1}^n \exp\left(\mu_j + \dfrac{\sigma_j^2}{2}\right) = 1 + \dfrac{\rho_j}{2}$.
 \end{enumerate}
-We see that the problem can be rewritten into (1.1) in \cite{Nemirovsky_and_Shapiro} with $m=1$. Denote $\tilde{x} = (\tau, x_0, x_1, \cdots, x_n)^T$. The objective function is simply $f(\tilde{x}) = -\tau$, and the chance constraint is \[\mathbb{P}\left(F(\tilde{x}, \xi) \leq 0 \right) \geq 1-\alpha\] where \[F(\tilde{x},\xi) =g_0(\tilde{x}) + \sum_{j=1}^d \xi_j g_j(\tilde{x}),\ d = n+q,\ g_0(\tilde{x}) = \tau - x_0,\]
+We see that the problem can be rewritten into (1.1) in \cite{Nemirovsky_and_Shapiro} with $m=1$. Denote \[\tilde{x} = (\tau, x_0, x_1, \cdots, x_n)^T.\] The objective function is simply $f(\tilde{x}) = -\tau$, and the chance constraint is \[\mathbb{P}\left(F(\tilde{x}, \xi) \leq 0 \right) \geq 1-\alpha\] where \[F(\tilde{x},\xi) =g_0(\tilde{x}) + \sum_{j=1}^d \xi_j g_j(\tilde{x}),\ d = n+q,\ g_0(\tilde{x}) = \tau - x_0,\]
 \[\xi_j = \eta_j,\ g_j(\tilde{x}) = -x_j,\ 1\leq j \leq n,\] \[\xi_{n+l} = \zeta_l,\ g_{n+l}(\tilde{x}) = -\sum_{j=1}^n \gamma_{jl}x_j,\ 1\leq l \leq q.\]
 
 \section*{Convex approximation and standard form formulation }

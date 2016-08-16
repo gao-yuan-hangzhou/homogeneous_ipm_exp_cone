@@ -1,4 +1,4 @@
-function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
+function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
 addpath([fileparts(pwd), '/subroutines']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,8 @@ for k = 1:size(blk,1)
 end;
 % Compute the total dimension of x = [xl; xq; xe]
 dim_x = Nl + sum(Nq) + 3*Ne;
+% Define v, the parameter for the logarithmic barrier for the product cone K
+v = Nl + length(Nq) + 3*Ne;
 % Define structure dimension_info that contains Nl, Nq and Ne
 dimension_info.l = Nl; dimension_info.q = Nq; dimension_info.e = Ne; dimension_info.m = m;
 % Construct A = [Al, Aq, Ae]
@@ -96,6 +98,7 @@ if sprank(U_A) < sprank(U_full)
     display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
 elseif sprank(U_A) < m
     display('Error: A is not FULL ROW RANK!');
+    return;
 else
     disp('Ok: A has full row rank and Ax = b');
 end
@@ -108,17 +111,8 @@ id_e = repmat(exp_cone_center,Ne,1);
 x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 tau = 1; kappa = 1; theta0 = 1.0; theta = theta0;
 % Compute the auxiliary parameters which completely define (HSD)
-b_bar = (b*tau - A*x)/theta; 
-c_bar = (c*tau - A'*y - z)/theta; 
-g_bar = (c'*x - b'*y + kappa)/theta; 
-% alpha_bar = (x'*z + tau*kappa)/theta;
-
-% Formualte part of the coefficient matrix for the predictor search direction
-% Note that the system for the predictor search direction can be compactly written as
-% G_bar * dx_bar_p = R_bar_p, where G_bar = [G1; G2; G3] with
-G1 = [-A, sparse(m,m), sparse(m,dim_x), b, sparse(m,1), -b_bar; sparse(dim_x,dim_x), A', speye(dim_x), -c, sparse(dim_x,1), c_bar; c', -b', zeros(1,dim_x), 0, 1, -g_bar; -c_bar', b_bar', sparse(1,dim_x), g_bar, 0, 0];
-% and x_bar is the concatenated vector of all variables
-x_bar = [x; y; z; tau; kappa; theta];
+b_bar = (b*tau - A*x)/theta; c_bar = (c*tau - A'*y - z)/theta; 
+g_bar = (c'*x - b'*y + kappa)/theta; alpha_bar = (x'*z + tau*kappa)/theta;
 
 % Set the default relative accuracy
 if nargin < 5
@@ -127,56 +121,85 @@ end
 
 result_info.solution_status = 'undetermined';
 
+% Set the default max number of iterations
 if nargin < 6
     max_iter_count = 500;
 end
 
 % The main loop
 for it_count =1:max_iter_count
+    % disp(['(<x,z> + tau*kappa) - alpha_bar*theta = ' num2str(x'*z+tau*kappa - alpha_bar*theta)]);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Form G_bar, R_bar_p and solve for the predictor search direction
-    G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
-    G3 = [speye(dim_x), sparse(dim_x, m), theta*H_dual(z, dimension_info), sparse(dim_x,3)];
-    G_bar = [G1; G2; G3];
-    R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
-    pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
-    % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 
-    dtau_p = pred_dir(2*dim_x+m+1); dkappa_p = pred_dir(2*dim_x+m+2); % dtheta_p = pred_dir(2*Nt+m+3);
+    % Find the HKM-like search direction pred_dir = [dx; dy; dz; dtau; dkappa]
+    % as in SDPT3 Guide: http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf
+    A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
+    y_hat = [y; tau; theta]; % y_hat has dimension (m+2)
+    B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
+    % mu_xz = x'*z/v; mu_hat = (x'*z +tau*kappa)/(v+1); 
+    mu_hat = theta;
+    Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
+    Rd = -A_hat'*y_hat - z;
+    Rc = -x; % sigma = 0 for predictor direction system, as explained below
+    Rt = - kappa;
+    %H = mu_hat*H_dual(z, dimension_info);
+    H = H_dual_NT(x,z,mu_hat, dimension_info);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
+    LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
+    h_nat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
+    dy_hat_pred = LHS_Schur_comp_eq \ h_nat; % (28)
+    dy_pred = dy_hat_pred(1:m);
+    dtau_pred = dy_hat_pred(m+1);
+    dtheta_pred = dy_hat_pred(m+2);
+    dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
+    dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
+    dkappa_pred = Rt - (kappa/tau) * dtau_pred; % 4th equation of (27)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Compute alpha_p (approximately)
+    x_bar = [x; y; z; tau; kappa; theta];
+    pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
     alpha_p = find_alpha_max(x_bar, pred_dir, dimension_info);
     % Set sigma (parameter for the system for the combined search direction)
-    sigma = min(1,(1-alpha_p)^3);
+    sigma_param = (1-alpha_p)^3;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Solve for the combined search direction
-    R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)]; %R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
-    comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
-    % dx = comb_dir(1:Nt); dy = comb_dir(Nt+1:Nt+m); dz = comb_dir(Nt+m+1:2*Nt+m); dtau = comb_dir(2*Nt+m+1); dkappa = comb_dir(2*Nt+m+2); 
-    dtheta = comb_dir(2*dim_x+m+3);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
+    % the above sigma (centering parameter)
+    Rc = -x - sigma_param*mu_hat*g_dual(z, dimension_info);
+    h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
+    dy_hat = LHS_Schur_comp_eq \ h_hat;
+    dy = dy_hat(1:m);
+    dtau = dy_hat(m+1);
+    dtheta = dy_hat(m+2);
+    dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
+    dx = Rc - H*dz; % 3rd equation of (27)
+    dkappa = Rt - (kappa/tau)*dtau; % 4th equation of (27)
+    comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);
-    alpha = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
+    alpha = 0.2*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p, 0.8)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p,alpha_p)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = 0.98*find_alpha_max(x_bar, comb_dir, dimension_info);
     % x = x+alpha*dx; y = y + alpha*dy; z = z + alpha*dz; tau = tau + alpha*dtau; kappa = kappa + alpha*dkappa; theta = theta+alpha*dtheta;
     x_bar = x_bar + alpha*comb_dir;
-    % disp([num2str(theta,5) ' | ' num2str(sigma,5) ' | ' num2str(dtheta,5) ' | ' num2str(alpha,5) ' | '  num2str(tau,5) ' | ' num2str(kappa,5) ' | ' num2str(nnz(G_bar)/numel(G_bar))]);
-    if it_count == 1
-        disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
-        disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
-        disp(['Initial density of G_bar = ' num2str(nnz(G_bar)/numel(G_bar))]);
-        disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-        disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
-    elseif rem(it_count,5) == 0
-        fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma, full(dtheta), alpha, tau, kappa, it_count);
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Termination conditions (from Section 5.4. in http://web.stanford.edu/~yyye/nonsymmhsdimp.pdf)
     % Extract x, y, z, tau, theta, kappa
     x = x_bar(1:dim_x); y = x_bar(dim_x+1:dim_x+m); z = x_bar(dim_x+m+1:2*dim_x+m);  
     tau = x_bar(2*dim_x+m+1); kappa = x_bar(2*dim_x+m+2); theta = x_bar(2*dim_x+m+3);
+    % Display some running information
+    if it_count == 1
+        disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
+        disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
+        disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+        disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
+    end
+    if rem(it_count,5) == 0
+        fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma_param, full(dtheta), alpha, tau, kappa, it_count);
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Termination conditions (from Section 5.4. in http://web.stanford.edu/~yyye/nonsymmhsdimp.pdf)
     % Check the 7 inequalities P, D, G, A, T, K, M
     bool_P = norm(A*x-tau*b,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
     bool_D = norm(A'*y+z-c*tau,Inf) <= rel_eps*max(1,norm([A',speye(dim_x),-c], Inf)); 
@@ -202,7 +225,7 @@ for it_count =1:max_iter_count
         if is_dual_infeasible
             disp(['cTx = ' num2str(c'*x) ' < 0']);
             display('The problem is dual infeasible. See the info structure returned for a certificate.');
-            
+            % x_cert = x; c_vector = c; save('dual_infeas_cert.mat', 'x_cert', 'c_vector');
             idx_l = 1; idx_q = Nl+1; idx_e = Nl+sum(Nq)+1;
             for k = 1:size(blk,1)
                 if blk{k,1} == 'l'
@@ -271,6 +294,7 @@ for k = 1:size(blk,1)
         z_return{k} = z_final(idx_e:idx_e + sum(blk{k,2})-1); 
         idx_e = idx_e + sum(blk{k,2});
     end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 % End of the main loop    
 end
 % Assign y_return

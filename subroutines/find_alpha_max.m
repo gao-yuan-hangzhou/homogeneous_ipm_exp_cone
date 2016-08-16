@@ -17,11 +17,11 @@ function alpha_max = find_alpha_max(x_bar, predictor_search_direction, dimension
 % Bisection search
 alpha_low=0; alpha_high = 2; max_it = 8;
 for it_count = 1:max_it
-    alpha_golden_ratio = 0.5*alpha_low + 0.5*alpha_high;
+    alpha_middle = 0.5*alpha_low + 0.5*alpha_high;
     if is_in_product_cone(x_bar + alpha_high*predictor_search_direction, dimension_info)
-        alpha_low = alpha_golden_ratio;
+        alpha_low = alpha_middle;
     else
-        alpha_high = alpha_golden_ratio;
+        alpha_high = alpha_middle;
     end
 end
 alpha_max = alpha_low;

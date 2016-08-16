@@ -4,7 +4,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 2; q = 0;
+n = 10; q = 3;
 
 % Set alpha
 alpha_risk = 0.05;
@@ -29,15 +29,17 @@ mu = -1 + (2*log_E_eta+1).^(1/2); sig = mu;
 d = n+q;
 
 % Construct the discrete distributions
+eps_th = 1e-3; 
+Del_resol = 1e-2;
 N = zeros(d,1);
 for j = 1:n
-    discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j));
+    discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
     v{j} = discrete_LN_vars{j}.vals; p{j} = discrete_LN_vars{j}.prob_masses;
     N(j) = length(discrete_LN_vars{j}.vals);
 end
 
 for j = 1:q
-    discrete_LN_vars{n+j} = xi_hat_discrete_LN(nv(j), theta(j));
+    discrete_LN_vars{n+j} = xi_hat_discrete_LN(nv(j), theta(j), eps_th, Del_resol);
     v{n+j} = discrete_LN_vars{n+j}.vals; p{n+j} = discrete_LN_vars{n+j}.prob_masses;
     N(n+j) = length(discrete_LN_vars{n+j}.vals);
 end
@@ -46,7 +48,6 @@ end
 N_total = sum(N);
 
 % Now the decision variables (including slack and auxiliary variables) are 
-
 blk{1,1} = 'u'; blk{1,2} = 1;                                          % tau free
 blk{2,1} = 'l'; blk{2,2} = n+2;                                        % x0, x(1), ... x(n), sx all >= 0               
 blk{3,1} = 'u'; blk{3,2} = d+1;                                        % g0, g(1), ..., g(d) all free              
@@ -63,7 +64,6 @@ c_cell{1} = -1;
 for k = 2:6
     c_cell{k} = zeros(sum(blk{k,2}),1);
 end
-
 
 % Get total number of constraints
 m_total = (1+1+1) + (n+q) + N_total + d + N_total;
@@ -158,4 +158,4 @@ A_cell{3} = A(:,blk{1,2}+blk{2,2}+1:blk{1,2}+blk{2,2}+blk{3,2});
 A_cell{4} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2});
 A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2});
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);

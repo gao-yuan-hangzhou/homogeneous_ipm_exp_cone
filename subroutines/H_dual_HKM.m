@@ -1,4 +1,4 @@
-function H_return = H_dual_NT(x, z, mu, dimension_info)
+function H_return = H_dual_HKM(x, z, mu_xz, dimension_info)
 % Compute the Hessian of the barrier function at w (NT scaling point) in the 
 % relative interior of the product cone K^*
 
@@ -15,14 +15,15 @@ for k = 1:length(Nq)
     Nq_curr = Nq(k);
     J_q_curr = diag([1;-1*ones(Nq_curr-1,1)]);
     curr_q_idx = (1+sum(Nq(1:k-1)):sum(Nq(1:k)));
-    x_q_curr = x(Nl+curr_q_idx); 
-    z_q_curr = z(Nl+curr_q_idx); 
-    w_q_curr = sqrt(gamma_Lorentz(z)/gamma_Lorentz(x));
-    ksai_q_curr = z_q_curr/w_q_curr + w_q_curr*J_q_curr*x_q_curr;
-    t_q_curr = sqrt(2)*J_q_curr*ksai_q_curr/(w_q_curr*gamma_Lorentz(ksai_q_curr));
-    H_q(curr_q_idx, curr_q_idx) = -(1/(w_q_curr^2))*J_q_curr + t_q_curr*t_q_curr';
+    x_q_curr = x(Nl+curr_q_idx);
+    z_q_curr = z(Nl+curr_q_idx);
+    term1 = - x_q_curr'*z_q_curr/(z_q_curr(1)^2 - z_q_curr(2:end)'*z_q_curr(2:end))*J_q_curr;
+    term2 = x_q_curr * Lorentz_inv(z_q_curr)';
+    term3 = Lorentz_inv(z_q_curr) * z_q_curr';
+    H_q(curr_q_idx, curr_q_idx) = term1 + term2 + term3;
 end;
-H_e = H_exp_tilde_dual_sparse_diagonal(z(Nl+sum(Nq)+1:end));
-H_return = blkdiag(H_l, H_q, mu*H_e); 
+% disp(['density(H_q)=' num2str(nnz(H_q)/numel(H_q))]); 
+H_e = H_exp_tilde_dual_sparse_diagonal(z(end-3*Ne+1:end));
+H_return = blkdiag(H_l, H_q, mu_xz*H_e); 
 end
 
