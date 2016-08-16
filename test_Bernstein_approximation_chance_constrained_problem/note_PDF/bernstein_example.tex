@@ -6,7 +6,7 @@
 
 %opening
 \title{Bernstein approximation of chance constrained problems: an example}
-\author{Gao Yuan}
+\author{Yuan Gao}
 
 \begin{document}
 
@@ -30,17 +30,42 @@ where $\alpha \in [0,1]$ is a given constant. The assumptions are
 We see that the problem can be rewritten into (1.1) in \cite{Nemirovsky_and_Shapiro} with $m=1$. Denote \[\tilde{x} = (\tau, x_0, x_1, \cdots, x_n)^T.\] The objective function is simply $f(\tilde{x}) = -\tau$, and the chance constraint is \[\mathbb{P}\left(F(\tilde{x}, \xi) \leq 0 \right) \geq 1-\alpha\] where \[F(\tilde{x},\xi) =g_0(\tilde{x}) + \sum_{j=1}^d \xi_j g_j(\tilde{x}),\ d = n+q,\ g_0(\tilde{x}) = \tau - x_0,\]
 \[\xi_j = \eta_j,\ g_j(\tilde{x}) = -x_j,\ 1\leq j \leq n,\] \[\xi_{n+l} = \zeta_l,\ g_{n+l}(\tilde{x}) = -\sum_{j=1}^n \gamma_{jl}x_j,\ 1\leq l \leq q.\]
 
-\section*{Convex approximation and standard form formulation }
-Here we construct the Bernstein approximation to \eqref{investment_problem} and reformulate it into a standard form involving exponential cone constraints. \\
+\section*{The Bernstein approximation and standard form formulation}
+Here we construct the Bernstein approximation to \eqref{investment_problem}, which is a convex optimization problem and reformulate it into a standard form conic program involving exponential cone constraints. \\
 
-Note that the discretization scheme described in \cite{Nemirovsky_and_Shapiro} has been adopted and all random variables $\xi_j$, $1\leq j \leq d$ are now discrete with finite support. For each $j$, denote the support and the associated probability masses as $\left\{(v_k^j, p_k^j)\right\}_{1\leq k \leq N_j}$. In other words, for each $j$, $\mathbb{P}\left(\xi_j = v_k^j\right), \forall k$ and the moment generating function of $\xi_j$ is $M_j: z \rightarrow \sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j z\right)$.\\
+Note that the discretization scheme described in \cite{Nemirovsky_and_Shapiro} has been adopted and all random variables $\xi_j$, $1\leq j \leq d$ are now discrete with finite support. For each $j$, denote the support and the associated probability masses as $\left\{(v_k^j, p_k^j)\right\}_{1\leq k \leq N_j}$. In other words, for each $j$, $k=1, \cdots, N_j$, one has $\mathbb{P}\left(\xi_j = v_k^j\right)$ and the moment generating function of $\xi_j$ is $M_j: z \rightarrow \sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j z\right)$.\\
 
 The Bernstein approximation to (1) is therefore the following convex maximization problem
 \begin{align} \label{Bernstein_approx_direct_form}
-\max_{x_0, x_1, \cdots, x_n, \tau} (\tau - 1)\ \ \ \ \textnormal{s.t.}\ \ \inf_{t>0} \left(g_0(\tilde{x}) + \sum_{j=1}^d t \Lambda_j\left(t^{-1}g_j(\tilde{x})\right) - t\log \alpha \right) \leq 0.
+\begin{split}
+&\max_{\tau, x_0, x_1, \cdots, x_n} (\tau - 1) \\
+\textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1,\  x_j \geq 0,\forall j \\
+&\inf_{t>0} \left(g_0(\tilde{x}) + \sum_{j=1}^d t \Lambda_j\left(t^{-1}g_j(\tilde{x})\right) - t\log \alpha \right) \leq 0
+\end{split}
 \end{align}
 
-In fact, problem \eqref{Bernstein_approx_direct_form} can be reformulated into the standard form (PD$'$) in \cite{Gao_Yuan_thesis}, namely (note that $d = n+q$)
+Note that problem \eqref{Bernstein_approx_direct_form} is equivalent to 
+\begin{align}\label{Bernstein_approx_eq_form_1}
+\begin{split}
+&\max_{\tau, x_0, x_1, \cdots, x_n, s_1, \cdots, s_d} (\tau - 1)\\ \textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1,\  x_j \geq 0,\forall j \\
+&g_0 + \sum_{j=1}^d s_j - t\log \alpha = 0 \\
+{(*)_j}:\ \ \ & s_j \geq t \Lambda_j\left(\dfrac{g_j}{t}\right),\ j=1, \cdots, d\ \ \ \\
+& g_0 = \tau - x_0 \\
+& g_j = -x_j,\ j = 1, \cdots, n \\
+& g_{n+l} = -\sum_{j=1}^n \gamma_{jl}x_j,\ l=1,\cdots, q
+\end{split}
+\end{align}
+
+Since $\Lambda_j\left(\cdot\right) = \log M_j \left(\cdot\right)$, for $j=1, \cdots, d$, constraint $(*)_j$ is equivalent to 
+\begin{align*}
+&\sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j \cdot \dfrac{g_j}{t}\right) \leq \exp\left(\dfrac{s_j}{t}\right) \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq 1 \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j\cdot  t \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq t \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ t\exp\left(\dfrac{w_k^j}{t}\right) \leq u_k^j,\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ \left[w_k^j; u_k^j; t\right] \in \mathcal{K}_{\exp},\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j
+\end{align*}
+
+Eventually, problem \eqref{Bernstein_approx_direct_form} can be reformulated into the standard form (PD$'$) in \cite{Gao_Yuan_thesis}, namely (note that $d = n+q$ and the constant term in the objective has been dropped)
 \begin{align}
 \begin{split}\label{reformulated_std_conic_form}
 &\min \ -\tau \\ 
