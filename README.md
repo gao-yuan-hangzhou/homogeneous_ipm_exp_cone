@@ -3,7 +3,6 @@
 
 The main program is hsd_lqeu.m which takes in SDPT3-style cell array inputs. It solves problems of the following form:
 
-
 min c'x
 
 s.t. Ax = b, x(i) in K(i)
@@ -12,17 +11,17 @@ where x = [x(1); ..., x(N)], c = [c(1), ..., c(N)], A = [A(1), ..., A(N)]
 
 and each K(j) can be one of the following:
 
-  % (R_+)^nl = {x: x>=0}.
+  % A nonnegative orthant of dimension n_l, (R_+)^(n_l)
 
   % product of lorentz cones Q(n) = {x in R^n: x(1)>=||x(2:n)||}, where || || is the Euclidean 2-norm.
 
   % Product of the exponential cone K_exp = closure{(x1,x2,x3): x2>=0, x3>0, exp(x1/x3)<=x2/x3}.
 
-  % R^nu for some integer nu.
+  % R^(n_u) for some integer n_u.
 
-How to call: 
+====== How to call hsd_lqeu_Schur ======
 
-[obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b, 1e-8, 500);
+[obj_val, x_re,y_re,z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b, optional_relative_accuracy, optional_maximum_iter_count);
 
 ====== What are blk, A_cell, c_cell and b? ======
 
