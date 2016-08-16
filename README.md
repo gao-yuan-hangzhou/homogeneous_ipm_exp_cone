@@ -1,7 +1,7 @@
 # homogeneous_ipm_exp_cone
 
 
-The main program is hsd_lqeu.m which takes in SDPT3-style cell array inputs. It solves problems of the following form:
+The main program is hsd_lqeu_Schur.m which takes in SDPT3-style cell array inputs. It solves problems of the following form:
 
 min c'x
 
