@@ -19,7 +19,10 @@ We study the example in\cite{Nemirovsky_and_Shapiro} in more detail and repeat t
 \section*{The model}
 We describe the chance constrained problem in detail. As in \cite{Nemirovsky_and_Shapiro}, consider the following chance constrained program
 \begin{align} \label{investment_problem}
-\max_{x_0, x_1\cdots,x_n, \tau}\ (\tau - 1)\ \ \ \textnormal{s.t.}\ \ \mathbb{P} \left(\tau > \sum_{j=0}^n r_j x_j \right) \leq \alpha,\ \sum_{j=0}^{n} x_j \leq 1,\ x_j \geq 0, \forall j
+\max_{\begin{matrix}
+	\tau \in \mathbb{R}\\ 	
+	x_0, x_1\cdots,x_n \geq 0
+	\end{matrix}}\ (\tau - 1)\ \ \ \textnormal{s.t.}\ \ \mathbb{P} \left(\tau > \sum_{j=0}^n r_j x_j \right) \leq \alpha,\ \sum_{j=0}^{n} x_j \leq 1
 \end{align}
 where $\alpha \in [0,1]$ is a given constant. The assumptions are 
 \begin{enumerate}
@@ -38,16 +41,23 @@ Note that the discretization scheme described in \cite{Nemirovsky_and_Shapiro} h
 The Bernstein approximation to (1) is therefore the following convex maximization problem
 \begin{align} \label{Bernstein_approx_direct_form}
 \begin{split}
-&\max_{\tau, x_0, x_1, \cdots, x_n} (\tau - 1) \\
-\textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1,\  x_j \geq 0,\forall j \\
-&\inf_{t>0} \left(g_0(\tilde{x}) + \sum_{j=1}^d t \Lambda_j\left(t^{-1}g_j(\tilde{x})\right) - t\log \alpha \right) \leq 0
+&\max_{\begin{matrix}
+	\tau \in \mathbb{R}\\ 	
+	x_0, x_1\cdots,x_n \geq 0
+	\end{matrix}} (\tau - 1)\ \ \
+\textnormal{s.t.}\ \ \sum_{j=0}^n x_j \leq 1,\ \ \inf_{t>0} \left(g_0(\tilde{x}) + \sum_{j=1}^d t \Lambda_j\left(t^{-1}g_j(\tilde{x})\right) - t\log \alpha \right) \leq 0
 \end{split}
 \end{align}
 
-Note that problem \eqref{Bernstein_approx_direct_form} is equivalent to 
+Note that problem \eqref{Bernstein_approx_direct_form} is equivalent to
 \begin{align}\label{Bernstein_approx_eq_form_1}
 \begin{split}
-&\max_{\tau, x_0, x_1, \cdots, x_n, s_1, \cdots, s_d,\ g_0,\ g_1, \cdots, g_d} (\tau - 1)\\ \textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1,\  x_j \geq 0,\forall j \\
+&\max_{\begin{matrix}
+	\tau \in \mathbb{R} \\ 
+	x_0, x_1, \cdots, x_n \geq 0\\
+	g_0,\ g_1, \cdots, g_d \in \mathbb{R}\\
+	s_1, \cdots, s_d \in \mathbb{R}
+	\end{matrix}} (\tau - 1)\\ \textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1\\
 &g_0 + \sum_{j=1}^d s_j - t\log \alpha = 0 \\
 {(*)_j}:\ \ \ & s_j \geq t \Lambda_j\left(\dfrac{g_j}{t}\right),\ j=1, \cdots, d\ \ \ \\
 & g_0 = \tau - x_0 \\
@@ -56,13 +66,13 @@ Note that problem \eqref{Bernstein_approx_direct_form} is equivalent to
 \end{split}
 \end{align}
 
-Since $\Lambda_j\left(\cdot\right) = \log M_j \left(\cdot\right)$, for $j=1, \cdots, d$, constraint $(*)_j$ is equivalent to 
+Since $\Lambda_j\left(\cdot\right) = \log M_j \left(\cdot\right)$, for $j=1, \cdots, d$, constraint $(*)_j$ in \eqref{Bernstein_approx_eq_form_1} is equivalent to 
 \begin{align*}
 &\sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j \cdot \dfrac{g_j}{t}\right) \leq \exp\left(\dfrac{s_j}{t}\right) \\
 \Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq 1 \\
 \Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j\cdot  t \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq t \\
 \Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ t\exp\left(\dfrac{w_k^j}{t}\right) \leq u_k^j,\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j \\
-\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ \left[w_k^j; u_k^j; t\right] \in \mathcal{K}_{\exp},\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ \left[w_k^j; u_k^j; t\right] \in \mathcal{K}_{\exp},\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j.
 \end{align*}
 
 Eventually, problem \eqref{Bernstein_approx_direct_form} can be reformulated into the standard form (PD$'$) in \cite{Gao_Yuan_thesis}, namely (note that $d = n+q$ and the constant term in the objective has been dropped)
@@ -79,17 +89,17 @@ Eventually, problem \eqref{Bernstein_approx_direct_form} can be reformulated int
 & t_0 - t_k^j = 0,\ j = 1,\cdots, d,\ k = 1,\cdots,N_j
 \end{split}
 \end{align}
-where the decision variables are
+with decision variables
 \begin{align*}
 & \tau \in \mathbb{R} \\
 & x_0, x_1, \cdots, x_n, s_x \geq 0 \\
 & g_0, g_1, \cdots, g_d \in \mathbb{R} \\
 & t_0 \geq 0 \\
 & s_1, \cdots, s_d \in \mathbb{R} \\
-& [w_k^j; u_k^j; t_k^j] \in \mathcal{K}_{\exp},\ j = 1, \cdots, d,\ k = 1,\cdots, N_j.
+& \left[w_k^j; u_k^j; t_k^j\right] \in \mathcal{K}_{\exp},\ j = 1, \cdots, d,\ k = 1,\cdots, N_j.
 \end{align*}
 
-Note that we keep the slack variable $s_x \geq 0$ in the first constraint, although it can be shown that there is always an optimal solution $(x_0^*, x_1^*, \cdots, x_n^*)$ with $\sum_{j=0}^n x_j^* = 1$.
+Note that we keep the slack variable $s_x \geq 0$ in the first constraint, although it can be shown that there is always an optimal solution $\left(x_0^*, x_1^*, \cdots, x_n^*\right)$ with $\sum_{j=0}^n x_j^* = 1$.
 
 \bibliography{references}{}
 \bibliographystyle{plain}

@@ -60,23 +60,23 @@ We will be primarily working with the above three types of proper cones, namely,
 In theory, all polynomial-time interior-point methods for conic programming problems require a well-defined and computable (up to the Hessian) barrier function for the cone.
 
 \begin{defin}
-	Let $\mathcal{K} \subset \mathbb{R}^n$ be a closed convex set with $\textnormal{int}\left(\mathcal{K}\right) \neq \emptyset$, and $f: \textnormal{int} \left(\mathcal{K}\right) \rightarrow \mathbb{R}$ be strictly convex. The function $f$ is called a \textit{self-concordant barrier} for $\mathcal{K}$  if 
+	Let $\mathcal{K} \subset \mathbb{R}^n$ be a closed convex set with $\textnormal{int}\left(\mathcal{K}\right) \neq \emptyset$, and $f: \relint \left(\mathcal{K}\right) \rightarrow \mathbb{R}$ be strictly convex. The function $f$ is called a \textit{self-concordant barrier} for $\mathcal{K}$  if 
 	\begin{enumerate}
-		\item (barrier property) for any sequence of points $\{x_n\}$ such that $\lim x_n \in \mathcal{K}\backslash \textnormal{int}\left(\mathcal{K}\right)$, one has $\lim f(x_n) = \infty$,
+		\item (barrier property) for any sequence of points $\{x_n\}$ such that $\lim x_n \in \mathcal{K}\backslash \relint\left(\mathcal{K}\right)$, one has $\lim f(x_n) = \infty$,
 		\item (differentiability) $f$ has continuous third-order mixed partial derivatives, and
-		\item (self-concordance) for any $x \in \textnormal{int}\left(\mathcal{K}\right)$ and $v \in \mathbb{R}^n$, the function $\phi(t) = f(x+tv)$ satisfies $|\phi ''' (t)|\leq M_f \left(\phi '' (t)\right)^{2/3}$ for some constant $M_f \geq 0$ and all $t$ such that $tv \in \textnormal{int}\left(\mathcal{K}\right)$.
+		\item (self-concordance) for any $x \in \relint\left(\mathcal{K}\right)$ and $v \in \mathbb{R}^n$, the function $\phi(t) = f(x+tv)$ satisfies $|\phi ''' (t)|\leq M_f \left(\phi '' (t)\right)^{2/3}$ for some constant $M_f \geq 0$ and all $t$ such that $tv \in \relint\left(\mathcal{K}\right)$.
 	\end{enumerate}
 \end{defin}
 
 \begin{defin}
-	Let $\mathcal{K}$ be a proper cone. The function $f: \textnormal{int}\left(\mathcal{K}\right)\rightarrow \mathbb{R}$ is called a logarithmically homogeneous self-concordant barrier (LHSCB) for $\mathcal{K}$ with parameter $\nu$ if $f$ is a self-concordant barrier for $\mathcal{K}$ and for all $x \in \textnormal{int}\left(\mathcal{K}\right)$ and $t>0$, one has 
+	Let $\mathcal{K}$ be a proper cone. The function $f: \relint\left(\mathcal{K}\right)\rightarrow \mathbb{R}$ is called a logarithmically homogeneous self-concordant barrier (LHSCB) for $\mathcal{K}$ with parameter $\nu$ if $f$ is a self-concordant barrier for $\mathcal{K}$ and for all $x \in \relint\left(\mathcal{K}\right)$ and $t>0$, one has 
 	\[f(tx) = f(x) - \nu \log t.\]
 \end{defin}
 
-Below is an important property of logarithmically homogeneous self-concordant barriers (see Theorem 4.3.4 in \cite{Akle_thesis}).
+Below is an important property of LHSCB (see Theorem 4.3.4 in \cite{Akle_thesis}).
 \begin{prop} \label{conjugate_of_LHSCB_is_LHSCB_for_dual}
-	Let $\mathcal{K}$ be a proper cone and $f$ a LHSCB for $\mathcal{K}$ with parameter $\nu$. The \textnormal{conjugate barrier} of $f$, denoted as $f^*$, defined on $\textnormal{int}(\mathcal{K}^*)$ by 
-	\[f^*(s) = \sup \left\{-s^Tx -f(x) \mid x\in \textnormal{int}\left(\mathcal{K}\right)  \right\}\]
+	Let $\mathcal{K}$ be a proper cone and $f$ a LHSCB for $\mathcal{K}$ with parameter $\nu$. The \textnormal{conjugate barrier} of $f$, denoted as $f^*$, defined on $\relint(\mathcal{K}^*)$ by 
+	\[f^*(s) = \sup \left\{-s^Tx -f(x) \mid x\in \relint\left(\mathcal{K}\right)  \right\}\]
 	is a LHSCB for $\mathcal{K}^*$ with parameter $\nu$. Furthermore, one has $(f^*)^* = f$.
 \end{prop}
 Note that the definition of conjugate barrier in this context is slightly different from the definition of convex conjugate adopted in standard references of convex analysis. \\
@@ -127,10 +127,10 @@ Note that the dual barrier $f_{\exp}^*$ above has a slightly more complicated ex
      &  \dfrac{1}{e} &     \\[1ex]
  -1 &    & 
 \end{bmatrix}. \]
-As such, $\tilde{f}_{\exp}(x,y,z) = f^*_{\exp}(B (x,y,z))$ is a LHSCB for $\mathcal{K}_{\exp}$ and $\tilde{f}_{\exp}^*(u,v,w) = f_{\exp}(B^{-1}(u,v,w))$ is its conjugate barrier, which is a LHSCB for $\mathcal{P}_{\exp}$. Note that by the definition of conjugate barrier and the property of LHSCB, we may also take $\tilde{f}_{\exp} + \beta$ and $ \left(\tilde{f}_{\exp} + \beta\right)^* = \tilde{f}^*_{\exp} - \beta $ as the LHSCBs for $\mathcal{K}_{\exp}$ and $\mathcal{P}_{\exp}$, respectively, for any $\beta \in \mathbb{R}$.
+As such, $\tilde{f}_{\exp}(x,y,z) = f^*_{\exp}(B (x,y,z))$ is a LHSCB for $\mathcal{K}_{\exp}$ and $\tilde{f}_{\exp}^*(u,v,w) = f_{\exp}(B^{-1}(u,v,w))$ is its conjugate barrier, which is a LHSCB for $\mathcal{P}_{\exp}$. Note that by the definition of conjugate barrier and the property of LHSCB, we may also take $\tilde{f}_{\exp} + \beta$ and $ \left(\tilde{f}_{\exp} + \beta\right)^* = \tilde{f}^*_{\exp} - \beta $ as the LHSCB for $\mathcal{K}_{\exp}$ and $\mathcal{P}_{\exp}$ respectively, for any $\beta \in \mathbb{R}$.
 
 \begin{prop}
-	The function $\tilde{f}_{\exp}: \textnormal{int}\left(\mathcal{K}_{\exp}\right)\rightarrow \mathbb{R}$ defined by
+	The function $\tilde{f}_{\exp}: \relint\left(\mathcal{K}_{\exp}\right)\rightarrow \mathbb{R}$ defined by
 	\[\tilde{f}_{\exp}(x,y,z) = -2 \log z - \log y  - \log \left(\dfrac{(1-\bar{\omega})^2}{\bar{\omega}}\right) - 3 \]
 	where 
 	\[\bar{\omega} = \omega\left(1-\dfrac{x}{z} - \log z - \log y\right) \]
@@ -224,9 +224,9 @@ The properties of (HSD) are summarized in the following proposition.
 \end{prop} 
 Note that if $(x,y,z,\tau,\kappa,0)$ is an optimal solution to (HSD) with $\tau=\kappa=0$, no conclusion can be made regarding (PD). \\
 
-Next we introduce the concept of \textit{central path}, which is essential in developing a path-following algorithm for solving (HSD). First we need a simple lemma which is a consequence of the properties of $LHSCB$ (see, e.g. (2.43) in \cite{Robert_thesis}).
+Next we introduce the concept of \textit{central path}, which is essential in developing a path-following algorithm for solving (HSD). First we need a simple lemma which is a consequence of the properties of LHSCB (see, e.g. (2.43) in \cite{Robert_thesis}).
 \begin{lemma}\label{x^plus_mu_g_dual_z_equals_0}
-	Let $\mathcal{K}\in \mathbb{R}^n$ be a proper cone, $\mathcal{K}^*$ its dual cone with $\nu$-LHSCB $f^*$. Denote $g^* = \nabla f^*$. For any $x\in \interior\left(\mathcal{K}\right)$, $z\in \interior\left(\mathcal{K}^*\right)$ and $\mu > 0$ such that $x + \mu g^*(z) = 0$, one has $x^T z = \nu \mu$.
+	Let $\mathcal{K}\in \mathbb{R}^n$ be a proper cone with $\nu$-LHSCB $f$, $\mathcal{K}^*$ its dual cone with $\nu$-LHSCB $f^*$. Denote $g = \nabla f$ and $g^* = \nabla f^*$. For any $x\in \interior\left(\mathcal{K}\right)$, $z\in \interior\left(\mathcal{K}^*\right)$ and $\mu > 0$, one has $x + \mu g^*(z) = 0$ if and only if $\mu g(x) + z = 0$, in which case $x^T z = \nu \mu$.
 \end{lemma}
 Now we formally define the central path parametrized by $\mu > 0$ in the following proposition. The proof can be found in \cite{Akle_thesis}.
 	\begin{prop}
@@ -318,13 +318,13 @@ For implementation purpose, we will adopt the standard form in \cite{SDPT3_2010}
 &\quad\quad y \in \mathbb{R}^m,\ z_i \in K_i^*, \forall i \\[1ex]
 \end{split} \quad\quad\quad\quad\quad\quad\quad \text{(PD$'$)}
 \end{align*}
-where $x_i, c_i \in \mathbb{R}^{n_i}$, $A_i \in \mathbb{R}^{m\times n_i}$, $b \in \mathbb{R}^m$ and $n = \sum_{i=1}^N n_i \geq m$. Each $K_i$ is one of the following: (i) the nonnegative orthant $\mathbb{R}_+^{n_i}$, (ii) product of Lorentz cones $\mathcal{Q}^{q_1}\times \cdots \times \mathcal{Q}^{q_{k_i}}$, $\sum_{j=1}^{k_i} q_j = n_i$, (iii) product of the exponential cone  $\left(\mathcal{K}_{\exp}\right)^{k_i}$, $3k_i = n_i$ or (iv) $\mathbb{R}^n_i$. Note that we define (which is consistent with the definition of dual cone) $\left(\mathbb{R}^k\right)^* = \left\{ y \in \mathbb{R}^k \mid y^T x \geq 0,\ \forall x \in \mathbb{R}^k  \right\} = \left\{0\right\}^k$. To write (PD$'$) into (PD), one simply let
+where $x_i, c_i \in \mathbb{R}^{n_i}$, $A_i \in \mathbb{R}^{m\times n_i}$, $b \in \mathbb{R}^m$ and $n = \sum_{i=1}^N n_i \geq m$. Each $K_i$ is one of the following: (i) the nonnegative orthant $\mathbb{R}_+^{n_i}$, (ii) product of Lorentz cones $\mathcal{Q}^{q_1}\times \cdots \times \mathcal{Q}^{q_{k_i}}$, $\sum_{j=1}^{k_i} q_j = n_i$, (iii) product of the exponential cone  $\left(\mathcal{K}_{\exp}\right)^{k_i}$, $3k_i = n_i$ or (iv) $\mathbb{R}^{n_i}$. Note that we define (which is consistent with the definition of dual cone) $\left(\mathbb{R}^k\right)^* = \left\{ y \in \mathbb{R}^k \mid y^T x \geq 0,\ \forall x \in \mathbb{R}^k  \right\} = \left\{0\right\}^k$. When there is no $K_i = \mathbb{R}^{n_j}$, to write (PD$'$) into (PD), one simply let
 \[  A = \begin{bmatrix} A_1,\ \hdots,\  A_N \end{bmatrix},\ \
 x = \begin{bmatrix} x_1 \\ \vdots\\ x_N \end{bmatrix},\ \ 
 c = \begin{bmatrix} c_1 \\ \vdots \\c_N \end{bmatrix},\ \
 z = \begin{bmatrix} z_1 \\ \vdots \\ z_N \end{bmatrix},\ \ \mathcal{K} = K_1 \times \cdots \times K_N,\ \ \mathcal{K}^* = K_1^* \times \cdots \times K_N^*.\]
 
-For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted $[M_1; \cdots ; M_L]$.
+When some $K_i = \mathbb{R}^{n_i}$, we will discuss in the following section how it can be processed so that (PD$'$) can be written into (PD). For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted $[M_1; \cdots ; M_L]$.
 
 \section{A homogeneous interior-point algorithm}
 Next we describe the algorithm for solving (HSD) (and hence find either a solution to (PD) or certificates of infeasibility) in detail. Henceforth the gradients of the barriers for $\mathcal{K}$ and $\mathcal{K}^*$ will be denoted as $g$ and $g^*$ (in particular, $\mathcal{K}_{\exp}$ and $\mathcal{P}_{\exp}$) respectively, and the Hessians $H$ and $H^*$ respectively.
