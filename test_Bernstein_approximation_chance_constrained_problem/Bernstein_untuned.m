@@ -4,10 +4,10 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 10; q = 2;
+n = 3; q = 1;
 
 % Set alpha
-alpha_risk = 0.05;
+alpha_risk = 0.6;
 
 % Set the parameters
 r0 = 1;
@@ -25,12 +25,16 @@ end
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
 mu = -1 + (2*log_E_eta+1).^(1/2); sig = mu;
 
+% Save the parameters for debugging
+%save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+
 % Total number of random variables
 d = n+q;
 
 % Construct the discrete distributions
-eps_th = 1e-3; 
-Del_resol = 1e-2;
+eps_th = 1e-6; % eps_th = 1e-3; 
+Del_resol = 0.0025; % Del_resol = 1e-2;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
@@ -159,7 +163,9 @@ A_cell{3} = A(:,blk{1,2}+blk{2,2}+1:blk{1,2}+blk{2,2}+blk{3,2});
 A_cell{4} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2});
 A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2});
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
+
+% Call the solver
+%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
 
 % Solve the Bernstein approximation
 cvx_begin
@@ -192,10 +198,10 @@ maximize(tau-1)
 cvx_end
 
 % Solve for the nominal dterministic optimal value (all random variables replaced by their means)
-cvx_clear
-cvx_begin
-variables tau x0 x(n)
-maximize(tau-1)
-    tau <= (1+rho)'*x;
-    sum(x)<=1; x>=0;
-cvx_end
+% cvx_clear
+% cvx_begin
+% variables tau x0 x(n)
+% maximize(tau-1)
+%     tau <= (1+rho)'*x;
+%     sum(x)<=1; x>=0;
+% cvx_end
