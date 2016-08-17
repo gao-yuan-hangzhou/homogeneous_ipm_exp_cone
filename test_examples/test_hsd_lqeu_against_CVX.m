@@ -3,7 +3,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']); addpath([fil
 % clear;
 
 % Set the number of exponential cones, i.e. dimension of x = 3*Ne
-Ne = 2000; Nl = 150; Nq = max(2,randi(50,100,1));
+Ne = 200; Nl = 150; Nq = max(2,randi(50,100,1));
 
 % Construct a feasible instance
 blk{1,1} = 'e'; blk{1,2} = 3*ones(Ne,1); 

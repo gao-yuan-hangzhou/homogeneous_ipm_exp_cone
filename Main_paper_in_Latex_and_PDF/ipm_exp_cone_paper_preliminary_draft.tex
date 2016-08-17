@@ -305,7 +305,7 @@ If we write \eqref{central^path_mu} as $\Phi(\bar{x}, \mu) = 0$, where $\Phi: \m
 
 For $\bar x = (x,y,z,\tau,\kappa, \theta) \in \bar K := \relint\left(\mathcal{K}\right) \times \mathbb{R}^m \times \relint\left(\mathcal{K}^*\right)\times \mathbb{R}_+^2 \times \mathbb{R}$ and $\mu > 0$, $\Delta \bar x$ defined by  \eqref{combined_system_mu} with $\sigma = 0$ will be the same as $\Delta x^p$ defined by \eqref{predictor_system_mu}, while \eqref{combined_system_mu} with $\sigma = 1$ gives $\Delta x^{corr}$ known as the \textit{centering search direction}. The term arises since it can be shown that moving along this direction decreases the \textit{central path proximity measure} of the iterate defined as 
 \[\Omega(\bar x) = (\nu+1) \log\left(\frac{x^T z + \tau\kappa}{\nu+1}\right) + (\nu+1)+ f(x)+f^*(z) - \log(\tau) - \log(\kappa).\] 
-It can be shown that for any $\bar x \in \bar K$, $\Omega (\bar x) \geq 0$, and $\bar x $ lies on the central path if and only if $\Omega(\bar x)=0$, in which case if \eqref{combined_system_mu} with $\sigma = 1$ gives a centering direction $\Delta \bar x = 0$. For $\sigma \in \left(0,1\right)$, \eqref{combined_system_mu} gives $\Delta \bar x = (1-\sigma) \Delta x^p + \sigma \Delta x^{corr}$, a combination of the two directions. \\
+It can be shown that for any $\bar x \in \relint \left(\bar K\right)$, ones has $\Omega (\bar x) \geq 0$.  Furthermore, $\bar x $ lies on the central path if and only if $\Omega(\bar x)=0$, in which case if \eqref{combined_system_mu} with $\sigma = 1$ gives a centering direction $\Delta \bar x = 0$. For $\sigma \in \left(0,1\right)$, \eqref{combined_system_mu} gives $\Delta \bar x = (1-\sigma) \Delta x^p + \sigma \Delta x^{corr}$, a combination of the two directions. \\
 
 For implementation purpose, we will adopt the standard form in \cite{SDPT3_2010} which can be written in the form of (PD). Specifically, we consider the following pair of primal and dual problem
 \begin{align*}
@@ -324,7 +324,7 @@ x = \begin{bmatrix} x_1 \\ \vdots\\ x_N \end{bmatrix},\ \
 c = \begin{bmatrix} c_1 \\ \vdots \\c_N \end{bmatrix},\ \
 z = \begin{bmatrix} z_1 \\ \vdots \\ z_N \end{bmatrix},\ \ \mathcal{K} = K_1 \times \cdots \times K_N,\ \ \mathcal{K}^* = K_1^* \times \cdots \times K_N^*.\]
 
-When some $K_i = \mathbb{R}^{n_i}$, we will discuss in the following section how it can be processed so that (PD$'$) can be written into (PD). For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted $[M_1; \cdots ; M_L]$.
+When some $K_i = \mathbb{R}^{n_i}$, we will discuss in the following section how it can be processed so that (PD$'$) can be written into (PD). For notational convenience, vertical concatenation of matrices (or vectors) of appropriate dimensions $(M_1^T,\ M_2^T,\ \cdots,\ M_L^T)^T$ will occasionally be denoted as $[M_1; \cdots ; M_L]$.
 
 \section{A homogeneous interior-point algorithm}
 Next we describe the algorithm for solving (HSD) (and hence find either a solution to (PD) or certificates of infeasibility) in detail. Henceforth the gradients of the barriers for $\mathcal{K}$ and $\mathcal{K}^*$ will be denoted as $g$ and $g^*$ (in particular, $\mathcal{K}_{\exp}$ and $\mathcal{P}_{\exp}$) respectively, and the Hessians $H$ and $H^*$ respectively.
@@ -335,12 +335,10 @@ Suppose one has a problem in the form (PD$'$). First, for all $i$ with $K_i = \m
 Next we set the iterate $(x^0,y^0, z^0, \tau^0, \kappa^0, \theta^0)$ such that $x^0 \in \interior\left(\mathcal{K}\right)$, $z^0 \in \interior\left(\mathcal{K}^*\right)$, $y^0 \in \mathbb{R}^m$, $\tau^0 > 0$, $\kappa^0 > 0$, $\theta^0>0$. One strategy is to set $y^0 = 0$, $\tau^0 = \kappa^0 = \theta^0 = 1$. For $x^0$ and $z^0$, we will take the analytical centers of the respective barrier function of $\mathcal{K}$ (and equivalently that of $\mathcal{K}^*$). In other words, we first find a LHSCB for the product cone $\mathcal{K}$ as the sum of its parts using the following simple fact.
 
 Since we have found analytic expressions for the LHSCB for the nonnegative orthant, the Lorentz cone, the exponential cone and its dual cone, we have found a LHSCB $f$ for the product cone $\mathcal{K}$. For the initial iterate, take $y = 0$, $\tau^0 = \kappa^0 = \theta^0 = 1$, $x \in \relint \left(\mathcal{K}\right)$, $z\in\relint\left(\mathcal{K}^*\right)$. Specifically, let $\mathcal{K} = \mathcal{K}_1 \times \cdots \times \mathcal{K}_N$ where each $\mathcal{K}_j$ is either a nonnegative orthant, a Lorentz cone or an exponential cone. For each $j$, if $\mathcal{K}_j = \mathbb{R}_+^{n_j}$, set the corresponding sub-vectors $\left(x^0\right)_j = \left(z^0\right)_j = (1,\cdots, 1)^T \in \mathbb{R}_+^{n_j}$; if $\mathcal{K}_j = \mathcal{Q}^{n_j}$, set $\left(x^0\right)_j = \left(z^0\right)_j = (1,0,\cdots, 0)^T \in \mathcal{Q}^{n_j}$; if $\mathcal{K} = \mathcal{K}_{\exp}$, set $\left(x^0\right)_j = \left(z^0\right)_j = \iota^0$, where $\iota^0 =   (-1.0151, 1.2590, 0.5560)^T$ is the approximate solution to 
-\[\iota + \tilde g^*(\iota) = 0.\]
-
-In addition, compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$ and set the initial central-path parameter $\mu^0 = \theta^0$.
+$\iota + \tilde g^*(\iota) = 0$. Finally, compute the auxillary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}$ and set the initial central-path parameter $\mu^0 = \theta^0$.
 
 \subsection{A typical iteration}\label{A_typical_iteration}
-Henceforth the current and next iterates are denoted as  $ \bar x = (x,y, \tau, z,\kappa, \theta)$ and  $ \bar x^+ = (x^+, y^+, \tau^+, z^+,\kappa^+, \theta^+)$ respectively. \\
+Henceforth the current and next iterates are denoted as  $ \bar x = (x,y, \tau, z,\kappa, \theta)$ and  $ \bar x^+$ respectively. \\
 
 Given the current iterate $\bar x$, compute $\mu = \dfrac{x^T z + \tau \kappa}{\nu}$, where $\nu = \sum_{j=1}^N \nu_j$ is the parameter for the LHSCB for $\mathcal{K}$. Note that with the above initialization, it always holds that $\mu = \theta$. \\
 

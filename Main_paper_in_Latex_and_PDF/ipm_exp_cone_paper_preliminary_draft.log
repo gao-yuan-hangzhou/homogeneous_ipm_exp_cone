@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  17 AUG 2016 10:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  17 AUG 2016 11:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -578,10 +578,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 333--334
  []
 
 [7]
-Overfull \hbox (33.03064pt too wide) in paragraph at lines 343--344
-\OT1/cmr/m/n/10 Henceforth the cur-rent and next it-er-ates are de-noted as $[]
- = (\OML/cmm/m/it/10 x; y; ^^\; z; ^^T; ^^R\OT1/cmr/m/n/10 )$ and $[] = (\OML/c
-mm/m/it/10 x[]; y[]; ^^\[]; z[]; ^^T[]; ^^R[]\OT1/cmr/m/n/10 )$
+Underfull \hbox (badness 10000) in paragraph at lines 341--342
+
  []
 
 
@@ -590,17 +588,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 343--344
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 345--346
+Underfull \hbox (badness 10000) in paragraph at lines 348--350
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 350--352
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 353--354
+Underfull \hbox (badness 10000) in paragraph at lines 351--352
 
  []
 
@@ -632,7 +625,7 @@ fonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmsy7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfont
 s/symbols/msbm10.pfb>
-Output written on ipm_exp_cone_paper_preliminary_draft.pdf (10 pages, 235958 by
+Output written on ipm_exp_cone_paper_preliminary_draft.pdf (10 pages, 235995 by
 tes).
 PDF statistics:
  105 PDF objects out of 1000 (max. 8388607)
