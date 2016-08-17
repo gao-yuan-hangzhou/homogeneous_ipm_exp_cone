@@ -13,11 +13,11 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nv = zeros(q,1); theta = 0.1*ones(q,1);
+nu = zeros(q,1); theta = 0.1*ones(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
-multiple = rho ./ (2*gamma*exp(nv+theta.^2/2));
+multiple = (rho/2) ./ (gamma*exp(nu+theta.^2/2));
 for kk = 1:q
     gamma(:,kk) = gamma(:,kk) .* multiple;
 end
@@ -39,13 +39,15 @@ for j = 1:n
 end
 
 for j = 1:q
-    discrete_LN_vars{n+j} = xi_hat_discrete_LN(nv(j), theta(j), eps_th, Del_resol);
+    discrete_LN_vars{n+j} = xi_hat_discrete_LN(nu(j), theta(j), eps_th, Del_resol);
     v{n+j} = discrete_LN_vars{n+j}.vals; p{n+j} = discrete_LN_vars{n+j}.prob_masses;
     N(n+j) = length(discrete_LN_vars{n+j}.vals);
 end
 
 % Get the total number of discretized points
 N_total = sum(N);
+
+keyboard;
 
 % Now the decision variables (including slack and auxiliary variables) are 
 blk{1,1} = 'u'; blk{1,2} = 1;                                          % tau free
