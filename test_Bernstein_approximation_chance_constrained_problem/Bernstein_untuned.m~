@@ -4,7 +4,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 10; q = 2;
+n = 10; q = 3;
 
 % Set alpha
 alpha_risk = 0.05;
@@ -34,16 +34,14 @@ Del_resol = 1e-2;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
-    v{j} = discrete_LN_vars{j}.vals; 
-    p{j} = discrete_LN_vars{j}.prob_masses;
-    N(j) = length(v{j});
+    v{j} = discrete_LN_vars{j}.vals; p{j} = discrete_LN_vars{j}.prob_masses;
+    N(j) = length(discrete_LN_vars{j}.vals);
 end
 
 for j = 1:q
     discrete_LN_vars{n+j} = xi_hat_discrete_LN(nu(j), theta(j), eps_th, Del_resol);
-    v{n+j} = discrete_LN_vars{n+j}.vals; 
-    p{n+j} = discrete_LN_vars{n+j}.prob_masses;
-    N(n+j) = length(v{n+j});
+    v{n+j} = discrete_LN_vars{n+j}.vals; p{n+j} = discrete_LN_vars{n+j}.prob_masses;
+    N(n+j) = length(discrete_LN_vars{n+j}.vals);
 end
 
 % Get the total number of discretized points
@@ -159,16 +157,16 @@ A_cell{3} = A(:,blk{1,2}+blk{2,2}+1:blk{1,2}+blk{2,2}+blk{3,2});
 A_cell{4} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2});
 A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2});
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
+% [obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
 
-% Solve the Bernstein approximation
 cvx_begin
 log_alpha = log(alpha_risk);
 variables tau x0 x(n) g0 g(d) s(d) t w(N_total) u(N_total)
 
 maximize(tau-1)
+    tau == 1
     x0 >= 0; x>=0; 
-    x0 + sum(x) <= 1;
+    sum(x) <= 1;
     g0 + sum(s) - log_alpha*t == 0;
     g0 == tau - x0;
     for j = 1:n 
@@ -178,24 +176,10 @@ maximize(tau-1)
         g(n+l) == -gamma(:,l)'*x;
     end
     for j = 1:d
-        % sum(p(j,k) * u(j,k), k = 1:N(j)) = t
-        curr_idx_u = (sum(N(1:j-1))+1:sum(N(1:j)));
-        p{j}'*u(curr_idx_u) == t;
         for k = 1:N(j)
-            curr_idx_jk = sum(N(1:j-1)) + k;
-            w(curr_idx_jk) == v{j}(k)*g(j) - s(j);
-            % Note that CVX defines exponential cone in a slight different way
-            % by interchanging the role of y and z in (x,y,z) in K_exp
-            {w(curr_idx_jk), t, u(curr_idx_jk)} <In> exponential;
-        end
+            p{j}'*u
+        e
     end
-cvx_end
-
-% Solve for the nominal dterministic optimal value (all random variables replaced by their means)
-cvx_clear
-cvx_begin
-variables tau x0 x(n)
-maximize(tau-1)
-    tau <= (1+rho)'*x;
-    sum(x)<=1; x>=0;
+        
+    
 cvx_end
