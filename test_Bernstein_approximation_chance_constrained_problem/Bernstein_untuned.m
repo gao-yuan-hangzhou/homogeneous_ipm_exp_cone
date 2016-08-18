@@ -7,7 +7,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 n = 3; q = 1;
 
 % Set alpha
-alpha_risk = 0.6;
+alpha_risk = 0.8;
 
 % Set the parameters
 r0 = 1;
@@ -23,10 +23,10 @@ for kk = 1:q
 end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = mu;
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.05*mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
-%save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+% save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 
 % Total number of random variables
@@ -62,7 +62,7 @@ blk{5,1} = 'u'; blk{5,2} = d;                                          % s(1), .
 blk{6,1} = 'e'; blk{6,2} = 3*ones(N_total,1);                          % [w(j,k); u(j,k); t(j,k)] in K_exp
 
 % Total dimension of the decision vector
-total_dim_dec_vec = 1+(n+2)+(d+1)+1+d+3*N_total;
+total_dim = 1+(n+2)+(d+1)+1+d+3*N_total;
 
 % The objective function is 
 % min -tau
@@ -73,23 +73,26 @@ end
 
 % Get total number of constraints
 m_total = (1+1+1) + (n+q) + N_total + d + N_total;
-A = sparse(m_total, total_dim_dec_vec);
+A = sparse(m_total, total_dim);
+
+% Set some indices of the decision variables
+idx_tau = 1; idx_x0 = 2; idx_x1 = 3; idx_x1_to_xn = (3:n+2); 
+idx_x0_to_sx = (2:n+3); idx_sx = n+3; idx_g0 = n+4; idx_g_1 = n+5;
+idx_g_1_to_d = (n+5:n+5+(d-1)); idx_t0 = n+5+(d-1)+1; 
+idx_s1 = n+5+(d-1)+2; idx_s1_to_sn = n+5+(d-1)+2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The constraints are (code up the whole constraint matrix)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % x0 + x(1) + ... + x(n) + sx = 1 (1 constraint)
 curr_row = 1;
-idx_x0_to_sx = (1+1:1+(2+n));
 A(curr_row,idx_x0_to_sx) = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% g0 + (s(1) + ... + s(n)) - log_alpha*t0 = 0 (1 constraint)
+% g0 + (s(1) + ... + s(d)) - log_alpha*t0 = 0 (1 constraint)
 curr_row = 2; 
-idx_g0 = 1+(n+2)+1; 
-idx_t0 = 1+(n+2)+(d+1)+1;
-idx_s_1_to_n = (1+(n+2)+(d+1)+1+1:1+(n+2)+(d+1)+1+d);
-A(curr_row,idx_g0) = 1; 
-A(curr_row,idx_s_1_to_n) = 1; 
+idx_s_1_to_d = (1+(n+2)+(d+1)+1+1:1+(n+2)+(d+1)+1+d);
+A(curr_row,idx_g0) = 1;
+A(curr_row,idx_s_1_to_d) = 1; 
 A(curr_row,idx_t0) = -log(alpha_risk);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % g0 - tau + x0 = 0 (1 constraint)
@@ -111,45 +114,49 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % g(n+l) + gamma(:,l)*x(1:n) = 0, l = 1, ..., q (q constraints)
 for l = 1:q
-    curr_row = 3+(n+l);
-    idx_gj = 1+(n+2)+1+(n+l); 
-    idx_x_1_to_n = (3:2+n);
-    A(curr_row, idx_gj) = 1; A(curr_row,idx_x_1_to_n) = gamma(:,l)';
+    curr_row = 3+n+l;
+    idx_gj = 1+(n+2)+1+n+l; 
+    idx_x1_to_xn = (3:2+n);
+    A(curr_row,idx_gj) = 1; 
+    A(curr_row,idx_x1_to_xn) = gamma(:,l)';
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % w(j,k) - g(j)*v(j,k) + s(j) = 0, j = 1, ..., d, k = 1, ..., N(j) 
 % (number of constraints = N_total_discretized_points)
+A6 = sparse(N_total, total_dim);
 for j = 1:d
     for k = 1:N(j)
         curr_row = 3 + d + (sum(N(1:j-1))+k);
         idx_wjk = (1+(n+2)+(d+1)+1+d) + (3*(sum(N(1:j-1))+k)-2);
         idx_gj = 1+(n+2)+1+j;
         idx_sj = 1+(n+2)+(d+1)+1+j;
-        A(curr_row, idx_wjk) = 1;                                % w(j,k)
-        A(curr_row, idx_gj) = - v{j}(k);                         % g(j)
-        A(curr_row, idx_sj) = 1;                                 % s(j)
+        A(curr_row,idx_wjk) = 1;                               % w(j,k)
+        A(curr_row,idx_gj) = -v{j}(k);                         % g(j)
+        A(curr_row,idx_sj) = 1;                                % s(j)
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sum(p(j,k)*u(j,k),k=1:N(j)) - t(j,1) = 0, any j (d constraints)
+A7 = sparse(d, total_dim);
 for j = 1:d
     curr_row = 3 + d + N_total+j;
     for k = 1:N(j)
         idx_ujk = 1+(n+2)+(d+1)+1+d+(3*(sum(N(1:j-1))+k)-1);
-        A(curr_row, idx_ujk) = p{j}(k);
+        A(curr_row,idx_ujk) = p{j}(k);
+        A7(j,idx_ujk) = p{j}(k);
     end
-    idx_tj1 = 1+(n+2)+(d+1)+2+d+3*(sum(N(1:j-1))+1);
-    A(curr_row, idx_tj1) = -1;
+    idx_t0 = 1+(n+2)+(d+1)+1;
+    A(curr_row,idx_t0) = -1;
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % t0 - t(j,k) = 0, j = 1, ..., d, k = 1, ..., N(j)
 for j = 1:d
     for k = 1:N(j)
         curr_row = 3 + d + N_total + d + (sum(N(1:j-1))+k);
         idx_t0 = 1+(n+2)+(d+1)+1;
         idx_tjk = 1+(n+2)+(d+1)+1+d+3*(sum(N(1:j-1))+k);
-        A(curr_row, idx_t0) = 1;
-        A(curr_row, idx_tjk) = -1;
+        A(curr_row,idx_t0) = 1;
+        A(curr_row,idx_tjk) = -1;
     end
 end
 
@@ -165,9 +172,11 @@ A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
 
 % Call the solver
-%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
 
 % Solve the Bernstein approximation
+cvx_clear
+cvx_tic
 cvx_begin
 log_alpha = log(alpha_risk);
 variables tau x0 x(n) g0 g(d) s(d) t w(N_total) u(N_total)
@@ -196,6 +205,8 @@ maximize(tau-1)
         end
     end
 cvx_end
+cvx_toc
+cvx_optval
 
 % Solve for the nominal dterministic optimal value (all random variables replaced by their means)
 % cvx_clear

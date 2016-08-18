@@ -7,7 +7,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 n = 3; q = 1;
 
 % Set alpha
-alpha_risk = 1;
+alpha_risk = 0.8;
 
 % Set the parameters
 r0 = 1;
@@ -22,19 +22,19 @@ for kk = 1:q
     gamma(:,kk) = gamma(:,kk) .* multiple;
 end
 
-log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = mu;
+% log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.05*mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
-save('n', 'q', 'nu', 'theta', 'rho', '', 'gamma');
-load('n', 'q', 'nu', 'theta');
+% save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 
 % Total number of random variables
 d = n+q;
 
 % Construct the discrete distributions
-eps_th = 1e-3; 
-Del_resol = 1e-2;
+eps_th = 1e-6; % eps_th = 1e-3; 
+Del_resol = 0.0025; % Del_resol = 1e-2;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
@@ -62,7 +62,7 @@ blk{5,1} = 'u'; blk{5,2} = d;                                          % s(1), .
 blk{6,1} = 'e'; blk{6,2} = 3*ones(N_total,1);                          % [w(j,k); u(j,k); t(j,k)] in K_exp
 
 % Total dimension of the decision vector
-total_dim_dec_vec = 1+(n+2)+(d+1)+1+d+3*N_total;
+total_dim = 1+(n+2)+(d+1)+1+d+3*N_total;
 
 % The objective function is 
 % min -tau
@@ -73,24 +73,38 @@ end
 
 % Get total number of constraints
 m_total = (1+1+1) + (n+q) + N_total + d + N_total;
-A = sparse(m_total, total_dim_dec_vec);
+A = sparse(m_total, total_dim);
+
+% Set the indices of decision variables
+idx_tau = 1;
+idx_x0 = 2; 
+idx_x1 = 3;
+idx_x1_to_xn = (3:n+2);
+idx_x0_to_sx = (2:n+3);
+idx_sx = n+3;
+idx_g0 = n+4;
+idx_g_1 = n+5;
+idx_g_1_to_d = (n+5:n+5+(d-1));
+idx_t0 = n+5+(d-1)+1;
+idx_s1 = n+5+(d-1)+2;
+idx_s1_to_sn = n+5+(d-1)+2
+idx_w = @(j,k) sum(N(1:j-1))+k;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The constraints are (code up the whole constraint matrix)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % x0 + x(1) + ... + x(n) + sx = 1 (1 constraint)
 curr_row = 1;
-idx_x0_to_sx = (1+1:1+(2+n));
 A(curr_row,idx_x0_to_sx) = 1;
+A1=sparse(1, total_dim); A1(1,idx_x0_to_sx) = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% g0 + (s(1) + ... + s(n)) - log_alpha*t0 = 0 (1 constraint)
+% g0 + (s(1) + ... + s(d)) - log_alpha*t0 = 0 (1 constraint)
 curr_row = 2; 
-idx_g0 = 1+(n+2)+1; 
-idx_t0 = 1+(n+2)+(d+1)+1;
-idx_s_1_to_n = (1+(n+2)+(d+1)+1+1:1+(n+2)+(d+1)+1+d);
-A(curr_row,idx_g0) = 1; 
-A(curr_row,idx_s_1_to_n) = 1; 
+idx_s_1_to_d = (1+(n+2)+(d+1)+1+1:1+(n+2)+(d+1)+1+d);
+A(curr_row,idx_g0) = 1;
+A(curr_row,idx_s_1_to_d) = 1; 
 A(curr_row,idx_t0) = -log(alpha_risk);
+A2 = sparse(1, total_dim); A2(1, idx_g0) = 1; A2(1, idx_s1_to_sn) = 1; A2(1, idx)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % g0 - tau + x0 = 0 (1 constraint)
 curr_row = 3; 
@@ -163,7 +177,9 @@ A_cell{3} = A(:,blk{1,2}+blk{2,2}+1:blk{1,2}+blk{2,2}+blk{3,2});
 A_cell{4} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2});
 A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2});
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
+
+% Call the solver
+%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
 
 % Solve the Bernstein approximation
 cvx_begin
@@ -196,10 +212,10 @@ maximize(tau-1)
 cvx_end
 
 % Solve for the nominal dterministic optimal value (all random variables replaced by their means)
-cvx_clear
-cvx_begin
-variables tau x0 x(n)
-maximize(tau-1)
-    tau <= (1+rho)'*x;
-    sum(x)<=1; x>=0;
-cvx_end
+% cvx_clear
+% cvx_begin
+% variables tau x0 x(n)
+% maximize(tau-1)
+%     tau <= (1+rho)'*x;
+%     sum(x)<=1; x>=0;
+% cvx_end
