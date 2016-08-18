@@ -5,16 +5,16 @@ clear;
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 64; q = 8;
+n = 64; q = 4;
 
 % Set alpha
-alpha_risk = 0.05;
+alpha_risk = 0.1;
 
 % Set the parameters
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = zeros(q,1); theta = 0.01*ones(q,1);
+nu = zeros(q,1); theta = 0.005*ones(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -24,7 +24,7 @@ for kk = 1:q
 end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.01*mu; mu = log_E_eta - sig.^2/2;
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.005*mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
 % save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
@@ -222,8 +222,6 @@ cvx_end
 opt_nominal = cvx_optval;
 disp(['nominal optimal value = ' num2str(opt_nominal)]);
 disp(['obj_tau_minus_one obtained by hsd_lqeu_Schur = ' num2str(obj_tau_minus_one)]);
-disp('optimal risky asset allocation vector obtained by hsd_lqeu_Schur (largest 10 entries) = '); 
-vec1 = sort(hsd_lqeu_x_opt, 'descend'); disp(vec1');
+disp(['optimal allocation vector obtained by hsd_lqeu_Schur = ']); disp(hsd_lqeu_x_opt');
 disp(['obj_tau_minus_one obtained by CVX = ' num2str(obj_tau_minus_one_cvx)]);
-disp('optimal risky asset allocation vector obtained by CVX (largest 10 entries) = '); 
-vec2 = sort(cvx_x_opt, 'descend'); disp(vec2(1:10)');
+disp(['optimal allocation vector obtained by CVX = ']); disp(cvx_x_opt');
