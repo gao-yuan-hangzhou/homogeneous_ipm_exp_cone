@@ -1,11 +1,18 @@
-addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
+addpath(fileparts(pwd)); 
+addpath([fileparts(pwd), '/subroutines']);
+addpath([fileparts(pwd), '/subroutines']);
 clear;
+% Whether to use CVX to solve the Bernstein approximation
+is_using_cvx = true;
 
 % Paper reference: 
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 64; q = 8;
+n = 64; 
+q = 8; 
+disp(['number_of_risky_assets = ' num2str(n)]);
+disp(['number_of_common_factors = ' num2str(q)]);
 
 % Set alpha
 alpha_risk = 0.05;
@@ -14,7 +21,7 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = zeros(q,1); theta = 0.01*ones(q,1);
+nu = 0.01*randn(q,1); theta = 0.5*rand(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -24,18 +31,19 @@ for kk = 1:q
 end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.01*mu; mu = log_E_eta - sig.^2/2;
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.2*mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
 % save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+%load('text_example_CVX_failed_2.mat', 'n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 
 % Total number of random variables
 d = n+q;
 
 % Construct the discrete distributions
-eps_th = 1e-6; % eps_th = 1e-3; 
-Del_resol = 0.0025; % Del_resol = 1e-2;
+eps_th = 1e-4;
+Del_resol = 0.01;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
@@ -51,6 +59,7 @@ for j = 1:q
     N(n+j) = length(v{n+j});
 end
 
+t_begin_hsd_lqeu = cputime;
 % Get the total number of discretized points
 N_total = sum(N);
 
@@ -172,58 +181,76 @@ A_cell{4} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}
 A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2});
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
 
-% Call the solver
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
+% Display the time for constructing the input
+disp('Done constructing blk, A_cell, c_cell, b for hsd_sqeu_Schur!');
+
+% ============== Call the solver ==============
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+% =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);
+t_end_hsd_lqeu = cputime;
+t_elapsed_hsd_lqeu = t_end_hsd_lqeu - t_begin_hsd_lqeu;
 
-% Solve the Bernstein approximation
-cvx_clear
-tic;
-cvx_begin
-log_alpha = log(alpha_risk);
-variables tau x0 x(n) g0 g(d) s(d) t w(N_total) u(N_total)
+if is_using_cvx
+    % Solve the Bernstein approximation
+    cvx_clear
+    t_begin_cvx = cputime;
+    cvx_begin
+    log_alpha = log(alpha_risk);
+    variables tau x0 x(n) g0 g(d) s(d) t w(N_total) u(N_total)
 
-maximize(tau-1)
-    x0 >= 0; x>=0; 
-    x0 + sum(x) <= 1;
-    g0 + sum(s) - log_alpha*t == 0;
-    g0 == tau - x0;
-    for j = 1:n 
-        g(j) == -x(j); 
-    end;
-    for l = 1:q
-        g(n+l) == -gamma(:,l)'*x;
-    end
-    for j = 1:d
-        % sum(p(j,k) * u(j,k), k = 1:N(j)) = t
-        curr_idx_u = (sum(N(1:j-1))+1:sum(N(1:j)));
-        p{j}'*u(curr_idx_u) == t;
-        for k = 1:N(j)
-            curr_idx_jk = sum(N(1:j-1)) + k;
-            w(curr_idx_jk) == v{j}(k)*g(j) - s(j);
-            % Note that CVX defines exponential cone in a slight different way
-            % by interchanging the role of y and z in (x,y,z) in K_exp
-            {w(curr_idx_jk), t, u(curr_idx_jk)} <In> exponential;
+    maximize(tau-1)
+        x0 >= 0; x>=0; 
+        x0 + sum(x) <= 1;
+        g0 + sum(s) - log_alpha*t == 0;
+        g0 == tau - x0;
+        for j = 1:n 
+            g(j) == -x(j); 
+        end;
+        for l = 1:q
+            g(n+l) == -gamma(:,l)'*x;
         end
-    end
-cvx_end
-toc;
-obj_tau_minus_one_cvx = cvx_optval;
-cvx_x_opt = cvx_value(x);
-
+        for j = 1:d
+            % sum(p(j,k) * u(j,k), k = 1:N(j)) = t
+            curr_idx_u = (sum(N(1:j-1))+1:sum(N(1:j)));
+            p{j}'*u(curr_idx_u) == t;
+            for k = 1:N(j)
+                curr_idx_jk = sum(N(1:j-1)) + k;
+                w(curr_idx_jk) == v{j}(k)*g(j) - s(j);
+                % Note that CVX defines exponential cone in a slight different way
+                % by interchanging the role of y and z in (x,y,z) in K_exp
+                {w(curr_idx_jk), t, u(curr_idx_jk)} <In> exponential;
+            end
+        end
+    cvx_end
+    t_end_cvx = cputime;
+    t_elapsed_cvx = t_end_cvx - t_begin_cvx;
+    obj_tau_minus_one_cvx = cvx_optval;
+    cvx_x_opt = cvx_value(x);
+end
+    
 % Solve for the nominal dterministic optimal value (all random variables replaced by their means)
+cvx_clear
 cvx_begin
 variables tau x0 x(n)
 maximize(tau-1)
     tau <= (1+rho)'*x;
     sum(x)<=1; x>=0;
 cvx_end
+
 opt_nominal = cvx_optval;
+disp(['number_of_risky_assets = ' num2str(n)]);
+disp(['number_of_common_factors = ' num2str(q)]);
+disp(['risk tolerance alpha = ' num2str(alpha_risk)]); disp(' ');
 disp(['nominal optimal value = ' num2str(opt_nominal)]);
-disp(['obj_tau_minus_one obtained by hsd_lqeu_Schur = ' num2str(obj_tau_minus_one)]);
-disp('optimal risky asset allocation vector obtained by hsd_lqeu_Schur (largest 10 entries) = '); 
-vec1 = sort(hsd_lqeu_x_opt, 'descend'); disp(vec1');
-disp(['obj_tau_minus_one obtained by CVX = ' num2str(obj_tau_minus_one_cvx)]);
-disp('optimal risky asset allocation vector obtained by CVX (largest 10 entries) = '); 
-vec2 = sort(cvx_x_opt, 'descend'); disp(vec2(1:10)');
+disp(['maximum return by hsd_lqeu_Schur = ' num2str(obj_tau_minus_one)]);
+disp(['running time = ' num2str(t_elapsed_hsd_lqeu) ' seconds']);
+disp(['optimal risky asset allocation vector obtained by hsd_lqeu_Schur (largest 10 entries) = ' num2str(obj_tau_minus_one)]); 
+vec1 = sort(hsd_lqeu_x_opt, 'descend'); disp(vec1(1:min(10,end))');
+if is_using_cvx
+    disp(['maximum return by CVX (SOCP approximation and calling SDPT3) = ' num2str(obj_tau_minus_one_cvx)]);
+    disp(['running time = ' num2str(t_elapsed_cvx) ' seconds']);
+    disp('optimal risky asset allocation vector obtained by CVX (largest 10 entries) = '); 
+    vec2 = sort(cvx_x_opt, 'descend'); disp(vec2(1:min(10,end))');
+end

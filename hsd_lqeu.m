@@ -1,6 +1,7 @@
 function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
 addpath([fileparts(pwd), '/subroutines']);
+disp('=== hsd_lqeu started... ===');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This function solves problems of the following form
 % min sum_j (c(j)'x(j)) s.t. sum_j (A(j)x(j)) = b, x(j) in K(j) (or free), j=1,2,...,N
@@ -89,16 +90,16 @@ for k=1:size(blk,1)
 end;
 c = [cl; cq; ce];
 
-% Check whether Ax=b has a solution
-disp('Check whether A has full row rank and Ax=b has a solution...');
-[~, U_A] = lu(A); [~,U_full] = lu([A,b]);
-if sprank(U_A) < sprank(U_full)
-    display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
-elseif sprank(U_A) < m
-    display('Error: A is not FULL ROW RANK!');
-else
-    disp('Ok: A has full row rank and Ax = b');
-end
+% % Check whether Ax=b has a solution
+% disp('Check whether A has full row rank and Ax=b has a solution...');
+% [~, U_A] = lu(A); [~,U_full] = lu([A,b]);
+% if sprank(U_A) < sprank(U_full)
+%     display('Error: Ax=b has no solution! The primal problem is infeasible.'); return;
+% elseif sprank(U_A) < m
+%     display('Error: A is not FULL ROW RANK!');
+% else
+%     disp('Ok: A has full row rank and Ax = b');
+% end
 
 % Now initialize (x, y, z, tau, kappa, theta)
 exp_cone_center = [-1.0151; 1.2590; 0.5560];
@@ -166,6 +167,7 @@ for it_count =1:max_iter_count
     if it_count == 1
         disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
+        disp(['size(G_bar) = [' num2str(size(G_bar,1)) ', ' num2str(size(G_bar,2)) ']']);
         disp(['Initial density of G_bar = ' num2str(nnz(G_bar)/numel(G_bar))]);
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
         disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');

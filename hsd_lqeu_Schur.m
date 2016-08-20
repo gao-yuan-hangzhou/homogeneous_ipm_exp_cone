@@ -1,6 +1,7 @@
 function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
 addpath([fileparts(pwd), '/subroutines']);
+disp('=== hsd_lqeu_Schur started... ===');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This function solves problems of the following form
 % min sum_j (c(j)'x(j)) s.t. sum_j (A(j)x(j)) = b, x(j) in K(j) (or free), j=1,2,...,N
@@ -146,17 +147,22 @@ for it_count =1:max_iter_count
     y_hat = [y; tau; theta]; % y_hat has dimension (m+2)
     B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
     % mu_xz = x'*z/v; mu_hat = theta;
-    mu_hat = (x'*z +tau*kappa)/(v_param+1);
+    mu_hat = theta; % mu_hat = (x'*z +tau*kappa)/(v_param+1);
     Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
     Rd = -A_hat'*y_hat - z;
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
-    Rt = mu_hat/tau - kappa;
+    Rt = - kappa; % Rt = mu_hat/tau - kappa;
     H = mu_hat*H_dual(z, dimension_info);
     %H = H_dual_NT(x,z,mu_hat, dimension_info);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
-    LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0]);
+    LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([zeros(m,1); kappa/tau; 0]);
+    if nnz(LHS_Schur_comp_eq)/numel(LHS_Schur_comp_eq) <= 0.25
+        LHS_Schur_comp_eq = sparse(LHS_Schur_comp_eq);
+    else
+        LHS_Schur_comp_eq = full(LHS_Schur_comp_eq);
+    end
     h_nat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     dy_hat_pred = LHS_Schur_comp_eq \ h_nat; % (28)
     dy_pred = dy_hat_pred(1:m);
@@ -177,6 +183,7 @@ for it_count =1:max_iter_count
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
     Rc = -x - sigma_param*mu_hat*g_dual(z, dimension_info);
+    Rt = sigma_param*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
     h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     dy_hat = LHS_Schur_comp_eq \ h_hat;
     dy = dy_hat(1:m);
@@ -202,6 +209,8 @@ for it_count =1:max_iter_count
     if it_count == 1
         disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
+        disp(['Schur_complement_equation_LHS size = [' num2str(size(LHS_Schur_comp_eq,1)) ', ' num2str(size(LHS_Schur_comp_eq,2)) ']']);
+        disp(['Initial density of it = ' num2str(nnz(LHS_Schur_comp_eq)/numel(LHS_Schur_comp_eq))]);
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
         disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
     end

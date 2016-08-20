@@ -32,7 +32,7 @@ disp('Portfolio Allocation under the Entropic Satisficing Measure');
 % ahigh(1) = alow(1)
 
 % Generate problem input
-n = 150; p = rand(n,1); q = 1-p; vlow = 100 - 50*rand(n,1); vhigh = 100 + 50*rand(n,1);
+n = 500; p = rand(n,1); q = 1-p; vlow = 100 - 50*rand(n,1); vhigh = 100 + 50*rand(n,1);
 % Calculate E(V(i))
 
 save('large_input.mat', 'n', 'p', 'q', 'vlow', 'vhigh');
@@ -89,9 +89,10 @@ blk{5,1} = 'l'; blk{5,2} = 1; A_cell{5} = A(:,8*n+1);     c_cell{5} = 0;
 % blk{6,1} = 'l'; blk{6,2} = 1; A_cell{6} = A(:,8*n+2);     c_cell{6} = 1;
 
 % Call hsd_lqeu
-[obj_val, xsol, ysol, zsol, info] = hsd_lqeu(blk, A_cell, c_cell, b);
-clear obj_val xsol ysol zsol info;
-[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_HKM(blk, A_cell, c_cell, b);
+eps_accuracy = 1e-4;
+[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, eps_accuracy);
+clear obj_val xsol ysol zsol info; 
+[obj_val, xsol, ysol, zsol, info] = hsd_lqeu(blk, A_cell, c_cell, b, eps_accuracy);
 
 % Obtain the variables from the stacked optimal solution
 a = xsol{1}(3); z = xsol{4}; zs = xsol{5};
