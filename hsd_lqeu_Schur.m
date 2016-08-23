@@ -170,7 +170,7 @@ for it_count =1:max_iter_count
     dtheta_pred = dy_hat_pred(m+2);
     dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
     dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
-    dkappa_pred = Rt - (kappa/tau) * dtau_pred; % 4th equation of (27)
+    dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Compute alpha_p (approximately)
     x_bar = [x; y; z; tau; kappa; theta];
@@ -191,7 +191,7 @@ for it_count =1:max_iter_count
     dtheta = dy_hat(m+2);
     dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
     dx = Rc - H*dz; % 3rd equation of (27)
-    dkappa = Rt - (kappa/tau)*dtau; % 4th equation of (27)
+    dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
     comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate

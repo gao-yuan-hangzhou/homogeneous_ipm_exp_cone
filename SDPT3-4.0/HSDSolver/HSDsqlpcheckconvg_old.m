@@ -10,7 +10,7 @@
 %% Last Modified: 16 Sep 2004
 %%*****************************************************************
 
-  function [param,breakyes,use_olditer,msg] = HSDsqlpcheckconvg(param,runhist)
+  function [param,breakyes,use_olditer,msg] = HSDsqlpcheckconvg(param,runhist);
 
       termcode    = param.termcode; 
       iter        = param.iter; 
@@ -39,7 +39,7 @@
       err = max(infeas,relgap); 
       if (obj(2) > 0); homRd = param.ZpATynorm/obj(2); else; homRd = inf; end
       if (obj(1) < 0); homrp = norm(param.AX)/(-obj(1)); else; homrp = inf; end
-      if (param.normX > 1e15*max(1,param.normX0)) | (param.normZ > 1e15*max(1,param.normZ0))
+      if (param.normX > 1e15*param.normX0 | param.normZ > 1e15*param.normZ0)
          termcode = 3;
          breakyes = 1; 
       end

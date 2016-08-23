@@ -90,9 +90,9 @@ blk{5,1} = 'l'; blk{5,2} = 1; A_cell{5} = A(:,8*n+1);     c_cell{5} = 0;
 
 % Call hsd_lqeu
 eps_accuracy = 1e-4;
-[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, eps_accuracy);
-clear obj_val xsol ysol zsol info; 
 [obj_val, xsol, ysol, zsol, info] = hsd_lqeu(blk, A_cell, c_cell, b, eps_accuracy);
+clear obj_val xsol ysol zsol info; 
+[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, eps_accuracy);
 
 % Obtain the variables from the stacked optimal solution
 a = xsol{1}(3); z = xsol{4}; zs = xsol{5};
