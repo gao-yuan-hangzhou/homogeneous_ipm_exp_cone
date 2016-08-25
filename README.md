@@ -1,5 +1,6 @@
 # homogeneous_ipm_exp_cone
 
+====== Currently working on a fast subroutine for solving the Schur complement equation. ======
 
 The main program is hsd_lqeu_Schur.m which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems of the following form:
 
