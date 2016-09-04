@@ -56,8 +56,9 @@ end
 blk{1,1} = 'e'; blk{1,2} = 3*ones(N,1); A_cell{1} = A_tilde; c_cell{1} = c_tilde; b_input = b_tilde;
 
 % Solve the instance
-disp('Calling the solver...');
+disp('Calling the solvers...');
 [pd_obj, xre, yre, zre, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b_input, 1e-8);
+[pd_obj, xre, yre, zre, info] = hsd_lqeu(blk, A_cell, c_cell, b_input, 1e-8);
 
 % Retrive the optimal decision variables
 x_sol = zeros(N,1);
@@ -70,7 +71,7 @@ for j = 1:N
 end
 
 obj1 = -d'*u_sol; 
-obj2 = d' * (x_sol .* log(x_sol));
+obj2 = d'*(x_sol .* log(x_sol));
 display(' ');
 disp('Check the values of <c,xre> and sum(d(j)*x_sol(j)log(x_sol(j))):');
 disp([obj1, obj2]);

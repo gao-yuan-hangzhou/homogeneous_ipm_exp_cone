@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  18 AUG 2016 22:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  4 SEP 2016 17:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -602,7 +602,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 350--351
 Here is how much of TeX's memory you used:
  3341 strings out of 493089
  44373 string characters out of 6134842
- 130364 words of memory out of 5000000
+ 131364 words of memory out of 5000000
  6755 multiletter control sequences out of 15000+600000
  13773 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -625,7 +625,7 @@ fonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmsy7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfont
 s/symbols/msbm10.pfb>
-Output written on ipm_exp_cone_paper_preliminary_draft.pdf (10 pages, 236039 by
+Output written on ipm_exp_cone_paper_preliminary_draft.pdf (10 pages, 239022 by
 tes).
 PDF statistics:
  105 PDF objects out of 1000 (max. 8388607)
