@@ -84,7 +84,7 @@ end
 
  
       
-h.solve('CPLEX'); 
+h.solve('SDPT3'); 
 beta = h.eval(beta);  % Output solution
 alpha = h.eval(alpha);
 

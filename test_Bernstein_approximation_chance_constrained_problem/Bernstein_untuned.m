@@ -3,7 +3,7 @@ addpath([fileparts(pwd), '/subroutines']);
 addpath([fileparts(pwd), '/subroutines']);
 clear;
 % Whether to use CVX to solve the Bernstein approximation
-is_using_cvx = true;
+is_using_cvx = false;
 
 % Paper reference: 
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
@@ -35,7 +35,7 @@ mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.2*mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
 % save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
-load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+% load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 %load('text_example_CVX_failed_2.mat', 'n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 
 % Total number of random variables
@@ -186,6 +186,7 @@ disp('Done constructing blk, A_cell, c_cell, b for hsd_sqeu_Schur!');
 
 % ============== Call the solver ==============
 [obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_dense_column_handling(blk, A_cell, c_cell, b);
 % =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);

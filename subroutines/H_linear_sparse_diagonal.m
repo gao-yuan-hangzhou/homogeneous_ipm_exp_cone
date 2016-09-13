@@ -1,5 +1,4 @@
-function H = H_linear(x)
+function H = H_linear_sparse_diagonal(x)
 % Evaluate the barrier for the nonnegative orthant
-diag_vec = 1./(x.^2);
-H = spdiags(diag_vec, 0, length(diag_vec), length(diag_vec));
+H = spdiags(1./(x.^2), 0, length(x), length(x));
 end
