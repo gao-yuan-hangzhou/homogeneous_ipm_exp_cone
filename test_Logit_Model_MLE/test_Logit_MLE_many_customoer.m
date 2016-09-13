@@ -16,10 +16,11 @@ J = 4;
 purchase_record_mat = csvread('data/Cracker_matlab_friendly.csv',2);
 
 % Take only a fraction of it since there are too many records
-purchase_record_mat = purchase_record_mat(floor(end/5)*2+1:floor(end/5)*3,:);
+purchase_record_mat = purchase_record_mat(floor(end/15)*13+1:floor(end/15)*14,:);
 
 % N is the number of observations of this customer
 N = size(purchase_record_mat,1); Gamma = 0.1*N;
+disp(['number of observations N = ' num2str(N)]);
 
 % Q is the number of attributes
 Q = 3;
@@ -124,8 +125,10 @@ A{4} = Abig(:, (J+Q)+N+1);
 A{5} = Abig(:, (J+Q)+N+1+1:end);
 
 % Call hsd_lqeu() or hsd_lqeu_Schur_dense_column_handling()
+% [opt_val, xre, yre, zre, info] = hsd_lqeu(blk, A, c, b);
+% [opt_val, xre, yre, zre, info] = hsd_lqeu_Schur_dense_column(blk, A, c, b);
+[opt_val, xre, yre, zre, info] = hsd_lqeu_fast_lu(blk, A, c, b);
 [opt_val, xre, yre, zre, info] = hsd_lqeu(blk, A, c, b);
-% [opt_val, xre, yre, zre, info] = hsd_lqeu_Schur_dense_column_handling(blk, A, c, b);
 
 % Get optimal alpha, beta, a[n], b
 alpha_opt = xre{1};

@@ -5,7 +5,7 @@ function [A_cell, c_cell, b] = generate_random_feasible_instance(blk, m)
 % in terms of A_cell (cell array), c_cell (cell array), b (vector)
 
 % Random sparse density function
-density = @() 0.15+0.05*rand()-0.05*rand();
+density = @() 0.015+0.005*rand()-0.005*rand();
 
 % Get the total number of blocks
 N_block = size(blk,1);

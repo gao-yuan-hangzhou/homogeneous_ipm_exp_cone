@@ -4,7 +4,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']);
 % linear, second-order and exponential cone constraints
 % to test hsd_lqe.m
 % Choose whether to assure feasibility of the generated instance
-ensure_feasibility = false;
+ensure_feasibility = true;
 % Example: Suppose one has 
 % x(1) in (R_+)^15, 
 % x(2) in Q(3)×Q(4)×Q(6),
@@ -27,10 +27,10 @@ ensure_feasibility = false;
 
 % Construct random blk, At, c and b
 clear blk; clear c_cell; clear A_cell; 
-m = 500;
+m = 3500;
 blk{1,1} = 'u'; blk{1,2} = 200; A_cell{1} = sprandn(m,sum(blk{1,2}),0.0005); c_cell{1} = randn(blk{1,2},1);
-blk{2,1} = 'l'; blk{2,2} = 2000; A_cell{2} = sprandn(m, sum(blk{2,2}), 0.00001); c_cell{2} = randn(sum(blk{2,2}),1);
-blk{3,1} = 'e'; blk{3,2} = 3*ones(15000,1); A_cell{3} = sprandn(m, sum(blk{3,2}), 0.00015); c_cell{3} = randn(sum(blk{3,2}), 1);
+blk{2,1} = 'l'; blk{2,2} = 1000; A_cell{2} = sprandn(m, sum(blk{2,2}), 0.00001); c_cell{2} = randn(sum(blk{2,2}),1);
+blk{3,1} = 'e'; blk{3,2} = 3*ones(2500,1); A_cell{3} = sprandn(m, sum(blk{3,2}), 0.00015); c_cell{3} = randn(sum(blk{3,2}), 1);
 %blk{4,1} = 'q'; blk{4,2} = max(2,randi(50,80,1)); A_cell{4} = sprandn(m, sum(blk{4,2}), 0.12); c_cell{4} = randn(sum(blk{4,2}), 1);
 %blk{5,1} = 'u'; blk{5,2} = 3; A_cell{5} = sprandn(m, blk{5,2}, 0.08); c_cell{5} = randn(blk{5,2}, 1);
 %blk{6,1} = 'l'; blk{6,2} = 1; A_cell{6} = sprandn(m, blk{6,2}, 0.07); c_cell{6} = randn(blk{6,2}, 1);
@@ -46,8 +46,8 @@ end
 %save('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 %load('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 
-[obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b, 1e-8, 1000);
-%[obj_val_dch, x_return_dch,y_return_dch,z_return_dch, info_dch] = hsd_lqeu_Schur_dense_column_handling(blk, A_cell, c_cell, b, 1e-8, 1000);
+[obj_val_dch, x_return_dch,y_return_dch,z_return_dch, info_dch] = hsd_lqeu_fast_lu(blk, A_cell, c_cell, b);
+[obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b);
 
 % Check certificate of dual infeasibility
 if strcmp(info.solution_status, 'dual_infeasible') || strcmp(info.solution_status, 'primal_and_dual_infeasible')

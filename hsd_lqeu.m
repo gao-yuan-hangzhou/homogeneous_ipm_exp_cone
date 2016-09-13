@@ -137,9 +137,8 @@ for it_count =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Form G_bar, R_bar_p and solve for the predictor search direction
     G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
-    Hmat = sparse(H_dual(z, dimension_info));
-    Hmat = theta*Hmat;
-    G3 = [speye(dim_x), sparse(dim_x, m), Hmat, sparse(dim_x,3)]; 
+    H = sparse(H_dual(z, dimension_info)); H = theta*H; % Assign H matrix to fix a Matlab memory allocation issue
+    G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)]; 
     G_bar = [G1; G2; G3];
     R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
     pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);

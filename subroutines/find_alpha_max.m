@@ -15,7 +15,7 @@ function alpha_max = find_alpha_max(x_bar, predictor_search_direction, dimension
 % dtau = predictor_search_direction(2*Nt+m+1); dkappa = predictor_search_direction(2*Nt+m+2); dtheta = predictor_search_direction(2*Nt+m+3);
 
 % Bisection search
-alpha_low=0; alpha_high = 2; max_it = 8;
+alpha_low=0; alpha_high = 1; max_it = 8;
 for it_count = 1:max_it
     alpha_middle = 0.5*alpha_low + 0.5*alpha_high;
     if is_in_product_cone(x_bar + alpha_high*predictor_search_direction, dimension_info)
