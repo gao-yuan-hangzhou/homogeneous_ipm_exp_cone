@@ -27,7 +27,7 @@ ensure_feasibility = true;
 
 % Construct random blk, At, c and b
 clear blk; clear c_cell; clear A_cell; 
-m = 3500;
+m = 2500;
 blk{1,1} = 'u'; blk{1,2} = 200; A_cell{1} = sprandn(m,sum(blk{1,2}),0.0005); c_cell{1} = randn(blk{1,2},1);
 blk{2,1} = 'l'; blk{2,2} = 1000; A_cell{2} = sprandn(m, sum(blk{2,2}), 0.00001); c_cell{2} = randn(sum(blk{2,2}),1);
 blk{3,1} = 'e'; blk{3,2} = 3*ones(2500,1); A_cell{3} = sprandn(m, sum(blk{3,2}), 0.00015); c_cell{3} = randn(sum(blk{3,2}), 1);
@@ -46,8 +46,8 @@ end
 %save('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 %load('blk_input.mat', 'blk', 'A_cell', 'c_cell', 'b');
 
-[obj_val_dch, x_return_dch,y_return_dch,z_return_dch, info_dch] = hsd_lqeu_fast_lu(blk, A_cell, c_cell, b);
-[obj_val, x_return,y_return,z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+[obj_val_dch, x_return_dch,y_return_dch,z_return_dch, info_dch] = hsd_lqeu_fast(blk, A_cell, c_cell, b, 1e-3, 100);
+[obj_val, x_return,y_return,z_return, info] = hsd_lqeu_Schur_dch_SMW(blk, A_cell, c_cell, b, 1e-3, 100);
 
 % Check certificate of dual infeasibility
 if strcmp(info.solution_status, 'dual_infeasible') || strcmp(info.solution_status, 'primal_and_dual_infeasible')

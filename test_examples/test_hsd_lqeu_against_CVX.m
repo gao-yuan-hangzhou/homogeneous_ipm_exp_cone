@@ -12,8 +12,7 @@ blk{3,1} = 'q'; blk{3,2} = Nq;
 [A_cell, c_cell, b] = generate_random_feasible_instance(blk,25);
 
 % Solve the problem using hsd_lqeu
-[opt_sol, x_retun, y_return, z_return, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b);
-[opt_sol, x_retun, y_return, z_return, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+[opt_sol, x_retun, y_return, z_return, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b);
 disp(['dual optimal solution by hsd_lueq = ' num2str(opt_sol(1))]);
 
 % Solve the problem using CVX

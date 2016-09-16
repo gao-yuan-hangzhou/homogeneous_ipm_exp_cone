@@ -21,7 +21,7 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = 0.01*randn(q,1); theta = rand(q,1);
+nu = 0.01*randn(q,1); theta = 0.1*rand(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -31,7 +31,7 @@ for kk = 1:q
 end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = mu; mu = log_E_eta - sig.^2/2;
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.5*rand(n,1) .* mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
 % save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
@@ -185,8 +185,9 @@ A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}
 disp('Done constructing blk, A_cell, c_cell, b for hsd_sqeu_Schur!');
 
 % ============== Call the solver ==============
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast_lu(blk, A_cell, c_cell, b);
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_dch_SMW(blk, A_cell, c_cell, b, 1e-4,100);
+%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, 1e-4, 100);
 % =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);

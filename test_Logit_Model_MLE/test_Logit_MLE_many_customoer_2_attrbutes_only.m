@@ -16,7 +16,7 @@ J = 4;
 purchase_record_mat = csvread('data/Cracker_matlab_friendly.csv',2);
 
 % Take only a fraction of it since there are too many records
-purchase_record_mat = purchase_record_mat(floor(end/25)*2+1:floor(end/25)*3,:);
+purchase_record_mat = purchase_record_mat(floor(end/25)*2+1:floor(end/25)*2+3,:);
 
 % N is the number of observations of this customer
 N = size(purchase_record_mat,1); Gamma = 0.1*N;
@@ -122,6 +122,9 @@ A{2} = Abig(:, J+(1:Q));
 A{3} = Abig(:, (J+Q)+(1:N));
 A{4} = Abig(:, (J+Q)+N+1);
 A{5} = Abig(:, (J+Q)+N+1+1:end);
+
+keyboard;
+
 
 % Call hsd_lqeu() or hsd_lqeu_Schur()
 [opt_val, xre, yre, zre, info] = hsd_lqeu(blk, A, c, b);

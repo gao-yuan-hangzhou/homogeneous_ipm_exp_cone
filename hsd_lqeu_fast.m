@@ -107,7 +107,10 @@ c = [cl; cq; ce];
 % Now initialize (x, y, z, tau, kappa, theta)
 exp_cone_center = [-1.0151; 1.2590; 0.5560];
 id_l = ones(Nl,1);
-id_q = zeros(sum(Nq),1); for k = 1:length(Nq) id_q(sum(Nq(1:k-1))+1) = 1; end;
+id_q = zeros(sum(Nq),1); 
+for k = 1:length(Nq) 
+    id_q(sum(Nq(1:k-1))+1) = 1; 
+end;
 id_e = repmat(exp_cone_center,Ne,1);
 x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 tau = 1; kappa = 1; theta0 = 1.0; theta = theta0;
@@ -135,6 +138,10 @@ if nargin < 6
     max_iter_count = 500;
 end
 
+% Compute the dimension of the large sparse G_bar for future use
+dim_x_bar = dim_x + m + dim_x + 3;
+% allocate [L_lu, U_lu, P_lu, Q_lu, R_lu]
+
 % The main loop
 for it_count =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,6 +152,7 @@ for it_count =1:max_iter_count
     G_bar = [G1; G2; G3];
     R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
     [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar);
+    %disp(['nnz([L,U,P,Q,R])=' num2str(nnz(L_lu)+nnz(P_lu)+nnz(U_lu)+nnz(P_lu)+nnz(Q_lu)+nnz(R_lu))]);
     pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p)))); % pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
     % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 
     dtau_p = pred_dir(2*dim_x+m+1); dkappa_p = pred_dir(2*dim_x+m+2); % dtheta_p = pred_dir(2*Nt+m+3);
@@ -173,7 +181,7 @@ for it_count =1:max_iter_count
         disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
         disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
         disp(['size(G_bar) = [' num2str(size(G_bar,1)) ', ' num2str(size(G_bar,2)) ']']);
-        disp(['Initial density of G_bar = ' num2str(nnz(G_bar)/numel(G_bar))]);
+        disp(['Initial nnz and density of G_bar = [' num2str(nnz(G_bar)) ', ' num2str(nnz(G_bar)/numel(G_bar)) ']']);
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
         disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
     end
@@ -284,7 +292,7 @@ end
 % Assign y_return
 y_return = y_final;
 % Take the dual objective value as the approximate optimal objective value
-obj_val = full([c'*x_final, b'*y_final]);
+obj_val = full([b'*y_final, c'*x_final]);
 disp(['[dual_obj, primal_obj] = [' num2str(obj_val(1),5) ', ' num2str(obj_val(2),5) ']']);
 % Construct the remaining entries of result_info
 result_info.relative_duality_gap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); 

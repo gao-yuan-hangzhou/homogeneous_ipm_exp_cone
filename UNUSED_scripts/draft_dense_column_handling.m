@@ -3,7 +3,7 @@
 % The following code demonstrates the dense column handling technique for the Schur complement
 % equation from the linear system for the search direction in the Homogeneous model.
 
-m = 3000; 
+m = 1000; 
 b = randn(m,1); 
 b_bar = randn(m,1);
 g_bar = randn();
@@ -19,18 +19,20 @@ V2 = [zeros(m+1,1); 1];
 U = [U1, U2, V1, V2];
 D = [zeros(2), eye(2); -eye(2), zeros(2)];
 
-disp(['||U*D*U'' - Bhat|| = ' num2str(norm(U*D*U'-B_hat))]);
+% disp(['||U*D*U'' - Bhat|| = ' num2str(norm(U*D*U'-B_hat), Inf)]);
 
-Msp = sprandn(m+2, m+2, 1/m);
+disp('Generating random positive definite Msp...');
+Msp = sprandn(m+2, m+2, 9/m);
 Msp = Msp'*Msp + spdiags(abs(randn(m+2)), 0, m+2, m+2);
-% keyboard;
-
+disp('Done...');
 M = Msp + U*D*U';
-
+% keyboard;
 D_inv = [zeros(2), -eye(2); eye(2), zeros(2)];
 
 % Compute the actual solution of the equation M*yHat = h
+tic;
 dy_hat_actual = M\h_hat;
+toc;
 
 % Now compute the solution through the dense column handling technique
 % Define lHat = D*U'*yHat and it can be shown that the system M*yHat = hHat is equivalent to 
@@ -39,22 +41,20 @@ dy_hat_actual = M\h_hat;
 % h_big = [h_hat; zeros(4,1)]
 % dy_big = M_big\h_big
 
+tic;
 % Now solve for dy_hat using Sherman-Morrison formula
-[R,p] = chol(Msp, 'lower'); R = R';
+% [R,p] = chol(Msp);
 % Calculate inv(Msp)*h_hat
-w_hat = R\(R'\h_hat);
+Msp_inv_h_hat = Msp\h_hat;
+%Msp_inv_h_hat = Msp\h_hat;
 
 % Calculate the 4-by-4 G = D_inv + U'*inv(Msp)*U and then inv(G)
-M_inv_U = R\(R'\U);
-G = U'*M_inv_U;
-G = D_inv + G;
+Msp_inv_U = Msp\U;
+G = D_inv + U'*Msp_inv_U;
 
-% Calculate P = eye(m+2) - inv(Msp)*U*G_inv*U' and then y_hat = P*w_hat
-P = G\U'; 
-P = M_inv_U*P;
-P = eye(m+2) - P;
-dy_hat = P*w_hat;
-
+% Implicitly calculate P = eye(m+2) - inv(Msp)*U*G_inv*U' and then y_hat = P*w_hat
+% P = eye(m+2) - M_inv_U*(G\U');
+dy_hat = Msp_inv_h_hat - Msp_inv_U*(G\(U'*Msp_inv_h_hat));
 % dy_hat_dch = dy_big(1:m+2);
-
-norm(dy_hat_actual - dy_hat)/norm(dy_hat)
+toc;
+disp(['relative error = ' num2str(norm(dy_hat_actual - dy_hat)/norm(dy_hat))]);
