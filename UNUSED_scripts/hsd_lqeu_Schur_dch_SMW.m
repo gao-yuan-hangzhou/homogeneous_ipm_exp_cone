@@ -149,7 +149,7 @@ for it_count =1:max_iter_count
     B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
     % mu_xz = x'*z/v; mu_hat = theta;
     mu_hat = theta; % mu_hat = (x'*z +tau*kappa)/(v_param+1);
-    Rp_hat = zeros(m+2,1); % Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
+    Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
     Rd = -A_hat'*y_hat - z;
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
     Rt = - kappa; % Rt = mu_hat/tau - kappa;
@@ -161,31 +161,28 @@ for it_count =1:max_iter_count
     % LHS_Schur_comp_eq = A_hat*H*A_hat' + B_hat + diag([zeros(m,1); kappa/tau; 0]);
     h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     Msp = A_hat*H*A_hat'+diag([sparse(m,1); kappa/tau; 0]);
-    [R,p] = chol(Msp);
     % disp(['nnz(R) = ' num2str(nnz(R)) ', density(R) = ' num2str(nnz(R)/numel(R))]);    
     % disp(['nnz(Msp) = ' num2str(nnz(Msp)) ', density(Msp) = ' num2str(nnz(Msp)/numel(Msp))]);
     U1 = [-b; 0; -g_bar/2]; U2 = [b_bar; g_bar/2; 0];
     V1 = [zeros(m,1); 1; 0]; V2 = [zeros(m+1,1); 1];
     U = [U1, U2, V1, V2];
-    D = [zeros(2), eye(2); -eye(2), zeros(2)];
+    % D = [zeros(2), eye(2); -eye(2), zeros(2)];
     D_inv = [zeros(2), -eye(2); eye(2), zeros(2)];
     % Now solve for dy_hat using Sherman-Morrison formula
     % Calculate inv(Msp)*h_hat = R\(R'\h_hat)
-    w_hat = R\(R'\h_hat);
-    % Calculate the 4-by-4 G = D_inv + U'*inv(Msp)*U and then inv(G)
-    Msp_inv_U = R\(R'\U);
-    G = U'*Msp_inv_U; G = D_inv + G;
-    % Calculate P = eye(m+2) - inv(Msp)*U*G_inv*U' and then y_hat = P*w_hat
-    P = G\U'; P = Msp_inv_U*P; P = speye(m+2) - P;
+    Msp_inv_h_hat = Msp\h_hat;
+    % Calculate the 4-by-4 matrix G = D_inv + U'*inv(Msp)*U
+    Msp_inv_U = Msp\U;
+    G = D_inv + U'*Msp_inv_U;
+    % Implicity calculate P = eye(m+2) - inv(Msp)*U*G_inv*U' and then y_hat = P*w_hat
+    % P = speye(m+2) - Msp_inv_U*(G\U');
     % Calculate dy_hat_pred = LHS_Schur_comp_eq \ h_hat; % (28)
-    dy_hat_pred = P*w_hat;
-    
+    dy_hat_pred = Msp_inv_h_hat - Msp_inv_U*(G\(U'*Msp_inv_h_hat));
     % Solve for dy_pred using the naive M\h_hat for DEBUGGING
     % M_schur = Msp+U*D*U';
     % dy_hat_pred = M_schur\h_hat;
     % disp(['error in dy_hat_pred = ' num2str(norm(dy_hat_pred-dy_hat_pred_sm)/norm(dy_hat_pred))]);
     % dy_hat_pred = dy_hat_pred_sm;
-    
     dy_pred = dy_hat_pred(1:m);
     dtau_pred = dy_hat_pred(m+1);
     dtheta_pred = dy_hat_pred(m+2);
@@ -208,9 +205,8 @@ for it_count =1:max_iter_count
     h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     % Find dy_hat = LHS_Schur_comp_eq \ h_hat; note that only h_hat has been updated
     % Use the same techniques as above
-    w_hat = R\(R'\h_hat);
-    dy_hat = P*w_hat;
-    
+    Msp_inv_h_hat = Msp\h_hat;
+    dy_hat = Msp_inv_h_hat - Msp_inv_U*(G\(U'*Msp_inv_h_hat));
     % Solve for dy_hat_actual for DEBUGGING
     % dy_hat = M_schur\h_hat;
     % disp(['error in dy_hat = ' num2str(norm(dy_hat-dy_hat_sm)/norm(dy_hat))]);
@@ -226,7 +222,7 @@ for it_count =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);
-    alpha = 0.5*find_alpha_max(x_bar, comb_dir, dimension_info);
+    alpha = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p, 0.8)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p,alpha_p)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = 0.98*find_alpha_max(x_bar, comb_dir, dimension_info);
@@ -348,8 +344,7 @@ for k = 1:size(blk,1)
 end
 % Assign y_return
 y_return = y_final;
-% Take the dual objective value as the approximate optimal objective value
-obj_val = full([c'*x_final, b'*y_final]);
+obj_val = full([b'*y_final, c'*x_final]);
 disp(['[dual_obj, primal_obj] = [' num2str(obj_val(1),5) ', ' num2str(obj_val(2),5) ']']);
 % Construct the remaining entries of result_info
 result_info.relative_duality_gap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); 
