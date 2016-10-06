@@ -4,11 +4,11 @@ clear;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set (total) sample size, Gamma/N and partition ratio
-sample_size = 600;
+sample_size = 200;
 % This means use(1-partition_ratio) data for training and partition_ratio for testing
-partition_ratio = 2/3;
+partition_ratio = 0.5;
 % This means we vary Gamma according to the list
-Gamma_list = (0:2); 
+Gamma_list = (0:10); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

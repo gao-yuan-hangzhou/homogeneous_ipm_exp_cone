@@ -3,6 +3,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx,amsmath,amsthm, amssymb,setspace, mathtools}
 \usepackage{dirtytalk}
+ \usepackage{graphicx}
+ \graphicspath{ {images/} }
  
  \def\DM{\protect{$\cal{DM}$}}
  \def\interior{\protect{\textnormal{ri}}}
@@ -498,10 +500,18 @@
 	\begin{itemize}
 		\item Numerical experiments with real purchase record data.
 		\begin{itemize}
-			\item Fix two sets $S_1$, $S_2$ of distinct observations with $|S_1|=|S_2|=250$.
+			\item Fix two sets $S_1$, $S_2$ of distinct observations with $|S_1|=|S_2|$.
 			\item Use $S_1$ to compute the estimates $\hat{\boldsymbol{\alpha}}$, $\hat{\boldsymbol{\beta}}$ and compute the \textit{likelihood} of them given $S_2$.
 		\end{itemize}
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Robust choice model}
+	\begin{itemize}
+		\item Plot of likelihood value of $|S_2|$ vs $\Gamma$, with $|S_1|=|S_2|=300$.
+	\end{itemize}
+	\includegraphics[scale=0.25]{vary_gamma_300_300_1_to_10}
 \end{frame}
 
 \begin{frame}

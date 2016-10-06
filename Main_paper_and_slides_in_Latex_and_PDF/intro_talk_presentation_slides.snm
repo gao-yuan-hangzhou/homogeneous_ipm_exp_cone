@@ -5,9 +5,9 @@
 \beamer@slide {reformulated_std_conic_form}{21}
 \beamer@slide {robust_choice_model_max_min}{29}
 \beamer@slide {robust_choice_dual_convex}{30}
-\beamer@slide {KKT_for_PD}{35}
-\beamer@slide {P_termination}{39}
-\beamer@slide {D_termination}{39}
-\beamer@slide {A_termination}{39}
-\beamer@slide {G_termination}{39}
-\beamer@slide {T_terminal}{39}
+\beamer@slide {KKT_for_PD}{36}
+\beamer@slide {P_termination}{40}
+\beamer@slide {D_termination}{40}
+\beamer@slide {A_termination}{40}
+\beamer@slide {G_termination}{40}
+\beamer@slide {T_terminal}{40}
