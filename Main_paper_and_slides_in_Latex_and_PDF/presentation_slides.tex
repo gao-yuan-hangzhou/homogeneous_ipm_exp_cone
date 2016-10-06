@@ -19,7 +19,7 @@
  
  
  \title[About Beamer] %optional
- {Design and implementation of a homogeneous interior-point method for conic programming involving exponential constraints}
+ {Design and implementation of a homogeneous interior-point method for conic programming involving exponential cone constraints}
  
  
  \author[gaoyuan] % (optional, for multiple authors)
@@ -554,7 +554,7 @@
 \begin{frame}
 	\frametitle{The algorithm}
 	\begin{itemize}
-		\item We introduce the (full) \textit{homogeneous self-dual embedding model} of (PD) (Ye, Todd, \& Mizuno, 1994; Toh, Todd \& T\"ut\"unc\"u, 2006)
+		\item We introduce the (full) \textit{homogeneous self-dual embedding model} of (PD) (Ye, Todd, \& Mizuno, 1994; Toh, Todd \& T\"ut\"unc\"u, 2006),
 		\begin{align*}
 		\begin{split}
 		& \min \,\, \bar{\alpha}\theta \\
@@ -590,10 +590,10 @@
 		\item The properties of (HSD) are summarized as follows.
 			For any given $(x^0, y^0, z^0, \tau^0, \kappa^0, \theta^0)$ such that $x^0 \in \interior \left(\mathcal{K}_{\exp}\right)$, $z^0 \in \interior \left(\mathcal{P}_{\exp}\right)$ and $\tau^0, \kappa^0, \theta^0 > 0$, the auxiliary parameters $\bar{b}$, $\bar{c}$, $\bar{g}$, $\bar{\alpha}>0$ and hence (HSD) are well-defined.
 			\begin{enumerate}
-				\item The problem (HSD) is \textnormal{self-dual}. In other words, the dual of the problem is equivalent to itself. 
+				\item The problem (HSD) is \textnormal{self-dual}.
 				\item $(x,y,z,\tau,\kappa, \theta) = (x^0,y^0,z^0, \tau^0,\kappa^0, \theta^0)$ is a strictly feasible (primal and dual) solution.
 				\item The optimal objective is always 0. 
-				\item Assume the solution $(x,y, \tau, z,\kappa, \theta)$ is feasible. One has $\theta\geq 0$ and $x^T z + \tau \kappa = \bar{\alpha} \theta$. Furthermore, the solution is optimal if and only if $\theta=0$, in which case one has $x^T z = \tau\kappa = 0$.
+				\item Assume $(x,y, \tau, z,\kappa, \theta)$ is feasible. Then $\theta\geq 0$ and $x^T z + \tau \kappa = \bar{\alpha} \theta$. Furthermore, the solution is optimal if and only if $\theta=0$, in which case $x^T z = \tau\kappa = 0$.
 				\item Assume $(x,y, \tau, z,\kappa, 0)$ is an optimal solution. If $\tau>0$ then $(x,y,z)/\tau$ is an optimal solution to (PD). If $\kappa>0$ then either $b^Ty>0$ or $c^Tx<0$ or both hold. 
 				\begin{itemize}
 					\item If $b^T y>0$ then (PD) is primal-infeasible.
