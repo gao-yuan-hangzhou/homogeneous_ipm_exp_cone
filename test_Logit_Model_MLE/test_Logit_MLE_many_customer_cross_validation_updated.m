@@ -4,7 +4,7 @@ clear;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set sample size, number of subsets and Gamma/N, where N is the size of the training set
-sample_size = 1000; % sample_size = 100;
+sample_size = 5000; % sample_size = 100;
 num_split = 5;
 Gamma_ratio = 0.1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,7 +42,7 @@ for dataset_index=1:num_split
     %purchase_record_mat_test = purchase_record_mat(floor(N/num_split)*(dataset_index-1)+1:floor(N/num_split)*dataset_index,:);
     % Now construct the N-by-J matrix representing this customer's purchase reord
     Y = purchase_record_mat_train(:,end-J+1:end);
-    N = size(purchase_record_mat_train,1); Gamma = 0.01*N;
+    N = size(purchase_record_mat_train,1); Gamma = Gamma_ratio*N;
     disp(['Number of observations in the training set = ' num2str(N)]);
     % Compute N-dimensional j_hat, which is defines as follows
     % j_hat(n) = k means in the n-th observation the customer bought item k, n=1:N, k=1:J.

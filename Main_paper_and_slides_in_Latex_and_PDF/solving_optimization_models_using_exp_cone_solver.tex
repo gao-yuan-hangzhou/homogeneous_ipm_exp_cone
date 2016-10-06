@@ -1,0 +1,216 @@
+\documentclass[10pt]{article}
+\usepackage{graphicx,amsmath,amsthm, amssymb,setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={6in, 8.5in}]{geometry}
+\usepackage{cite}
+\usepackage{setspace}
+
+\onehalfspacing
+
+
+\theoremstyle{definition}
+\newtheorem{defin}{Definition}
+\newtheorem{assumption}{Assumption} 
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}%[section]
+\newtheorem{example}{Example}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}{Corollary}
+
+\def\DM{\protect{$\cal{DM}$}}
+\def\interior{\protect{\textnormal{ri}}}
+\def\relint{\protect{\textnormal{ri}}}
+\def\closure{\protect{\textnormal{closure}}}
+\def\rank{\protect{\textnormal{rank}}}
+\def\diagonal{\protect{\textnormal{diag}}}
+
+\title{Solving robust optimization models involving exponential constraints}
+\author{Yuan Gao}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We consider several robust optimization models involving exponential constraints. We show that these models can be cast into standard form conic programs involving exponential cone constraints and thereby solved by interior-point methods. We demonstrate the efficiency of this approach by solving models of moderate size that are previously difficult to handle by other platforms such as CVX and NEOS.
+\end{abstract}
+
+\section{Definitions and preliminaries}
+We present several necessary concepts for our discussion and refer the reader to \cite{Robert_thesis} for a comprehensive review of the mathematics of non-symmetric conic programming and properties of the exponential cone. 
+
+For a convex cone $\mathcal{K} \in \mathbb{R}^n$, its \textit{dual cone} is defined as 
+$\mathcal{K}^* = \left\{y\in \mathbb{R}^n \mid x^T y\geq 0, \forall x \in \mathcal{K} \right\}$. A proper cone $\mathcal{K}$ is called \textit{self-dual} if $\mathcal{K}^* = \mathcal{K}$. It can be shown that for a proper cone $\mathcal{K} \in \mathbb{R}^n$, its dual cone $\mathcal{K}^*$ is also a proper cone and $(\mathcal{K}^*)^* = \mathcal{K}$ (Section 2.6. in \cite{Boyd_Vander_Convex_Opt_Book}). Define the \textit{Lorentz cone} or \textit{second-order cone} of dimension $n\geq 2$ as
+\[\mathcal{Q}_n = \left\{ x \in \mathbb{R}^n \mid x_1 \geq \sqrt{x_2+\cdots+x_n} \right\}.\]
+It can be easily seen that both the positive orthant and the Lorentz cone are self-dual. The positive orthant, the Lorenz cone and the positive semidefinite cone $\mathcal{S}^n_+ = \left\{ X \in \mathcal{S}^{n} \mid X\succeq 0 \right\}$, are all proper and self-dual. They are sometimes referred to as \textit{symmetric cones}.
+\begin{defin}
+	Let $\mathcal{K}^0_{\exp} = \left\{(x, y, z) \in \mathbb{R}^3 \mid y \geq 0, z > 0, \exp\left(\dfrac{x}{z}\right) \leq \dfrac{y}{z}\right\}$
+	and define the \textit{exponential cone} as
+	$\mathcal{K}_{\exp} = \textnormal{closure}\left(K^0_{\exp}\right)$. Let $\mathcal{P}^0_{\exp} = \left\{(u,v,w) \in \mathbb{R}^3 \mid u<0, v \geq 0, \exp\left(\dfrac{w}{u}\right)\leq -\dfrac{e\cdot v}{u} \right\}$
+	and define $\mathcal{P}_{\exp} = \textnormal{closure} \left(\mathcal{P}^0_{\exp}\right)$,
+	where $e$ denotes the base of natural logarithm. 
+\end{defin}
+\begin{prop}\label{K_exp=K0_exp_union_something}
+	One has $\mathcal{K}_{\exp} = K^0_{\exp} \cup \left[\left(-\mathbb{R}_+\right) \times \mathbb{R}_+ \times \{0\} \right]$, $\mathcal{P}_{\exp} = \mathcal{P}^0_{\exp} \cup \{0\} \times \mathbb{R}_+ \times \mathbb{R}_+$ and $ (\mathcal{K}_{\exp})^* = \mathcal{P}_{\exp} \neq \mathcal{K}_{\exp}$.
+\end{prop}
+
+\section{The standard conic form}
+In order to solve an optimization model using our solver. (\cite{Yuan_Gao_note}. The interior-point method implemented is described in \cite{Yuan_Gao_note}. We adopt the block-wise standard form in SDPT3 which are described in \cite{SDPT3_2010}. Specifically, the solver takes in the following Primal standard form
+\begin{align*}
+\begin{split}
+\quad &\min\,\, \sum_{i=1}^N c_i^Tx_i\\
+& \text{s.t.}\,\, \sum_{i=1}^N A_i x_i = b \\
+&\quad\quad x_i \in K_i,\ \forall i
+\end{split} \quad\quad\quad\quad\quad\quad\quad\,\,\, \textnormal{(P)}
+\end{align*}
+The dual of (P) is the following problem
+\begin{align*}
+\begin{split}
+\quad &\max\,\, b^T y\\
+& \text{s.t.}\,\, A_i^T y + z_i = c_i, \ \forall i \\
+&\quad\quad y \in \mathbb{R}^m,\ z_i \in K_i^*, \forall i
+\end{split}\quad\quad\quad\quad\textnormal{(D)}
+\end{align*}
+where $x_i, c_i \in \mathbb{R}^{n_i}$, $A_i \in \mathbb{R}^{m\times n_i}$, $b \in \mathbb{R}^m$, $n = \sum_{i=1}^N n_i \geq m$ and each $K_i$ is one of the following: (i) the nonnegative orthant $\mathbb{R}_+^{n_i}$, (ii) product of second-order cones $\mathcal{Q}^{q_1}\times \cdots \times \mathcal{Q}^{q_{k_i}}$, $\sum_{j=1}^{k_i} q_j = n_i$, (iii) product of the exponential cone  $\left(\mathcal{K}_{\exp}\right)^{k_i}$, $3k_i = n_i$ or (iv) $\mathbb{R}^{n_i}$. 
+
+In subsequent sections we present several recently developed robust optimization models that can be written into the standard conic form and solved using our solver. 
+
+\section{Convex aproximation of chance constrained problems}
+Consider the following problem
+\begin{align}\label{chance_constrained_general}
+\min_{\boldsymbol{x}\in \mathcal{X}} f(\boldsymbol{x}) \quad \textnormal{s.t.}\quad  \mathbb{P}\left(F\left(\boldsymbol{x},\tilde{\boldsymbol{\xi}}\right)\leq 0\right)\geq 1-\alpha
+\end{align}
+where $\mathcal{X}\subset \mathbb{R}^n$ is a nonempty convex set, $\boldsymbol{\xi}$ is a random vector with support $\Xi\subset \mathbb{R}^d$, $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is a convex function and $F: \mathbb{R}^n\times \Xi \rightarrow \mathbb{R}^m$. It is known as a \textit{chance constrained} problem since (some of) the constraints are characterized by . In this section we will present the portfolio optimization example in \cite{Nemirovsky_and_Shapiro} and demonstrate how a new convex approximation approach, known as the \textit{Bernstein approximation}, compares favorably to the classical simulation-based \textit{scenario approach}.
+
+\subsection{Scenario approach}
+The scenario approach is briefly described as follows without further discussion on its theoretical properties. To obtain an approximation of \eqref{chance_constrained_general}, one considers $N$ independent realizations of $\tilde{\boldsymbol{\xi}}$, $\boldsymbol{\xi}_k$, $k=1,\cdots,N$ and solves the following problem
+\begin{align}\label{Scenario_problem_N}
+\min f(\boldsymbol{x}) \quad \textnormal{s.t.} \quad F\left(\boldsymbol{x}, \boldsymbol{\xi}_k\right) \leq 0,\ k=1,\cdots,N.
+\end{align}
+
+As Calafiore and Campi have shown in \cite{Calafiore_and_Campi}, under mild assumptions on $F$ and the distribution of $\tilde{\boldsymbol{\xi}}$ (which are indeed satisfied for the example below), for a given $\delta\in (0,1)$, one can choose
+\begin{align}\label{Choose_N_sample_size}
+N = \left\lceil 2n\alpha^{-1}\log(12/\alpha)+2\alpha^{-1}\log(2/\delta)+2n\right\rceil
+\end{align}
+so that the solution yielded by \eqref{Scenario_problem_N} violates the original chance constraint with probability at most $\delta$.
+
+\subsection{Bernstein approach}\label{Section_Bernstein_general}
+For $m=1$ (so that $F$ is real-valued) and $F\left(\boldsymbol{x},\tilde{\boldsymbol{\xi}}\right) = g_0(\boldsymbol{x})+\sum_{j=1}^d \tilde{\xi}_j g_j(\boldsymbol{x})$ where the components $\tilde{\xi}_j$ are mutually independent, the Bernstein approximation to \eqref{chance_constrained_general} is the following convex problem
+\begin{align}\label{Bernstein_m_1}
+	\min_{\boldsymbol{x}\in\mathcal{X}} f(\boldsymbol{x}) \quad s.t. \quad \inf_{t>0}\left(g_0(x)+\sum_{j=1}^d t\Lambda_j\left(t^{-1}g_j(\boldsymbol{x})\right)-t\log \alpha\right)\leq 0.
+\end{align}
+For $m>1$, the Bernstein approximation can be similarly defined under mild assumptions on $F$ and $\boldsymbol{\xi}$. As Nemirovski and Shapiro have shown in \cite{Nemirovsky_and_Shapiro}, this is a \textit{conservative} approximation. In other worlds, the solution yielded by \eqref{Bernstein_m_1} is always feasible for \eqref{chance_constrained_general}.
+
+\subsection{The model} \label{the_model_description}
+We consider the problem of maximizing the upper $(1-\alpha)$-quantile of the total profit given initial capital, $n$ risky assets and a risk-free money account. The problem can be formulated as the following chance-constrained problem (see Section 5 in \cite{Nemirovsky_and_Shapiro})
+\begin{align} \label{investment_problem}
+\max_{\begin{matrix}
+	\tau \in \mathbb{R}\\ 	
+	x_0, x_1\cdots,x_n \geq 0
+	\end{matrix}}\ (\tau - 1)\ \ \ \textnormal{s.t.}\ \ \mathbb{P} \left(\tau > \sum_{j=0}^n \tilde r_j x_j \right) \leq \alpha,\ \sum_{j=0}^{n} x_j \leq 1
+\end{align}
+where $\tilde{r}_j$ is a random variable representing the return of asset $j$, $j=1\cdots,n$ and $\alpha \in [0,1]$ denotes the confidence level. We characterize $\tilde{r}_j,\ j=0,\cdots,n$ as follows.
+\begin{enumerate}
+	\item The returns $\tilde r_0, \tilde r_1, \cdots, \tilde r_n$ satisfy $\tilde r_0=r_0=1$ and $\mathbb{E}(\tilde r_j) = 1 + \rho_j,\ j=1,\cdots,n$.
+	
+	\item For $j=1,\cdots,n$,  $l=1,\cdots,q$, one has $\tilde r_j = \tilde\eta_j + \sum_{l=1}^q \gamma_{jl}\tilde\zeta_l$ where $\tilde\eta_j \sim \mathcal{LN}(\mu_j, \sigma_j^2)$ (individual uncertainties) and $\tilde\zeta_l \sim \mathcal{LN}(\nu_l, \theta_l^2)$ (common factors). Here $\mathcal{LN}(\mu,\sigma^2)$ denotes the log-normal distribution with parameters $\mu$ and $\sigma$. 
+
+	\item All $\tilde\eta_j$ and $\tilde\zeta_l$ are independent of each other.
+	
+	\item The parameters $\rho_j$, $\mu_j$, $\sigma_j$, $\nu_j$, $\theta_j$, $\gamma_{jl}$ satisfy
+	\begin{align*}
+	&\mu_j, \nu_j, \gamma_{jl} \geq 0,\ j=1,\dots,n,\ l=1,\cdots,q, \\[1ex]
+	&0\leq \rho_1 \leq \cdots \leq \rho_n,\\[1ex]
+	&\mathbb{E}\left[\sum_{l=1}^q \gamma_{jl} \tilde\zeta_l\right] =  \sum_{l=1}^q \gamma_{jl} \exp \left(\nu_l + \dfrac{\theta_l^2}{2}\right) = \dfrac{\rho_j}{2},\ j = 1, \cdots, n,\\[1ex]
+	&\mathbb{E}\left[\tilde\eta_j\right] = \exp\left(\mu_j + \dfrac{\sigma_j^2}{2}\right) = 1 + \dfrac{\rho_j}{2},\ j =1,\cdots, n.
+	\end{align*}
+\end{enumerate}
+
+Note that \eqref{investment_problem} is always feasible. In fact, $x_0=1$, $x_1=\cdots=x_n=0$ is a feasible solution with objective value $0$.
+
+It is clear that \eqref{investment_problem} can be formulated into \eqref{chance_constrained_general} with $m=1$. Specifically, denote $\bar{\boldsymbol{x}} = \left(\tau, x_0, x_1, \cdots, x_n\right)^T$. The (minimization) objective function is simply $f(\bar{\boldsymbol{x}}) = 1-\tau$ and the chance constraint is \[\mathbb{P}\left(F\left(\bar{\boldsymbol{x}}, \tilde{ \boldsymbol\xi} \right) \leq 0 \right) \geq 1-\alpha\] where \[F\left(\bar{\boldsymbol{x}},\tilde{\boldsymbol{\xi}}\right) =g_0(\bar{\boldsymbol{x}}) + \sum_{j=1}^d \boldsymbol{\xi}_j g_j(\bar{\boldsymbol{x}}),\ \tilde{\boldsymbol{\xi}} = \left(\tilde{\xi}_1, \cdots, \tilde\xi_{n+q}\right)^T,\ d = n+q,\]
+\[g_0(\bar{\boldsymbol{x}}) = \tau - x_0.\]
+\[\tilde{\xi}_j = \tilde{\eta}_j,\ g_j(\bar{\boldsymbol{x}}) = -x_j,\ 1\leq j \leq n,\] 
+\[\tilde{\xi}_{n+l} = \tilde{\zeta}_l,\ g_{n+l}(\bar{\boldsymbol{x}}) = -\sum_{j=1}^n \gamma_{jl}x_j,\ 1\leq l \leq q.\]
+
+\subsection{Discretizing the log-normal random variables}
+In order to apply Bernstein approximation to the above problem, it is required that the moment generating function (MGF) of $\tilde{\xi}_j$ have a nontrivial effective domain for any $j$. However, this is not the case for a $\mathcal{LN}$ random variable since its MGF of takes $\infty$ outside the origin. As such, a conservative discretization scheme described in Section 5 in \cite{Nemirovsky_and_Shapiro} has been adopted and all random variables are now discrete with finite support. This scheme ensures that any feasible solution to the new problem with discrete random variables remains feasible to the original problem. For each $j$, denote the support and the associated probability masses as $\left\{(v_k^j, p_k^j)\mid k = 1,\cdots, N_j \right\}$. In other words, for each $j$, $k=1, \cdots, N_j$, one has $\xi_j \in \left\{v_k^j \mid k=1,\cdots, N_j \right\}$ and $\mathbb{P}\left(\xi_j = v_k^j\right) = p_k^j$ and the moment generating function of $\xi_j$ is $M_j: z \rightarrow \sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j z\right)$. Denote $\Lambda_j(\cdot) = \log M_j(\cdot)$.
+
+\subsection{Bernstein approximation}
+By Section \ref{Section_Bernstein_general}, the Bernstein approximation to the above problem is the following (note that we keep the maximization sense)
+\begin{align} \label{Bernstein_approx_direct_form}
+\begin{split}
+\mathcal{O}^{Bernstein}\quad &=\max_{\begin{matrix}
+	\tau \in \mathbb{R}\\ 	
+	\bar{\boldsymbol{x}} = (x_0, x_1\cdots,x_n)^T \geq 0
+	\end{matrix}} (\tau - 1)\ \ \ \\
+&\textnormal{s.t.}\ \ \sum_{j=0}^n x_j \leq 1,\ \ \inf_{t>0} \left(g_0(\bar{\boldsymbol{x}}) + \sum_{j=1}^d t \Lambda_j\left(t^{-1}g_j(\bar{\boldsymbol{x}})\right) - t\log \alpha \right) \leq 0.
+\end{split}
+\end{align}
+
+Note that problem \eqref{Bernstein_approx_direct_form} is equivalent to
+\begin{align}\label{Bernstein_approx_eq_form_1}
+\begin{split}
+&\max_{\begin{matrix}
+	\tau \in \mathbb{R} \\ 
+	x_0, x_1, \cdots, x_n \geq 0\\
+	g_0,\ g_1, \cdots, g_d \in \mathbb{R}\\
+	s_1, \cdots, s_d \in \mathbb{R}
+	\end{matrix}} (\tau - 1)\\ \textnormal{s.t.}\ \ & \sum_{j=0}^n x_j \leq 1\\
+&g_0 + \sum_{j=1}^d s_j - t\log \alpha = 0 \\
+{(*)_j}:\ \ \ & \Lambda_j\left(\dfrac{g_j}{t}\right) \leq s_j,\ j=1, \cdots, d\ \ \ \\
+& g_0 = \tau - x_0 \\
+& g_j = -x_j,\ j = 1, \cdots, n \\
+& g_{n+l} = -\sum_{j=1}^n \gamma_{jl}x_j,\ l=1,\cdots, q
+\end{split}
+\end{align}
+We then show that constraint $(*)_j$ in \eqref{Bernstein_approx_eq_form_1} can be reformulated into linear and exponential cone constraints by introducing a few auxiliary variables. Specifically, for $j=1,\cdots,d$,
+\begin{align*}
+&\sum_{k=1}^{N_j} p_k^j \exp \left(v_k^j \cdot \dfrac{g_j}{t}\right) \leq \exp\left(\dfrac{s_j}{t}\right) \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq 1 \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^j\cdot  t \exp\left(\dfrac{v_k^j g_j - s_j}{t}\right) \leq t \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ t\exp\left(\dfrac{w_k^j}{t}\right) \leq u_k^j,\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j \\
+\Leftrightarrow\ & \sum_{k=1}^{N_j} p_k^ju_k^j = t,\ \ \ \left[w_k^j; u_k^j; t\right] \in \mathcal{K}_{\exp},\ w_k^j =v_k^j g_j - s_j,\ k = 1, \cdots, N_j
+\end{align*}
+
+Finally, problem \eqref{Bernstein_approx_direct_form} can be reformulated into the standard form (P), namely
+\begin{align}
+\begin{split}\label{reformulated_std_conic_form}
+& \mathcal{O}^{P} = \min  -\tau \\ 
+\textnormal{s.t.}\ \ \ & x_0 + x_1 + \cdots + x_n + s_x = 1 \\
+& g_0 + \left(\sum_{j=1}^d s_j\right) - \left(\log \alpha\right) t_0 = 0,\ d=n+q \\
+& g_0  - \tau + x_0 = 0 \\
+& g_j + x_j = 0,\ j = 1, \cdots, n \\
+& g_{n+l} + \sum_{j=1}^n \gamma_{jl} x_j = 0,\ l = 1, \cdots, q \\
+& w_k^j - v_k^j g_j + s_j = 0,\ j = 1, \cdots,d,\ k = 1, \cdots, N_j \\
+& \sum_{k=1}^{N_j} p_k^j u_k^j - t_0 = 0,\  j =1,\cdots,d \\
+& t_0 - t_k^j = 0,\ j = 1,\cdots, d,\ k = 1,\cdots,N_j
+\end{split}
+\end{align}
+with decision variables
+\begin{align*}
+& \tau \in \mathbb{R} \\
+& x_0, x_1, \cdots, x_n, s_x \geq 0 \\
+& g_0, g_1, \cdots, g_d \in \mathbb{R} \\
+& t_0 \geq 0 \\
+& s_1, \cdots, s_d \in \mathbb{R} \\
+& \left[w_k^j; u_k^j; t_k^j\right] \in \mathcal{K}_{\exp},\ j = 1, \cdots, d,\ k = 1,\cdots, N_j.
+\end{align*}
+
+The optimal objective to \eqref{Bernstein_approx_direct_form} is thus $\mathcal{O}^{Bernstein} = -\mathcal{O}^P -1$.
+
+\subsection{Numerical experiment}
+For experiment purpose, we (randomly) generate parameters that satisfy the assumptions in Section \ref{the_model_description} with $n=64$, $q=8$. The random variables are discretized with $\Delta=0.01$ and $\epsilon=10^{-4}$ (see Section 5 in \cite{Nemirovsky_and_Shapiro}). For the same set of parameters, we also solve the \textit{nominal problem} (which has a trivial solution) and use the scenario approach with sample size $N$ given by $\eqref{Choose_N_sample_size}$ to obtain an approximate solution.
+
+With the set-up in Section \ref{the_model_description}, the nominal problem is defined as
+\begin{align}\label{nominal_problem}
+\mathcal{O}^{nominal} \quad &= \max_{\begin{matrix}\
+	\tau \in \mathbb{R} \\
+	x_0, x_1, \cdots, x_n \geq 0
+	\end{matrix}}\ \left(\tau - 1\right)\ \ \ \ \\[1ex] &\textnormal{s.t.}\ \ \tau \leq \sum_{j=0}^n \left(1+\rho_j\right) x_j,\  \sum_{j=0}^n x_j \leq 1
+\end{align}
+In other words, \eqref{nominal_problem} is \eqref{investment_problem} with deterministic returns that are known. It can be easily seen that an optimal solution to \ref{nominal_problem} is $\tau = \rho_n$, $x_0=x_1=\cdots=x_{n-1}=0$, $x_n=1$ with optimal objective $\mathcal{O}^{nominal} = \rho_n$. 
+
+
+\newpage
+\bibliography{references}{}
+\bibliographystyle{plain}
+\end{document}

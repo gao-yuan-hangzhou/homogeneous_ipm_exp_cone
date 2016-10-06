@@ -1,7 +1,7 @@
 function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, rel_eps, max_iter_count)
 format long;
 addpath([fileparts(pwd), '/subroutines']);
-disp('=== hsd_lqeu_fast started... ===');
+disp('=== hsd_lqeu_fast (sparse LU with scaled partial pivoting) started... ===');
 % This program makes use of the sparse LU function [L,U,P,Q]=lu()
 %   in solving the systems for the search directions.
 
@@ -138,12 +138,23 @@ for it_count =1:max_iter_count
     G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
     H = sparse(H_dual(z, dimension_info)); H = theta*H; % Assign H matrix to fix a Matlab memory allocation issue
     G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)]; 
-    G_bar = [G1; G2; G3]; save('G_bar.mat', 'G_bar');
+    G_bar = [G1; G2; G3]; %save(['G_bar', num2str(cputime)], 'G_bar');
     R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
-    tic;[L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.05); toc;
-    LUmat = [L_lu, U_lu]; disp(['density of [L,U] = ' num2str(nnz(LUmat)/numel(LUmat))]);
+    try
+        tbeginlu = cputime; [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.01); tlu = cputime - tbeginlu;
+        % disp(['Time taken by the LU step = ' num2str(tlu)]);
+    catch memory_error
+        disp('Memory issue in factorizing G_bar...reduce the pivot threshold to 0.001');
+        try 
+            tbeginlu = cputime; [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.001); tlu = cputime - tbeginlu;
+        catch memory_error
+            disp('Memory issue in factorizing G_bar...reduce the pivot threshold to 0.0001');
+            tbeginlu = cputime; [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.0001); tlu = cputime - tbeginlu;
+        end
+    end
+    %LUmat = [L_lu, U_lu]; disp(['density of [L,U] = ' num2str(nnz(LUmat)/numel(LUmat))]);
     %disp(['nnz([L,U,P,Q,R])=' num2str(nnz(L_lu)+nnz(P_lu)+nnz(U_lu)+nnz(P_lu)+nnz(Q_lu)+nnz(R_lu))]);
-    tic;pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p))));toc; % pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
+    pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p)))); % pred_dir = G_bar\R_bar_p; %linsolve(G_bar,R_bar_p);
     % dx_p = pred_dir(1:Nt); dy_p = pred_dir(Nt+1:Nt+m); dz_p = pred_dir(Nt+m+1: 2*Nt+m); 
     dtau_p = pred_dir(2*dim_x+m+1); dkappa_p = pred_dir(2*dim_x+m+2); % dtheta_p = pred_dir(2*Nt+m+3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,7 +165,7 @@ for it_count =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve for the combined search direction
     R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)]; %R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
-    tic;comb_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar))));toc; % comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
+    comb_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar)))); % comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
     % dx = comb_dir(1:Nt); dy = comb_dir(Nt+1:Nt+m); dz = comb_dir(Nt+m+1:2*Nt+m); dtau = comb_dir(2*Nt+m+1); dkappa = comb_dir(2*Nt+m+2); 
     dtheta = comb_dir(2*dim_x+m+3);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

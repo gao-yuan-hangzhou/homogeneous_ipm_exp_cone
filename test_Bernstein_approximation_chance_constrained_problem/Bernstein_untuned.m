@@ -3,13 +3,13 @@ addpath([fileparts(pwd), '/subroutines']);
 addpath([fileparts(pwd), '/subroutines']);
 clear;
 % Whether to use CVX to solve the Bernstein approximation
-is_using_cvx = false;
+is_using_cvx = true;
 
 % Paper reference: 
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 64; 
+n = 100;
 q = 8; 
 disp(['number_of_risky_assets = ' num2str(n)]);
 disp(['number_of_common_factors = ' num2str(q)]);
@@ -21,7 +21,7 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = 0.01*randn(q,1); theta = 0.1*rand(q,1);
+nu = 0.1*randn(q,1); theta = 0.1*rand(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -31,7 +31,7 @@ for kk = 1:q
 end
 
 log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma(i)
-mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.5*rand(n,1) .* mu; mu = log_E_eta - sig.^2/2;
+mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.01*rand(n,1) .* mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
 % save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
@@ -42,8 +42,8 @@ mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.5*rand(n,1) .* mu; mu = log_E_eta - si
 d = n+q;
 
 % Construct the discrete distributions
-eps_th = 1e-4;
-Del_resol = 0.01;
+eps_th = 1e-5;
+Del_resol = 0.005;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
@@ -185,7 +185,6 @@ A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}
 disp('Done constructing blk, A_cell, c_cell, b for hsd_sqeu_Schur!');
 
 % ============== Call the solver ==============
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_dch_SMW(blk, A_cell, c_cell, b, 1e-4,100);
 %[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
 [obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, 1e-4, 100);
 % =============================================

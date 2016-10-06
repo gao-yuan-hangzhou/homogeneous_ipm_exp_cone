@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: solving_optimization_models_using_exp_cone_solver.aux
+The style file: plain.bst
+Database file #1: references.bib
+Warning--entry type for "SDPT3_2010" isn't style-file defined
+--line 50 of file references.bib
+Warning--entry type for "Yuan_Gao_note" isn't style-file defined
+--line 86 of file references.bib
+You've used 6 entries,
+            2118 wiz_defined-function locations,
+            535 strings with 5144 characters,
+and the built_in function-call counts, 1606 in all, are:
+= -- 147
+> -- 71
+< -- 1
++ -- 29
+- -- 22
+* -- 95
+:= -- 280
+add.period$ -- 16
+call.type$ -- 6
+change.case$ -- 27
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 59
+empty$ -- 140
+format.name$ -- 22
+if$ -- 332
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 4
+newline$ -- 31
+num.names$ -- 12
+pop$ -- 38
+preamble$ -- 1
+purify$ -- 23
+quote$ -- 0
+skip$ -- 47
+stack$ -- 0
+substring$ -- 79
+swap$ -- 7
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 22
+warning$ -- 0
+while$ -- 14
+width$ -- 7
+write$ -- 61
+(There were 2 warnings)

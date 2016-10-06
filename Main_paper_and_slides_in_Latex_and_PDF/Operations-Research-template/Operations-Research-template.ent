@@ -1,0 +1,30 @@
+\@doanenote {1}
+macro:->Who
+would
+expect
+that?
+\@endanenote 
+\@doanenote {2}
+macro:->This
+is
+really
+silly.
+We
+will
+demonstrate
+here
+how
+an
+endnote
+should
+look
+like
+if
+it
+is
+longer
+than
+just
+one
+line.
+\@endanenote 
