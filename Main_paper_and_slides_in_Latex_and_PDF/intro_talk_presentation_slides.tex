@@ -78,7 +78,7 @@
 	\end{itemize}
 \item Powerful solvers have been developed since then.
 	\begin{itemize}
-		\item LP: Excel, Matlab, AMPL.
+		\item LP: Excel, Matlab.
 		\item SOCP/MISOCP: Cplex, Gurobi.
 		\item SDP: SDPT3 (Toh, Todd \& T\"ut\"unc\"u), SeDuMi (Sturm, Romanko \& Pólik).
 	\end{itemize}
@@ -386,7 +386,7 @@
 	\frametitle{Example: Convex approximation of chance constrained problems}
 	\begin{itemize}
 		\item For a randomly generated instance of \eqref{Bernstein_approx_direct_form} with $n=100$, $q=4$, $\alpha=0.05$, $\epsilon=10^{-5}$, $\Delta=0.005$ and appropriate values of distributional parameters, the resulting standard form (P') has $A \in \mathbb{R}^{2187\times 3491}$, $density(A) = 0.0012058$,
-		$N_l = 539$, $N_q = 0$, $N_e = 2952$.
+		$dim_l = 539$, $dim_q = 0$, $dim_e = 2952$.
 		\item The dimension of (the exponential cone part of) $A$ depends chiefly on the \say{shape} of the $\mathcal{LN}$ distributions and precision of the discretization.
 	\end{itemize}
 \end{frame}

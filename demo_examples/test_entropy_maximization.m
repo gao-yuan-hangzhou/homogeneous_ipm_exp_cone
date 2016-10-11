@@ -57,8 +57,8 @@ blk{1,1} = 'e'; blk{1,2} = 3*ones(N,1); A_cell{1} = A_tilde; c_cell{1} = c_tilde
 
 % Solve the instance
 disp('Calling the solvers...');
-[pd_obj, xre, yre, zre, info] = hsd_lqeu_Schur_dense_column_handling(blk, A_cell, c_cell, b_input, 1e-8);
-[pd_obj, xre, yre, zre, info] = hsd_lqeu(blk, A_cell, c_cell, b_input, 1e-8);
+[pd_obj, xre, yre, zre, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b_input, 1e-8);
+%[pd_obj, xre, yre, zre, info] = hsd_lqeu(blk, A_cell, c_cell, b_input, 1e-8);
 
 % Retrive the optimal decision variables
 x_sol = zeros(N,1);

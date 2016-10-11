@@ -8,7 +8,7 @@ sample_size = 200;
 % This means use(1-partition_ratio) data for training and partition_ratio for testing
 partition_ratio = 0.5;
 % This means we vary Gamma according to the list
-Gamma_list = (0:10); 
+Gamma_list = (0:0); 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -27,7 +27,7 @@ J = 4;
 purchase_record_mat = csvread('data/Cracker_matlab_friendly.csv',2);
 total_num_obs = size(purchase_record_mat,1);
 purchase_record_mat = purchase_record_mat(randsample(total_num_obs,min(total_num_obs,sample_size)),:); % Get first 10 observations
-save('purchase_record_mat.mat', 'purchase_record_mat');
+%save('purchase_record_mat.mat', 'purchase_record_mat');
 load('purchase_record_mat.mat');
 
 % N is the number of observations of this customer
