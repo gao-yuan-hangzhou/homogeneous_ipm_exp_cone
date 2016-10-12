@@ -2,7 +2,7 @@
 
 The main program is === hsd_lqeu_fast.m === which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
 
-min c{1}' * x{1} + ... + c(N)' * x{N}
+min c{1}' * x{1} + ... + c{N}' * x{N}
 
 s.t. A{1} * x{1}+...+A{n} * x{n} = b, x{j} ∈ K{j}, i = 1, ..., N
 
