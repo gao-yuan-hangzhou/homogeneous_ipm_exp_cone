@@ -3,7 +3,7 @@ addpath(fileparts(pwd)); addpath([fileparts(pwd), '/subroutines']); addpath([fil
 % clear;
 
 % Set the number of exponential cones, i.e. dimension of x = 3*Ne
-Ne = 500; Nl = 15; Nq = max(2,randi(50,10,1));
+Ne = 50; Nl = 130; Nq = max(5,randi(50,10,1));
 
 % Construct a feasible instance
 blk{1,1} = 'e'; blk{1,2} = 3*ones(Ne,1); 
@@ -12,7 +12,13 @@ blk{3,1} = 'q'; blk{3,2} = Nq;
 [A_cell, c_cell, b] = generate_random_feasible_instance(blk,25);
 
 % Solve the problem using hsd_lqeu
-[opt_sol, x_retun, y_return, z_return, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b);
+in_opt.rel_eps = 1e-5;
+clear input_options;
+[opt_sol, x_return, y_return, z_return, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b);
+input_options.initial_x = x_return;
+input_options.initial_y = y_return;
+input_options.initial_z = z_return;
+[opt_sol, x_retun1, y_return1, z_return1, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, input_options);
 disp(['dual optimal solution by hsd_lueq = ' num2str(opt_sol(1))]);
 
 % Solve the problem using CVX
