@@ -1,45 +1,45 @@
 # homogeneous_ipm_exp_cone
 
-====== Currently working on a fast subroutine for solving the Schur complement equation. ======
+The main program is === hsd_lqeu_fast.m === which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
 
-The main program is hsd_lqeu_Schur.m which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems of the following form:
+min c{1}' * x{1} + ... + c(N)' * x{N}
 
-min c'x
+s.t. A{1} * x{1}+...+A{n} * x{n} = b, x{j} ∈ K{j}, i = 1, ..., N
 
-s.t. Ax = b, x(i) in K(i)
+and each K{j}, j = 1, ..., N can be one of the following:
 
-where x = [x(1); ..., x(N)], c = [c(1), ..., c(N)], A = [A(1), ..., A(N)]
+  % blk{j,1} = 'l' means x{j} ∈ nonnegative orthant of dimension blk{j,2} or sum(blk{j,2})
+  
+  % blk{j,1} = 'q' means x{j} ∈ product of second-order cones. In this case, blk{j,2} = [q(1); ...; q(n)] gives the dimensions of the individual second-order cones. A second order cone of dimension p is defined as Q(p)= {x is p-dimensional: x(1)>=||x(2:n)||}, where ||·|| is the usual 2-norm.
 
-and each K(j) can be one of the following:
+  % blk{j,1} = 'e' means x{j} ∈ product of the exponential cone Kexp = closure{(x1,x2,x3): x2>=0, x3>0, exp(x1/x3)<=x2/x3}. In this case, there are length(blk{j,2}) exponential cones, where blk{j,2} = [3;...;3].
 
-  % A nonnegative orthant of dimension n_l, (R_+)^(n_l)
+  % blk{j,1} = 'u' means x{j} has dimension blk{j,2} and is unrestricted.
 
-  % product of lorentz cones Q(n) = {x in R^n: x(1)>=||x(2:n)||}, where || || is the Euclidean 2-norm.
 
-  % Product of the exponential cone K_exp = closure{(x1,x2,x3): x2>=0, x3>0, exp(x1/x3)<=x2/x3}.
+## ======== INPUT FORMAT ======== ##
 
-  % R^(n_u) for some integer n_u.
+[x_re,y_re,z_re, info_re] = hsd_lueq_fast(blk, A, c, b, input_options)
 
-====== How to call hsd_lqeu_Schur ======
+blk is the (2-by-N) cell array storing the dimensions of individual x{j}, as described above.
 
-[obj_val, x_re,y_re,z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b, optional_relative_accuracy, optional_maximum_iter_count);
+A is the cell array of coefficient matrices consisting of A{1}, ... , A{N}.
 
-====== What are blk, A_cell, c_cell and b? ======
+c is the cell array of cost vectors consisting of c{1}, ..., c{N}.
 
-For j = 1,...,N
+b is the right hand side vector in A{1} * x{1}+...+A{n} * x{n} = b.
 
-if K(j) is (R_+)^nl or R^nu, one has blk{j,1} = 'l' or 'u' respectively, blk{j,2} = dimension of x(j)
+You may wish to set one or more fields in the structure input_options as follows (note that everything below is OPTIONAL)
 
-if K(j) is a product of Lorentz cones, one has blk{j,1} = 'q', blk{j,2} is, say, [5;3;2;5] (each element is the dimension of 
-a single Lorenz cone)
+input_options.rel_eps: a number specifies the desired relative accuracy. If not specified, the default value is 1e-8.
 
-if K(j) is a product of exponential cones, one has blk{j,1} = 'e', blk{j,2} = [3;3;...;3], length(blk{j,2}) = number of exponential cones in the product
+input_options.max_iter_count: a number specifies the maximum number of iteartions allowed. If not specified, the default value is 500.
 
-c{1}, ..., c{N} corresponds to c(1), ..., c(N) such that c'x = c(1)'x(1) + ... + c(n)'x(n)
+input_options.initial_x: a cell array specifying x as part of the initial iterate.
 
-b is the right hand side vector of Ax = b, or A(1)x(1)+...+A(n)x(N) = b
+input_options.initial_y: a vector specifying y as part of the initial iterate. Note that its dimension is m=dim(b).
 
-Please refer to test_simple_examples, test_hsd_lqeu and test_hsd_lqeu_against_SDPT3 for more examples of usage.
+input_options.initial_z: a cell array specifying z as part of the initial iterate.
 
-Please email queries to gaoyuan@u.nus.edu or comment on the webpage. Thank you.
+Please email queries to gaoyuan@u.nus.edu or comment on the webpage.
 
