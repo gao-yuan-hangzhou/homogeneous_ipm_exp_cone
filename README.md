@@ -43,7 +43,8 @@ input_options.initial_z: a cell array specifying z as part of the initial iterat
 
 ## ======== References ======== ##
 
-Presentation slides available at https://goo.gl/MEyRgY. The slides include several important examples involving exponential cone constraints and a brief description of the algorithm implemented.
+Presentation slides are available at https://goo.gl/MEyRgY, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented.
+
 A more detalied description of the algorithm can be found at https://goo.gl/zIYIKB.
 
 Please email queries to gaoyuan@u.nus.edu or comment on the webpage.
