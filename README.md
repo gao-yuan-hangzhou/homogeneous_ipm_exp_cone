@@ -17,32 +17,32 @@ min c{1}' * x{1} + ... + c{N}' * x{N} s.t. A{1} * x{1}+...+A{n} * x{n} = b, x{j}
 
 ## ======== INPUT FORMAT ======== ##
 
-[x_re,y_re,z_re, info_re] = hsd_lueq_fast(blk, A, c, b, input_options)
+[x_re,y_re,z_re, info_re] = hsd_lueq_fast(blk, A, c, b, input_options) where
 
-blk is the (2-by-N) cell array storing the dimensions of individual x{j}, as described above.
+ - blk is the (2-by-N) cell array storing the dimensions of individual x{j}, as described above.
 
-A is the cell array of coefficient matrices consisting of A{1}, ... , A{N}.
+ - A is the cell array of coefficient matrices consisting of A{1}, ... , A{N}.
 
-c is the cell array of cost vectors consisting of c{1}, ..., c{N}.
+ - c is the cell array of cost vectors consisting of c{1}, ..., c{N}.
 
-b is the right hand side vector in A{1} * x{1}+...+A{n} * x{n} = b.
+ - b is the right hand side vector in A{1} * x{1}+...+A{n} * x{n} = b. 
 
 You may wish to set one or more fields in the structure input_options as follows (note that everything below is OPTIONAL)
 
-input_options.rel_eps: a number specifies the desired relative accuracy. If not specified, the default value is 1e-8.
+ - input_options.rel_eps: a number specifies the desired relative accuracy. If not specified, the default value is 1e-8.
 
-input_options.max_iter_count: a number specifies the maximum number of iteartions allowed. If not specified, the default value is 500.
+ - input_options.max_iter_count: a number specifies the maximum number of iteartions allowed. If not specified, the default value is 500.
 
-input_options.initial_x: a cell array specifying x as part of the initial iterate.
+ - input_options.initial_x: a cell array specifying x as part of the initial iterate.
 
-input_options.initial_y: a vector specifying y as part of the initial iterate. Note that its dimension is m=dim(b).
+ - input_options.initial_y: a vector specifying y as part of the initial iterate. Note that its dimension is m=dim(b).
 
-input_options.initial_z: a cell array specifying z as part of the initial iterate.
+ - input_options.initial_z: a cell array specifying z as part of the initial iterate.
 
 ## ======== References ======== ##
 
-Presentation slides are available at https://goo.gl/MEyRgY, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented.
+- Presentation slides are available at https://goo.gl/MEyRgY, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented.
 
-A more detalied description of the algorithm can be found at https://goo.gl/zIYIKB.
+- A more detalied description of the algorithm can be found at https://goo.gl/zIYIKB.
 
 Please email queries to gaoyuan@u.nus.edu or comment on the webpage.
