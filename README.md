@@ -2,19 +2,17 @@
 
 The main program is [hsd_lqeu_fast.m] which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
 
-min c{1}' * x{1} + ... + c{N}' * x{N}
+min c{1}' * x{1} + ... + c{N}' * x{N} s.t. A{1} * x{1}+...+A{n} * x{n} = b, x{j} ∈ K{j}, i = 1, ..., N
 
-s.t. A{1} * x{1}+...+A{n} * x{n} = b, x{j} ∈ K{j}, i = 1, ..., N
+ where each K{j}, j = 1, ..., N can be one of the following:
 
-and each K{j}, j = 1, ..., N can be one of the following:
-
-  Linear cone: blk{j,1} = 'l' means x{j} ∈ nonnegative orthant of dimension blk{j,2} or sum(blk{j,2})
+ - Linear cone: blk{j,1} = 'l' means x{j} ∈ nonnegative orthant of dimension blk{j,2} or sum(blk{j,2})
   
-  Second-order cone: blk{j,1} = 'q' means x{j} ∈ product of second-order cones. In this case, blk{j,2} = [q(1); ...; q(n)] gives the dimensions of the individual second-order cones. A second order cone of dimension p is defined as Q(p)= {x is p-dimensional: x(1)>=||x(2:n)||}, where ||·|| is the usual 2-norm.
+ - Second-order cone: blk{j,1} = 'q' means x{j} ∈ product of second-order cones. In this case, blk{j,2} = [q(1); ...; q(n)] gives the dimensions of the individual second-order cones. A second order cone of dimension p is defined as Q(p)= {x is p-dimensional: x(1)>=||x(2:n)||}, where ||·|| is the usual 2-norm.
 
-  Exponential cone: blk{j,1} = 'e' means x{j} ∈ product of the exponential cone Kexp = closure{(x1,x2,x3): x2>=0, x3>0, exp(x1/x3)<=x2/x3}. In this case, there are length(blk{j,2}) exponential cones, where blk{j,2} = [3;...;3].
+ - Exponential cone: blk{j,1} = 'e' means x{j} ∈ product of the exponential cone Kexp = closure{(x1,x2,x3): x2>=0, x3>0, exp(x1/x3)<=x2/x3}. In this case, there are length(blk{j,2}) exponential cones, where blk{j,2} = [3;...;3].
 
-  Unrestricted space: blk{j,1} = 'u' means x{j} has dimension blk{j,2} and is unrestricted.
+ - Unrestricted space: blk{j,1} = 'u' means x{j} has dimension blk{j,2} and is unrestricted.
 
 
 ## ======== INPUT FORMAT ======== ##
