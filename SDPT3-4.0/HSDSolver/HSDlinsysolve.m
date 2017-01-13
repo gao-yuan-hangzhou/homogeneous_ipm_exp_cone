@@ -129,7 +129,9 @@
              end         
           end
           if (solvesys)
+             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
              [xx,resnrm,solve_ok] = HSDbicgstab(coeff,rhs,L,[],[],printlevel);
+             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
              if (solve_ok<=0) & (printlevel)
                 fprintf('\n  warning: HSDbicgstab fails: %3.1f.',solve_ok); 
              end

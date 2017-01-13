@@ -1,7 +1,8 @@
-addpath(fileparts(pwd)); 
-addpath([fileparts(pwd), '/subroutines']);
-addpath([fileparts(pwd), '/subroutines']);
 clear;
+addpath(fileparts(pwd)); 
+addpath(fileparts(fileparts(pwd)));
+addpath([fileparts(fileparts(pwd)), '/subroutines']);
+
 % Whether to use CVX to solve the Bernstein approximation
 is_using_cvx = true;
 
@@ -182,11 +183,12 @@ A_cell{5} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+1:blk{1,2}+blk{2,2}+blk{3,2}
 A_cell{6} = A(:,blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+1:blk{1,2}+blk{2,2}+blk{3,2}+blk{4,2}+blk{5,2}+sum(blk{6,2}));
 
 % Display the time for constructing the input
-disp('Done constructing blk, A_cell, c_cell, b for hsd_sqeu_Schur!');
+disp('Done constructing blk, A_cell, c_cell, b!');
 
 % ============== Call the solver ==============
 %[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, 1e-4, 100);
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b);
+%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b);
 % =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);

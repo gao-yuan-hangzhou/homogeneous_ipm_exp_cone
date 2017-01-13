@@ -1,4 +1,4 @@
-function H = H_lorentz(x)
+function H = H_lorentz(x) % x is a column vector
 % Compute the Hessian of the log barrier of the Lorentz cone 
 % Q(m) = {x|sqrt(x(2)^2+...+x(n)^2)<=x(1)}
 % THe log barrier of Q(m) chosen is 

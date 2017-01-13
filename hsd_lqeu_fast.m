@@ -2,11 +2,12 @@ function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_fast(blk,
 % Calling syntax can be found here:
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/README.md
 format long;
-warning('on', 'all');
 
 % Include the path for subroutines
 % All subroutines needed are in the folder "subroutines"
+warning('off', 'all');
 addpath('./subroutines');
+warning('on', 'all');
 
 disp('=== hsd_lqeu_fast (sparse LU with scaled partial pivoting) started... ===');
 % This program makes use of [L,U,P,Q,R]=lu() 
@@ -40,6 +41,11 @@ try initial_z = input_options.initial_z;
     is_initial_z_given = true;
     disp('User specified initial_z!');
 catch err
+end
+
+% Make A_cell{k} sparse
+for k = 1:size(blk,1)
+    A_cell{k} = sparse(A_cell{k});
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,10 +123,14 @@ dimension_info.l = Nl; dimension_info.q = Nq; dimension_info.e = Ne; dimension_i
 % Construct A = [Al, Aq, Ae]
 Al = sparse(m,0); Aq = sparse(m,0); Ae = sparse(m,0);
 for k=1:size(blk,1)
-    if blk{k,1} == 'l' Al = [Al, A_cell{k}];
-    elseif blk{k,1} == 'q' Aq = [Aq, A_cell{k}];
-    elseif blk{k,1} == 'e' Ae = [Ae, A_cell{k}];
-    else disp(['Error: blk{' num2str(k) ',1} is not one of l, q or e!']);
+    if blk{k,1} == 'l' 
+        Al = [Al, A_cell{k}];
+    elseif blk{k,1} == 'q' 
+        Aq = [Aq, A_cell{k}];
+    elseif blk{k,1} == 'e' 
+        Ae = [Ae, A_cell{k}];
+    else
+        disp(['Error: blk{' num2str(k) ',1} is not one of l, q or e!']);
     end;
 end;
 A = [Al, Aq, Ae];
@@ -128,10 +138,14 @@ A = [Al, Aq, Ae];
 % Contruct c = [cl; cq; ce]
 cl = sparse(0,1); cq = sparse(0,1); ce = sparse(0,1);
 for k=1:size(blk,1)
-    if blk{k,1} == 'l' cl = [cl; c_cell{k}];
-    elseif blk{k,1} == 'q' cq = [cq; c_cell{k}];
-    elseif blk{k,1} == 'e' ce = [ce; c_cell{k}];
-    else display('Error: blk{k,1} is not one of l, q or e!');
+    if blk{k,1} == 'l' 
+        cl = [cl; c_cell{k}];
+    elseif blk{k,1} == 'q' 
+        cq = [cq; c_cell{k}];
+    elseif blk{k,1} == 'e' 
+        ce = [ce; c_cell{k}];
+    else
+        display('Error: blk{k,1} is not one of l, q or e!');
     end;
 end;
 c = [cl; cq; ce];
@@ -199,6 +213,17 @@ disp(['maximum iteration count = ' num2str(max_iter_count)]);
 % Set the default solution status
 result_info.solution_status = 'undetermined';
 
+% Compute the metrics of the initial iterate
+% x = x_bar(1:dim_x); 
+% y = x_bar(dim_x+1:dim_x+m); 
+% z = x_bar(dim_x+m+1:2*dim_x+m);  
+% tau = x_bar(2*dim_x+m+1); 
+% kappa = x_bar(2*dim_x+m+2); 
+% theta = x_bar(2*dim_x+m+3);
+% pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf)); % primal infeasibility
+% dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf)); % dual infeasibility
+% reldualgap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); % relative duality gap
+
 % The main loop
 for iter_idx =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,7 +260,7 @@ for iter_idx =1:max_iter_count
         end
         if is_dual_infeasible
             disp(['cTx = ' num2str(c'*x) ' < 0']);
-            display('The problem is dual infeasible. See info structure returned for a certificate.');
+            display('The problem is dual infeasible. See the info structure returned for a certificate.');
             % Construct and return a certificate of dual infeasibility
             idx_l = 1; 
             idx_q = Nl+1; 
@@ -275,20 +300,21 @@ for iter_idx =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Form G_bar, R_bar_p and solve for the predictor search direction
     G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
-    H = sparse(H_dual(z, dimension_info));
     % Assign H matrix to fix a Matlab memory allocation issue
-    H = theta*H; 
+    H = sparse(H_dual(z, dimension_info)); H = theta*H;
     % Only the Hessian in G3 is updated, while the rest of G_bar remains unchanged throughout
-    G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)]; 
-    G_bar = [G1; G2; G3]; % DEBUGGING: save(['G_bar', num2str(cputime)], 'G_bar');
+    G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)];
+    G_bar = [G1; G2; G3]; 
+    % save(['G_bar', num2str(cputime), '.mat'], 'G_bar'); % FOR DEBUGGING
     R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; % R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x]; 
     % LU Factorization of G_bar using lu(G_bar, threshold)
     % Note that a smaller threshold gives less accurate LU factorization but 
     % is more memory-efficient
     try
-        tbeginlu = cputime; 
+        % tbeginlu = cputime; 
+        % keyboard;
         [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.01); 
-        tlu = cputime - tbeginlu;
+        % tlu = cputime - tbeginlu;
         % disp(['Time taken by the LU step = ' num2str(tlu)]);
     catch memory_error
         disp('Memory issue in factorizing G_bar...reduce the pivot threshold to 0.001');
@@ -328,34 +354,41 @@ for iter_idx =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);
-    alpha_step = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
+    alpha_combined = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p, 0.8)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p,alpha_p)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = 0.98*find_alpha_max(x_bar, comb_dir, dimension_info);
     % x = x+alpha*dx; y = y + alpha*dy; z = z + alpha*dz; tau = tau + alpha*dtau; kappa = kappa + alpha*dkappa; theta = theta+alpha*dtheta;
-    x_bar = x_bar + alpha_step*comb_dir;
+    x_bar = x_bar + alpha_combined*comb_dir;
     % disp([num2str(theta,5) ' | ' num2str(sigma,5) ' | ' num2str(dtheta,5) ' | ' num2str(alpha,5) ' | '  num2str(tau,5) ' | ' num2str(kappa,5) ' | ' num2str(nnz(G_bar)/numel(G_bar))]);
     if iter_idx == 1
-        disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
-        disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ', total_dim_e = ' num2str(3*Ne)]);
+        disp(['size(A) = [' num2str(size(A,1)) ',' num2str(size(A,2)) ...
+            '], density(A) = ' num2str(nnz(A)/(size(A,1)*size(A,2)))]);
+        disp(['total_dim_l = ' num2str(Nl) ', total_dim_q = ' num2str(sum(Nq)) ...
+            ', total_dim_e = ' num2str(3*Ne)]);
         disp(['size(G_bar) = [' num2str(size(G_bar,1)) ', ' num2str(size(G_bar,2)) ']']);
-        disp(['Initial nnz and density of G_bar = [' num2str(nnz(G_bar)) ', ' num2str(nnz(G_bar)/numel(G_bar)) ']']);
-        disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Main loop started... %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-        disp('  theta       sigma        dtheta        alpha         tau         kappa       iteration');
+        disp(['Initial nnz and density of G_bar = ['...
+            num2str(nnz(G_bar)) ', ' num2str(nnz(G_bar)/numel(G_bar)) ']']);
+        disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% The main loop %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+        disp(' theta  pinfeas dinfeas dualgap   primalobj      dualobj    steplen   tau    kappa  iter');
     end
     if rem(iter_idx,5) == 0
-        fprintf('%10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %10.4d | %4d \n', theta, sigma, full(dtheta), alpha_step, tau, kappa, iter_idx);
+        pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf)); % primal infeasibility
+        dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf)); % dual infeasibility
+        reldualgap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); % relative duality gap
+        fprintf('%5.1d|%5.1d|%5.1d|%5.1d|%12.6d|%12.6d|%5.1d|%5.1d|%5.1d|%3d \n', ...
+            theta, pinfeas, dinfeas, reldualgap, c'*x/tau, b'*y/tau, alpha_combined, tau, kappa, iter_idx);
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check whether the program gets stuck halfway
-    if false % dtheta*alpha_step == 0
+    if dtheta*alpha_combined == 0
         display('No more progress possible! The value of theta cannot decrease anymore! Algorithm terminates now!');
-        res1 = norm(A*x/tau-b, Inf)/norm([A, b], Inf); 
-        res2 = norm(A'*y/tau + z/tau -c, Inf)/norm([A' speye(dim_x) c], Inf); 
-        res3 = abs(b'*y/tau - c'*x/tau)/(1+abs(b'*y/tau));
-        display(['The relative residual norms (linear primal, linear dual, duality gap) are ' ...
-            num2str(res1) ', ' num2str(res2) ' and ' num2str(res3)]);
+        pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf)); % primal infeasibility
+        dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf)); % dual infeasibility
+        reldualgap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); % relative duality gap
+        display(['The primal infeasibility, dual infeasibility and duality gap are ' ...
+            num2str(pinfeas) ', ' num2str(dinfeas) ' and ' num2str(reldualgap)]);
         break;
     end
 end
