@@ -32,7 +32,7 @@ disp('Portfolio Allocation under the Entropic Satisficing Measure');
 % ahigh(1) = alow(1)
 
 % Generate problem input
-n = 1000; p = rand(n,1); q = 1-p; vlow = 100 - 30*rand(n,1); vhigh = 100 + 30*rand(n,1);
+n = 20; p = rand(n,1); q = 1-p; vlow = 100 - 30*rand(n,1); vhigh = 100 + 30*rand(n,1);
 % Calculate E(V(i))
 
 %save('large_input.mat', 'n', 'p', 'q', 'vlow', 'vhigh');
@@ -89,9 +89,9 @@ blk{5,1} = 'l'; blk{5,2} = 1; A_cell{5} = A(:,8*n+1);     c_cell{5} = 0;
 % blk{6,1} = 'l'; blk{6,2} = 1; A_cell{6} = A(:,8*n+2);     c_cell{6} = 1;
 
 % Call the solver
-eps_accuracy = 1e-5;
-[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, eps_accuracy);
-%[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, eps_accuracy);
+input_options.max_iter_count = 500;
+% [obj_val, xsol, ysol, zsol, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b, input_options);
+[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, input_options);
 %clear obj_val xsol ysol zsol info; 
 %[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, eps_accuracy);
 

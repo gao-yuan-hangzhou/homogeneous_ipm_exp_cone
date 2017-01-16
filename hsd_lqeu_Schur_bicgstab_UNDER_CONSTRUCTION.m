@@ -1,4 +1,4 @@
-function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, input_options)
+function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, input_options)
 % Calling syntax can be found here:
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/README.md
 format long;
@@ -9,7 +9,7 @@ warning('off', 'all');
 addpath('./subroutines');
 warning('on', 'all');
 
-disp('=== hsd_lqeu_Schur_bicgstab (Schur complement equation solved using BiCGSTAB(l)) started... ===');
+disp('=== Calling hsd_lqeu_Schur_bicgstab (Schur complement equation solved using BiCGSTAB(l) or LU factorization)... ===');
 % This program makes use of [L,U,P,Q,R]=lu() 
 % (sparse LU factorization with scaled partial pivoting)
 % in solving the systems for the search directions.
@@ -334,6 +334,7 @@ for iter_idx =1:max_iter_count
     % The H matrix is the Hessian of the dual barrier evaluated at z
     % if iter_idx == 5 keyboard; end;
     H = H_dual(z, dimension_info); H = mu_hat*H; % to fix Matlab's memory allocation issue
+    % keyboard;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Now decompose M into M = Msp + U*D*U'; 
     % where Msp is sparse symmetric positive definite (nearly indefinite) and 

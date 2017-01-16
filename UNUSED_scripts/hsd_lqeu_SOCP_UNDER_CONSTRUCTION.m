@@ -1,4 +1,4 @@
-function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, input_options)
+function [obj_val, x_return,y_return,z_return, result_info] = hsd_lqeu(blk, A_cell, c_cell, b, input_options)
 % Calling syntax can be found here:
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/README.md
 format long;
@@ -230,7 +230,7 @@ end
 try
     max_iter_count = input_options.max_iter_count;
 catch err
-    max_iter_count = 8;
+    max_iter_count = 500;
 end
 
 disp(['relative accuracy = ' num2str(rel_eps)]);
@@ -246,6 +246,9 @@ is_lu = false;
 % Set the BiCGSTAB tolerance and max_iter_bicgstab
 tol_bicgstab = 1e-10;
 max_iter_bicgstab = 8;
+
+% Needed for decomposing the second-order cone Hessian
+has_q = (sum(Nq)~=0);
 
 % The main loop
 for iter_idx =1:max_iter_count
@@ -333,7 +336,21 @@ for iter_idx =1:max_iter_count
     Rt = - kappa; % Rt = mu_hat/tau - kappa;
     % The H matrix is the Hessian of the dual barrier evaluated at z
     % if iter_idx == 5 keyboard; end;
-    H = H_dual(z, dimension_info); H = mu_hat*H; % to fix Matlab's memory allocation issue
+    % Compute the diagonal part of mu_hat*H_dual(z)
+    % Definition: H = mu*H_dual(z) = E_mat + v*v'
+    E_mat = E_dual(z, dimension_info); E_mat = mu_hat*E_mat; % to fix Matlab's memory allocation issue
+    % Compute the rank-1 perturbation in the second-order cone Hessian
+    if has_q
+        v = sqrt(mu_hat)*v_dual(z, dimension_info); 
+    else
+        v = [];
+    end
+    % Define the linear operator H
+    if has_q
+        H = @(vec) E_mat*vec + v*(v'*vec);
+    else
+        H = @(vec) E_mat * vec;
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Now decompose M into M = Msp + U*D*U'; 
     % where Msp is sparse symmetric positive definite (nearly indefinite) and 
@@ -345,28 +362,33 @@ for iter_idx =1:max_iter_count
     DB = [zeros(2), eye(2); -eye(2), zeros(2)]; 
     DB_inv = [zeros(2), -eye(2); eye(2), zeros(2)];
     
-    % Construct H_tilde, H_tilde_1, H_tilde_2 such that H_tilde = bikdiag(H_tilde_1, H_tilde_2)
-    % and A_hat*H*A_hat' = A_hat_sp * H_tilde_1 * A_hat_sp' + A_hat_dc * H_tilde_1 * A_hat_dc'
-    % H_tilde = P_perm_mat'*H*P_perm_mat;
-    H_tilde_1 = P_perm_mat(:, 1:n-num_dc)'*H*P_perm_mat(:, 1:n-num_dc);
-    H_tilde_2 = P_perm_mat(:, n-num_dc+1:end)'*H*P_perm_mat(:, n-num_dc+1:end);
+    % Construct E_tilde_1 and E_tilde_2 such that 
+    % blkdiag(E_tilde_1, E_tilde_2) = P'*E_mat*P
+    E_tilde_1 = P_perm_mat(:, 1:n-num_dc)'*E_mat*P_perm_mat(:, 1:n-num_dc);
+    E_tilde_2 = P_perm_mat(:, n-num_dc+1:end)'*E_mat*P_perm_mat(:, n-num_dc+1:end);
 
     % Set M, Msp, U, D such that 
     % M = Msp + U*D*U' 
-    %   = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0])
-    %   = Msp + B_hat + A_hat_dc * H_tilde_2 * A_hat_dc'
-    Msp = A_hat_sp * H_tilde_1 * A_hat_sp' + diag([sparse(m,1); kappa/tau; 0]);
-    Msp_pert = Msp+1e-16*norm(Msp, Inf)*speye(m+2); % chol(Msp_pert)
-    U = [UB, A_hat_dc];
-    D = blkdiag(DB, H_tilde_2);
-    D_inv = blkdiag(DB_inv, inv(H_tilde_2));
+    Msp = A_hat_sp * E_tilde_1 * A_hat_sp' + diag([sparse(m,1); kappa/tau; 0]);
+    Msp_pert = Msp+1e-15*norm(Msp, Inf)*speye(m+2); % chol(Msp_pert)
+    
+    if has_q
+        U = [UB, A_hat_dc, A_hat*v];
+        D = blkdiag(DB, E_tilde_2, 1);
+        D_inv = blkdiag(DB_inv, inv(E_tilde_2), 1);
+    else
+        U = [UB, A_hat_dc];
+        D = blkdiag(DB, E_tilde_2);
+        D_inv = blkdiag(DB_inv, inv(E_tilde_2));
+    end
+    
     % Define M = Msp + U*D*U' as a linear map since computing U*D*U' is time-consuming
     M = @(yy) Msp*yy + U*D*(U'*yy);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
     % (28) is M*y_hat = h_hat (with sigma = 0)
     % Construct the right hand side
-    h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]); 
+    h_hat = sparse(Rp_hat + A_hat*(H(Rd)-Rc) + [sparse(m,1); Rt; 0]); 
     
     % Solve for dy_hat using Sherman-Morrison formula
     % Calculate Msp\h_hat = R\(R'\h_hat), Msp\U
@@ -388,56 +410,31 @@ for iter_idx =1:max_iter_count
             if flag ~= 0
                 throw(exception);
             end
-            dy_pred = dy_hat_pred(1:m);
-            dtau_pred = dy_hat_pred(m+1);
-            dtheta_pred = dy_hat_pred(m+2);
-            dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
-            dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
-            dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
-            pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
         catch err
-            disp(['Preconditioned BiCGSTAB fails! Switch to LU factorization of G_bar at iteration ', num2str(iter_idx)]);
-            % keyboard;
+            disp(['Preconditioned BiCGSTAB fails! Switch to LU factorization of M_aug at iteration ', num2str(iter_idx)]);
+            keyboard;
             is_lu = true;
         end
     end
     
     % If is_lu = true, solve equation (21) in SDPT3 guide  
     if is_lu
-        G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)];
-        try
-            G_bar = [G1; G2; G3];
-        catch err
-            G1 = [-A, sparse(m,m), sparse(m,dim_x), b, sparse(m,1), -b_bar; 
-                    sparse(dim_x,dim_x), A', speye(dim_x), -c, sparse(dim_x,1), c_bar; c', -b', sparse(1,dim_x), 0, 1, -g_bar; 
-                       -c_bar', b_bar', sparse(1,dim_x), g_bar, 0, 0];
-            G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
-            G_bar = [G1; G2; G3];
-        end
-        keyboard;
-        % LU factorization with scaled partial pivoting
-        try
-        % tbeginlu = cputime; 
-        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.01); 
-        % tlu = cputime - tbeginlu;
-        % disp(['Time taken by the LU step = ' num2str(tlu)]);
-        catch memory_error
-            disp('Insufficient memory for factorizing G_bar...reduce the pivot threshold to 0.001');
-            try 
-                % tbeginlu = cputime; 
-                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.001); 
-                % tlu = cputime - tbeginlu;
-            catch memory_error
-                disp('Insufficient memory for factorizing G_bar...reduce the pivot threshold to 0.0001');
-                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.0001);
-            end
-        end
-        R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x];
-        pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p))));
-        % dtau_p and dkappa_p are used to formulate the RHS in the system for the combined direction
-        dtau_p = pred_dir(2*dim_x+m+1); 
-        dkappa_p = pred_dir(2*dim_x+m+2);
+        h_hat_aug = [h_hat; zeros(num_dc+4+has_q,1)]; % D is (s+4)-by-(s+4), where s is the number of dense columns
+        M_aug = [Msp_pert, U; U', -D_inv]; % M_aug is (m+2+s+4)-by-(m+2+s+4), slightly larger than Msp
+        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(M_aug, 0.05);
+        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
+        dy_hat_pred = dy_hat_aug(1:m+2);
     end
+    
+    % Compute dy_pred, dx_pred, ...
+    dy_pred = dy_hat_pred(1:m);
+    dtau_pred = dy_hat_pred(m+1);
+    dtheta_pred = dy_hat_pred(m+2);
+    dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
+    dx_pred = Rc - H(dz_pred); % 3rd equation of (27)
+    dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
+    pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
+
     % if (iter_idx==5) keyboard; end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Given current iterate x_bar and pred_dir, approximately compute alpha_p
@@ -449,26 +446,25 @@ for iter_idx =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
-    % Solve for the combined direction using LU factorization, if necessary
+    % Solve for the combined direction using either BiCGSTAB or LU factorization
+    Rc = -x - sigma*mu_hat*g_dual(z, dimension_info);
+    Rt = sigma*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
+    h_hat = sparse(Rp_hat + A_hat*(H(Rd)-Rc) + [sparse(m,1); Rt; 0]);
     if is_lu
-        % R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
-        R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)]; 
-        comb_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar)))); % comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
-        dtheta = comb_dir(2*dim_x+m+3); % for printing
+        h_hat_aug = [h_hat; zeros(num_dc+4+has_q,1)];
+        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
+        dy_hat = dy_hat_aug(1:m+2);
     else % Otherwise, still use preconditioned BiGSTAB, Cholesky and LU factors already computed
-        Rc = -x - sigma*mu_hat*g_dual(z, dimension_info);
-        Rt = sigma*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
-        h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
-        dy_hat = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
-        % [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
-        dy = dy_hat(1:m);
-        dtau = dy_hat(m+1);
-        dtheta = dy_hat(m+2);
-        dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
-        dx = Rc - H*dz; % 3rd equation of (27)
-        dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
-        comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
+        % dy_hat = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
+        [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
     end      
+    dy = dy_hat(1:m);
+    dtau = dy_hat(m+1);
+    dtheta = dy_hat(m+2);
+    dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
+    dx = Rc - H(dz); % 3rd equation of (27)
+    dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
+    comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);

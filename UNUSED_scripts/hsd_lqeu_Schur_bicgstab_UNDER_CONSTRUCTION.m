@@ -240,7 +240,7 @@ disp(['maximum iteration count = ' num2str(max_iter_count)]);
 result_info.solution_status = 'undetermined';
 
 % Whether the systems for search directions are solved through LU factorization.
-% The default is false (using Schur complement equation and )
+% The default is false (using Schur complement equation and preconditioned BiCGSTAB)
 is_lu = false;
 
 % Set the BiCGSTAB tolerance and max_iter_bicgstab
@@ -351,9 +351,9 @@ for iter_idx =1:max_iter_count
     
     % Construct H_tilde, H_tilde_1, H_tilde_2 such that H_tilde = bikdiag(H_tilde_1, H_tilde_2)
     % and A_hat*H*A_hat' = A_hat_sp * H_tilde_1 * A_hat_sp' + A_hat_dc * H_tilde_1 * A_hat_dc'
-    % H_tilde = P_perm_mat'*H*P_perm_mat;
-    H_tilde_1 = P_perm_mat(:, 1:n-num_dc)'*H*P_perm_mat(:, 1:n-num_dc);
-    H_tilde_2 = P_perm_mat(:, n-num_dc+1:end)'*H*P_perm_mat(:, n-num_dc+1:end);
+    H_tilde = P_perm_mat'*H*P_perm_mat;
+    H_tilde_1 = H_tilde(1:n-num_dc, 1:n-num_dc);
+    H_tilde_2 = H_tilde()
 
     % Set M, Msp, U, D such that 
     % M = Msp + U*D*U' 
@@ -405,7 +405,7 @@ for iter_idx =1:max_iter_count
             is_lu = true;
         end
     end
-    
+    % keyboard;
     % If is_lu = true, solve for the predictor direction through LU factorization
     if is_lu
         % Assemble G_bar = [G1; G2; G3]
@@ -419,7 +419,7 @@ for iter_idx =1:max_iter_count
             G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
             G_bar = [G1; G2; G3];
         end
-        keyboard;
+        % keyboard;
         % LU factorization with scaled partial pivoting
         try
         % tbeginlu = cputime; 
