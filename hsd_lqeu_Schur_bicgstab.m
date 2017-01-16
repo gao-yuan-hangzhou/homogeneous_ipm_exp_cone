@@ -245,7 +245,7 @@ is_lu = false;
 
 % Set the BiCGSTAB tolerance and max_iter_bicgstab
 tol_bicgstab = 1e-10;
-max_iter_bicgstab = 8;
+max_iter_bicgstab = 200;
 
 % The main loop
 for iter_idx =1:max_iter_count
@@ -253,8 +253,12 @@ for iter_idx =1:max_iter_count
     % Begin of all termination conditions 
     % (from Section 5.4. in http://web.stanford.edu/~yyye/nonsymmhsdimp.pdf)
     % Extract x, y, z, tau, theta, kappa
-    x = x_bar(1:dim_x); y = x_bar(dim_x+1:dim_x+m); z = x_bar(dim_x+m+1:2*dim_x+m);  
-    tau = x_bar(2*dim_x+m+1); kappa = x_bar(2*dim_x+m+2); theta = x_bar(2*dim_x+m+3);
+    x = x_bar(1:dim_x); 
+    y = x_bar(dim_x+1:dim_x+m); 
+    z = x_bar(dim_x+m+1:2*dim_x+m);  
+    tau = x_bar(2*dim_x+m+1); 
+    kappa = x_bar(2*dim_x+m+2); 
+    theta = x_bar(2*dim_x+m+3);
     % Check the 7 inequalities P, D, G, A, T, K, M
     % pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf));
     % dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf));
@@ -388,31 +392,57 @@ for iter_idx =1:max_iter_count
             if flag ~= 0
                 throw(exception);
             end
+            dy_pred = dy_hat_pred(1:m);
+            dtau_pred = dy_hat_pred(m+1);
+            dtheta_pred = dy_hat_pred(m+2);
+            dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
+            dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
+            dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
+            pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
         catch err
-            disp(['Preconditioned BiCGSTAB fails! Switch to LU factorization of M_aug at iteration ', num2str(iter_idx)]);
+            disp(['Preconditioned BiCGSTAB fails! Switch to LU factorization of G_bar at iteration ', num2str(iter_idx)]);
             % keyboard;
             is_lu = true;
         end
     end
     
-    % If is_lu = true, solve equation (21) in SDPT3 guide  
+    % If is_lu = true, solve for the predictor direction through LU factorization
     if is_lu
-        h_hat_aug = [h_hat; zeros(num_dc+4,1)]; % D is (s+4)-by-(s+4), where s is the number of dense columns
-        M_aug = [Msp_pert, U; U', -D_inv]; % M_aug is (m+2+s+4)-by-(m+2+s+4), slightly larger than Msp
-        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(M_aug, 0.05);
-        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
-        dy_hat_pred = dy_hat_aug(1:m+2);
+        % Assemble G_bar = [G1; G2; G3]
+        G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)];
+        try
+            G_bar = [G1; G2; G3];
+        catch err
+            G1 = [-A, sparse(m,m), sparse(m,dim_x), b, sparse(m,1), -b_bar; 
+                    sparse(dim_x,dim_x), A', speye(dim_x), -c, sparse(dim_x,1), c_bar; c', -b', sparse(1,dim_x), 0, 1, -g_bar; 
+                       -c_bar', b_bar', sparse(1,dim_x), g_bar, 0, 0];
+            G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
+            G_bar = [G1; G2; G3];
+        end
+        keyboard;
+        % LU factorization with scaled partial pivoting
+        try
+        % tbeginlu = cputime; 
+        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.01); 
+        % tlu = cputime - tbeginlu;
+        % disp(['Time taken by the LU step = ' num2str(tlu)]);
+        catch memory_error
+            disp('Insufficient memory for factorizing G_bar...reduce the pivot threshold to 0.001');
+            try 
+                % tbeginlu = cputime; 
+                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.001); 
+                % tlu = cputime - tbeginlu;
+            catch memory_error
+                disp('Insufficient memory for factorizing G_bar...reduce the pivot threshold to 0.0001');
+                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.0001);
+            end
+        end
+        R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x];
+        pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p))));
+        % dtau_p and dkappa_p are used to formulate the RHS in the system for the combined direction
+        dtau_p = pred_dir(2*dim_x+m+1); 
+        dkappa_p = pred_dir(2*dim_x+m+2);
     end
-    
-    % Compute dy_pred, dx_pred, ...
-    dy_pred = dy_hat_pred(1:m);
-    dtau_pred = dy_hat_pred(m+1);
-    dtheta_pred = dy_hat_pred(m+2);
-    dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
-    dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
-    dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
-    pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
-
     % if (iter_idx==5) keyboard; end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Given current iterate x_bar and pred_dir, approximately compute alpha_p
@@ -424,25 +454,26 @@ for iter_idx =1:max_iter_count
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
-    % Solve for the combined direction using either BiCGSTAB or LU factorization
-    Rc = -x - sigma*mu_hat*g_dual(z, dimension_info);
-    Rt = sigma*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
-    h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
+    % Solve for the combined direction using LU factorization, if necessary
     if is_lu
-        h_hat_aug = [h_hat; zeros(num_dc+4,1)];
-        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
-        dy_hat = dy_hat_aug(1:m+2);
+        % R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)];
+        R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma*theta - dtau_p*dkappa_p; -x - sigma*theta*g_dual(z, dimension_info)]; 
+        comb_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar)))); % comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
+        dtheta = comb_dir(2*dim_x+m+3); % for printing
     else % Otherwise, still use preconditioned BiGSTAB, Cholesky and LU factors already computed
-        % dy_hat = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
-        [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
+        Rc = -x - sigma*mu_hat*g_dual(z, dimension_info);
+        Rt = sigma*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
+        h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
+        dy_hat = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
+        % [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
+        dy = dy_hat(1:m);
+        dtau = dy_hat(m+1);
+        dtheta = dy_hat(m+2);
+        dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
+        dx = Rc - H*dz; % 3rd equation of (27)
+        dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
+        comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     end      
-    dy = dy_hat(1:m);
-    dtau = dy_hat(m+1);
-    dtheta = dy_hat(m+2);
-    dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
-    dx = Rc - H*dz; % 3rd equation of (27)
-    dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
-    comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);

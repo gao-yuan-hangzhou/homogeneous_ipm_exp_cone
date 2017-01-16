@@ -237,8 +237,8 @@ for iter_idx =1:max_iter_count
     kappa = x_bar(2*dim_x+m+2); 
     theta = x_bar(2*dim_x+m+3);
     % Check the 7 inequalities P, D, G, A, T, K, M
-    bool_P = norm(A*x-tau*b,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
-    bool_D = norm(A'*y+z-c*tau,Inf) <= rel_eps*max(1,norm([A',speye(dim_x),-c], Inf)); 
+    bool_P = norm(A*x/tau-b,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
+    bool_D = norm(A'*y/tau+z/tau-c,Inf) <= rel_eps*max(1,norm([A',speye(dim_x),-c], Inf)); 
     bool_G = abs(-c'*x+b'*y-kappa) <= rel_eps*max(1, norm([-c',b',1],Inf)); 
     bool_A = abs(c'*x/tau - b'*y/tau) <= rel_eps*(1+abs(b'*y/tau)); 
     bool_T = tau <= rel_eps*(1e-2)*max(1,kappa); 
