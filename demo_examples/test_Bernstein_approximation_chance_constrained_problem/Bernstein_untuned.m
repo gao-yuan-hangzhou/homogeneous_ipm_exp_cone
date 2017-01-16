@@ -4,7 +4,7 @@ addpath(fileparts(fileparts(pwd)));
 addpath([fileparts(fileparts(pwd)), '/subroutines']);
 
 % Whether to use CVX to solve the Bernstein approximation
-is_using_cvx = true;
+is_using_cvx = false;
 
 % Paper reference: 
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
@@ -22,7 +22,7 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = 0.1*randn(q,1); theta = 0.1*rand(q,1);
+nu = 0.2*randn(q,1); theta = 0.2*rand(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -187,8 +187,9 @@ disp('Done constructing blk, A_cell, c_cell, b!');
 
 % ============== Call the solver ==============
 %[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b);
-%[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b);
+opt.rel_eps = 1e-6;
+[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, opt);
+% [obj_val, x_re, y_re, z_re, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b, opt);
 % =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);

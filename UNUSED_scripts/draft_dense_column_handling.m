@@ -3,7 +3,7 @@
 % The following code demonstrates the dense column handling technique for the Schur complement
 % equation from the linear system for the search direction in the Homogeneous model.
 
-m = 1000; 
+m = 5000;
 b = randn(m,1); 
 b_bar = randn(m,1);
 g_bar = randn();
@@ -45,11 +45,13 @@ tic;
 % Now solve for dy_hat using Sherman-Morrison formula
 % [R,p] = chol(Msp);
 % Calculate inv(Msp)*h_hat
-Msp_inv_h_hat = Msp\h_hat;
+Msp_inv_U_and_h_hat = Msp\[U, h_hat]; % Matlab will use sparse Cholesky factorization for this step
+Msp_inv_U = Msp_inv_U_and_h_hat(:, 1:end-1);
+Msp_inv_h_hat = Msp_inv_U_and_h_hat(:, end);
 %Msp_inv_h_hat = Msp\h_hat;
 
-% Calculate the 4-by-4 G = D_inv + U'*inv(Msp)*U and then inv(G)
-Msp_inv_U = Msp\U;
+% Calculate the 4-by-4 G = D_inv + U'*inv(Msp)*U and then 
+% Calculate inv(G)
 G = D_inv + U'*Msp_inv_U;
 
 % Implicitly calculate P = eye(m+2) - inv(Msp)*U*G_inv*U' and then y_hat = P*w_hat
@@ -57,4 +59,20 @@ G = D_inv + U'*Msp_inv_U;
 dy_hat = Msp_inv_h_hat - Msp_inv_U*(G\(U'*Msp_inv_h_hat));
 % dy_hat_dch = dy_big(1:m+2);
 toc;
-disp(['relative error = ' num2str(norm(dy_hat_actual - dy_hat)/norm(dy_hat))]);
+
+lu(G);
+
+tic;
+L = chol(Msp);
+Msp_inv_chol = @(X) L\(L'\X);
+Msp_inv_U = Msp_inv_chol(U);
+Msp_inv_h_hat = Msp_inv_chol(h_hat);
+G = D_inv + U'*Msp_inv_U;
+[UG, LG] = lu(G);
+precond_func = @(rhs) precond_M_inv(rhs, U, L, LG, UG, Msp_inv_U);
+
+% Compute precond(M) and precond(h_hat)
+dy_hat_bicgstab = bicgstab(M, h_hat, [], [], precond_func);
+toc;
+
+disp('Comparison of the solutions y_hat_lu, y_hat_chol, y_hat_bicgs:')
