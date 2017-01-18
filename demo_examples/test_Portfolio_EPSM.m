@@ -91,7 +91,7 @@ blk{5,1} = 'l'; blk{5,2} = 1; A_cell{5} = A(:,8*n+1);     c_cell{5} = 0;
 % Call the solver
 input_options.max_iter_count = 500;
 input_options.rel_eps = 1e-8;
-[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b, input_options);
+[obj_val, xsol, ysol, zsol, info] = hsd_lqeu(blk, A_cell, c_cell, b, input_options);
 % [obj_val, xsol, ysol, zsol, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b, input_options);
 %clear obj_val xsol ysol zsol info; 
 %[obj_val, xsol, ysol, zsol, info] = hsd_lqeu_Schur(blk, A_cell, c_cell, b, eps_accuracy);

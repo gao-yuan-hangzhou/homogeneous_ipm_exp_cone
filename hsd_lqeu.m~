@@ -9,10 +9,7 @@ warning('off', 'all');
 addpath('./subroutines');
 warning('on', 'all');
 
-disp('=== Calling hsd_lqeu_Schur_bicgstab (Schur complement equation solved using BiCGSTAB(l) or LU factorization)... ===');
-% This program makes use of [L,U,P,Q,R]=lu() 
-% (sparse LU factorization with scaled partial pivoting)
-% in solving the systems for the search directions.
+disp('=== Calling hsd_lqeu (Schur complement equation solved using preconditioned BiCGSTAB)... ===');
 
 % Get the current CPU time at the beginning
 t_very_beginning = cputime;
@@ -22,7 +19,9 @@ tol_bicgstab = 1e-10; new_tol_bicgstab = 1e-4; max_iter_bicgstab = 20;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check whether initial iterate is (partly) specified.
-is_initial_x_given = false; is_initial_y_given = false; is_initial_z_given = false;
+is_initial_x_given = false; 
+is_initial_y_given = false; 
+is_initial_z_given = false;
 
 try 
     initial_x = input_options.initial_x; is_initial_x_given = true;
@@ -65,7 +64,7 @@ end
 
 % Say something about 'u'
 if sum(indices_of_u)>0
-    disp('Unrestricted blocks detected and are converted into linear blocks');
+    disp(['Unrestricted block(s) detected! Total dimension = ' num2str(length(indices_of_u))]);
 end
 
 % Obtain the following dimensions:
@@ -150,7 +149,8 @@ for k = 1:length(Nq)
 end;
 exp_cone_center = [-1.0151; 1.2590; 0.5560];
 id_e = repmat(exp_cone_center,Ne,1);
-x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
+x0 = [id_l; id_q; id_e];
+x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 % Juse some possible initial values of tau, kappa and theta
 tau = 1; kappa = 1; theta0 = 1.0; theta = theta0;
 
@@ -176,7 +176,7 @@ A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
 try
     density_treshold = input_options.density_threshold;
 catch err
-    density_threshold = 0.1;  
+    density_threshold = 0.08;  
 end
 
 % Find the dense columns in A_hat
@@ -461,7 +461,7 @@ for iter_idx =1:max_iter_count
         warning('off','all');
         [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
         if flag ~= 0
-            [dy_hat, flag] = bicgstab(M, h_hat, new_tol_bicgstab, max_iter_bicgstab, precond_func);
+            disp(Bi);
         end
         warning('on','all');
         dy = dy_hat(1:m);
