@@ -10,7 +10,6 @@ addpath('./subroutines');
 warning('on', 'all');
 
 disp('=== Calling hsd_lqeu (Schur complement equation solved using preconditioned BiCGSTAB)... ===');
-
 % Get the current CPU time at the beginning
 t_very_beginning = cputime;
 
