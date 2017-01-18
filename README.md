@@ -1,6 +1,6 @@
 # homogeneous_ipm_exp_cone
 
-Presentation slides are available at https://goo.gl/vTK0WA, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented.
+Presentation slides are available at https://goo.gl/vTK0WA, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented. In short, it solves for the search directions though solving the Schur complement equations of the original linear systems using the preconditioned BiCGSTAB. The preconditioner is formed using the Sherman-Morrison-Woodburry formua applied on the Schur complement matrix, which is the sum of its sparse positive semidefinite part plus a low-rank perturbation term. This allows the solver to make use of the highly efficient and robust Cholesky factorization subroutine (on the sparse PSD part of the Schur complement matrix).
 
 The main program is [hsd_lqeu.m] which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
 
@@ -35,7 +35,7 @@ You may wish to set one or more fields in the structure input_options as follows
 
 input_options.rel_eps: a number specifies the desired relative accuracy. If not specified, the default value is 1e-8.
 
-input_options.max_iter_count: a number specifies the maximum number of iteartions allowed. If not specified, the default value is 500.
+input_options.max_iter_count: the maximum number of iteartions allowed. If not specified, the default value is 500.
 
 input_options.initial_x: a cell array specifying x as part of the initial iterate.
 
