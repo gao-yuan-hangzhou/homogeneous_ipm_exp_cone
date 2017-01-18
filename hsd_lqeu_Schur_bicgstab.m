@@ -17,28 +17,27 @@ disp('=== Calling hsd_lqeu_Schur_bicgstab (Schur complement equation solved usin
 % Get the current CPU time at the beginning
 t_very_beginning = cputime;
 
+% Set the BiCGSTAB tolerance and max_iter_bicgstab
+tol_bicgstab = 1e-10; new_tol_bicgstab = 1e-4; max_iter_bicgstab = 20;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check whether initial iterate is (partly) specified.
-is_initial_x_given = false;
-is_initial_y_given = false;
-is_initial_z_given = false;
+is_initial_x_given = false; is_initial_y_given = false; is_initial_z_given = false;
 
 try 
-    initial_x = input_options.initial_x;
-    is_initial_x_given = true;
+    initial_x = input_options.initial_x; is_initial_x_given = true;
     disp('User specified initial_x!');
 catch err
 end
 
 try 
-    initial_y = input_options.initial_y;
-    is_initial_y_given = true;
+    initial_y = input_options.initial_y; is_initial_y_given = true;
     disp('User specified initial_y!');
 catch err
 end
 
-try initial_z = input_options.initial_z;
-    is_initial_z_given = true;
+try 
+    initial_z = input_options.initial_z; is_initial_z_given = true;
     disp('User specified initial_z!');
 catch err
 end
@@ -144,12 +143,12 @@ c = [cl; cq; ce];
 % Now initialize (x, y, z, tau, kappa, theta)
 % If no initial values are given, 
 % set x{j} = z{j} = conic identity (analytic centers) of K{j}
-exp_cone_center = [-1.0151; 1.2590; 0.5560];
-id_l = ones(Nl,1);
+id_l = ones(Nl,1); 
 id_q = zeros(sum(Nq),1); 
 for k = 1:length(Nq) 
     id_q(sum(Nq(1:k-1))+1) = 1; 
 end;
+exp_cone_center = [-1.0151; 1.2590; 0.5560];
 id_e = repmat(exp_cone_center,Ne,1);
 x0 = [id_l; id_q; id_e]; x = x0; y0 = zeros(m,1); y = y0; z0 = x0; z = z0;
 % Juse some possible initial values of tau, kappa and theta
@@ -167,32 +166,26 @@ if is_initial_z_given
 end
 
 % Compute the auxiliary parameters which completely define (HSD)
-b_bar = (b*tau - A*x)/theta; 
-c_bar = (c*tau - A'*y - z)/theta; 
-g_bar = (c'*x - b'*y + kappa)/theta; 
-alpha_bar = (x'*z + tau*kappa)/theta;
+b_bar = (b*tau - A*x)/theta; c_bar = (c*tau - A'*y - z)/theta; 
+g_bar = (c'*x - b'*y + kappa)/theta; alpha_bar = (x'*z + tau*kappa)/theta;
 
 % Define the extented coefficient matrix
 A_hat = [A; -c'; c_bar']; % A_hat is (m+2) by dim_x
 
-% Extract dense columns from A_hat
+% Set the density threshold
 try
     density_treshold = input_options.density_threshold;
 catch err
-    density_threshold = 0.08;  
+    density_threshold = 0.1;  
 end
 
 % Find the dense columns in A_hat
 density = @(X) nnz(X)/numel(X);
 dense_col_bool = sparse(dim_x, 1);
-A_hat_dc = sparse(m+2, dim_x);
-A_hat_sp = A_hat;
 for col_idx = 1:dim_x
     curr_col = A_hat(:, col_idx);
     if (density(curr_col) >= density_threshold)
         dense_col_bool(col_idx) = 1;
-        A_hat_dc(:, col_idx) = A_hat(:, col_idx);
-        A_hat_sp(:, col_idx) = 0;
     end
 end
 dense_col_indices = find(dense_col_bool);
@@ -200,18 +193,13 @@ num_dc = length(dense_col_indices);
 disp(['Number of dense columns in A = ' num2str(num_dc)]);
 
 % Find the permutation P such that A_hat * P = [A_hat_sp, A_hat_dc]
-P_perm_mat = speye(dim_x, dim_x);
-for k = 1:num_dc
-    dc_idx = dense_col_indices(k);
-    new_idx = n - num_dc + k;
-    temp_col = P_perm_mat(:, dc_idx);
-    P_perm_mat(:, dc_idx) = P_perm_mat(:, new_idx); 
-    P_perm_mat(:, new_idx) = temp_col;
-end
+[P_perm_mat, all_removable_indices] = find_P_perm_mat(dense_col_indices, dimension_info);
+num_removable_indices = length(all_removable_indices);
+disp(['Number of removable columns in A = ' num2str(num_removable_indices)]);
 
-% Construct A_hat_sp and A_hat_dc
-A_hat_sp = A_hat * P_perm_mat(:, 1:n-num_dc);
-A_hat_dc = A_hat * P_perm_mat(:, n-num_dc+1:end);
+% Construct A_hat_sp and A_hat_remove such that 
+A_hat_sp = A_hat * P_perm_mat(:, 1:n-num_removable_indices);
+A_hat_remov = A_hat * P_perm_mat(:, n-num_removable_indices+1:end); % A_hat_remov contains all 
 
 % Set x_bar, the concatenated vector of all variables
 x_bar = [x; y; z; tau; kappa; theta];
@@ -224,7 +212,7 @@ dim_x_bar = 2*dim_x + m + 3;
 try 
     rel_eps = input_options.rel_eps;
 catch err
-    rel_eps = 1e-6;
+    rel_eps = 1e-8;
 end
 
 try
@@ -239,13 +227,9 @@ disp(['maximum iteration count = ' num2str(max_iter_count)]);
 % Set the default solution status
 result_info.solution_status = 'undetermined';
 
-% Whether the systems for search directions are solved through LU factorization.
-% The default is false (using Schur complement equation and )
+% Initially, use preconditioned BiCGSTAB
+% When chol(Msp_pert) or preconditioned BiCGSTAB fails, permanently switch to LU factorization
 is_lu = false;
-
-% Set the BiCGSTAB tolerance and max_iter_bicgstab
-tol_bicgstab = 1e-10;
-max_iter_bicgstab = 8;
 
 % The main loop
 for iter_idx =1:max_iter_count
@@ -259,8 +243,8 @@ for iter_idx =1:max_iter_count
     % pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf));
     % dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf));
     % reldualgap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau));
-    bool_P = norm(A*x/tau-b,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
-    bool_D = norm(A'*y/tau+z/tau-c,Inf) <= rel_eps*max(1, norm([A',speye(dim_x),-c], Inf)); 
+    bool_P = norm(A*x-b*tau,Inf) <= rel_eps*max(1,norm([A,b],Inf)); 
+    bool_D = norm(A'*y+z-c*tau,Inf) <= rel_eps*max(1, norm([A',speye(dim_x),-c], Inf)); 
     bool_G = abs(-c'*x+b'*y-kappa) <= rel_eps*max(1, norm([-c',b',1],Inf)); 
     bool_A = abs(c'*x/tau - b'*y/tau) <= rel_eps*(1+abs(b'*y/tau));
     bool_T = tau <= rel_eps*(1e-2)*max(1,kappa); 
@@ -272,7 +256,7 @@ for iter_idx =1:max_iter_count
         display('The problem is primal and dual feasible.');
         display(['The approximate primal and dual optimal objectives are ' num2str(c'*x/tau) ' and ' num2str(b'*y/tau)]);
         break;
-    elseif bool_P && bool_D && bool_G && bool_T
+    elseif bool_T
         is_primal_infeasible = (b'*y>0); is_dual_infeasible = (c'*x<0);
         if is_dual_infeasible && is_primal_infeasible
             result_info.solution_status = 'primal_and_dual_infeasible';
@@ -328,13 +312,13 @@ for iter_idx =1:max_iter_count
     B_hat = [sparse(m,m), -b, b_bar; b', 0, g_bar; -b_bar', -g_bar, 0]; % B_hat is (m+2) by (m+2)
     mu_hat = theta; % mu_hat = (x'*z +tau*kappa)/(v_param+1) = theta; % mu_xz = x'*z/v;
     Rp_hat = [sparse(m,1); kappa; -alpha_bar] - A_hat*x - B_hat*y_hat;
+    % disp(norm(Rp_hat, Inf))
     Rd = -A_hat'*y_hat - z;
     Rc = -x; % sigma = 0 for predictor direction system, as explained below
     Rt = - kappa; % Rt = mu_hat/tau - kappa;
     % The H matrix is the Hessian of the dual barrier evaluated at z
     % if iter_idx == 5 keyboard; end;
     H = H_dual(z, dimension_info); H = mu_hat*H; % to fix Matlab's memory allocation issue
-    % keyboard;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Now decompose M into M = Msp + U*D*U'; 
     % where Msp is sparse symmetric positive definite (nearly indefinite) and 
@@ -349,26 +333,28 @@ for iter_idx =1:max_iter_count
     % Construct H_tilde, H_tilde_1, H_tilde_2 such that H_tilde = bikdiag(H_tilde_1, H_tilde_2)
     % and A_hat*H*A_hat' = A_hat_sp * H_tilde_1 * A_hat_sp' + A_hat_dc * H_tilde_1 * A_hat_dc'
     % H_tilde = P_perm_mat'*H*P_perm_mat;
-    H_tilde_1 = P_perm_mat(:, 1:n-num_dc)'*H*P_perm_mat(:, 1:n-num_dc);
-    H_tilde_2 = P_perm_mat(:, n-num_dc+1:end)'*H*P_perm_mat(:, n-num_dc+1:end);
+    H_tilde_1 = P_perm_mat(:, 1:n-num_removable_indices)'*H*P_perm_mat(:, 1:n-num_removable_indices);
+    H_tilde_2 = P_perm_mat(:, n-num_removable_indices+1:end)'*H*P_perm_mat(:, n-num_removable_indices+1:end);
 
+    if norm(P_perm_mat'*H*P_perm_mat - blkdiag(H_tilde_1, H_tilde_2), Inf) ~= 0
+        disp('Warning: H_tilde not equal to blkdiag(H_tilde_1, H_tilde_2)!');
+    end
     % Set M, Msp, U, D such that 
     % M = Msp + U*D*U' 
     %   = A_hat*H*A_hat' + B_hat + diag([sparse(m,1); kappa/tau; 0])
     %   = Msp + B_hat + A_hat_dc * H_tilde_2 * A_hat_dc'
     Msp = A_hat_sp * H_tilde_1 * A_hat_sp' + diag([sparse(m,1); kappa/tau; 0]);
-    Msp_pert = Msp+1e-16*norm(Msp, Inf)*speye(m+2); % chol(Msp_pert)
-    U = [UB, A_hat_dc];
+    Msp_pert = Msp+1e-15*norm(Msp, Inf)*speye(m+2); % later will do: chol(Msp_pert)
+    U = [UB, A_hat_remov];
     D = blkdiag(DB, H_tilde_2);
     D_inv = blkdiag(DB_inv, inv(H_tilde_2));
     % Define M = Msp + U*D*U' as a linear map since computing U*D*U' is time-consuming
-    M = @(yy) Msp*yy + U*D*(U'*yy);
+    M = @(yy) Msp*yy + U*(D*(U'*yy));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Solve equation (28) and then (27) with sigma = 0 for the predictor direction
     % (28) is M*y_hat = h_hat (with sigma = 0)
     % Construct the right hand side
     h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]); 
-    
     % Solve for dy_hat using Sherman-Morrison formula
     % Calculate Msp\h_hat = R\(R'\h_hat), Msp\U
     % and the 4-by-4 matrix G = D_inv + U'*inv(Msp)*U
@@ -385,34 +371,69 @@ for iter_idx =1:max_iter_count
             % Calculate dy_hat_pred = LHS_Schur_comp_eq \ h_hat; % (28)
             % Mathematically, dy_hat_pred = Msp_inv_h_hat - Msp_inv_U*(G\(U'*Msp_inv_h_hat));
             precond_func = @(rhs) precond_M_inv(rhs, Lchol, U, LG, UG, Msp_inv_U);
+            warning('off','all');
+            % dy_hat_pred = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
             [dy_hat_pred, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
             if flag ~= 0
-                throw(exception);
+                [dy_hat_pred, flag] = bicgstab(M, h_hat, new_tol_bicgstab, max_iter_bicgstab, precond_func);
+                if flag ~= 0 
+                    throw(exception);
+                end
             end
+            warning('on','all');
+            % Compute dy_pred, dx_pred, ...
+            dy_pred = dy_hat_pred(1:m);
+            dtau_pred = dy_hat_pred(m+1);
+            dtheta_pred = dy_hat_pred(m+2);
+            dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
+            dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
+            dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
+            pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
         catch err
-            disp(['Preconditioned BiCGSTAB fails! Switch to LU factorization of M_aug at iteration ', num2str(iter_idx)]);
-            % keyboard;
+            disp(['Chol(Msp_pert)/BiCGSTAB fails! Switch to LU factorization of G_bar at iteration ', num2str(iter_idx)]);
+            disp(['flag = ' num2str(flag)]);
             is_lu = true;
         end
     end
     
     % If is_lu = true, solve equation (21) in SDPT3 guide  
     if is_lu
-        h_hat_aug = [h_hat; zeros(num_dc+4,1)]; % D is (s+4)-by-(s+4), where s is the number of dense columns
-        M_aug = [Msp_pert, U; U', -D_inv]; % M_aug is (m+2+s+4)-by-(m+2+s+4), slightly larger than Msp
-        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(M_aug, 0.05);
-        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
-        dy_hat_pred = dy_hat_aug(1:m+2);
+        % LU factorization of the big coefficient matrix G_bar
+        % First assemble G_bar = [G1; G2; G3]
+        G3 = [speye(dim_x), sparse(dim_x, m), H, sparse(dim_x,3)];
+        try
+            G_bar = [G1; G2; G3];
+        catch err_G1_G2_not_assigned
+            G1 = [-A, sparse(m,m), sparse(m,dim_x), b, sparse(m,1), -b_bar; 
+                    sparse(dim_x,dim_x), A', speye(dim_x), -c, sparse(dim_x,1), c_bar; c', -b', sparse(1,dim_x), 0, 1, -g_bar; 
+                       -c_bar', b_bar', sparse(1,dim_x), g_bar, 0, 0];
+            G2 = [sparse(1,2*dim_x+m), kappa, tau, 0]; 
+            G_bar = [G1; G2; G3];
+        end
+        % keyboard;
+        % LU factorization with scaled partial pivoting
+        try
+        % tbeginlu = cputime; 
+        [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.005); 
+        % tlu = cputime - tbeginlu;
+        % disp(['Time taken by the LU step = ' num2str(tlu)]);
+        catch memory_error
+            disp('Insufficient memory for factorizing G_bar...reduce the pivot threshold to 0.001');
+            try 
+                % tbeginlu = cputime; 
+                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.001); 
+                % tlu = cputime - tbeginlu;
+            catch memory_error
+                disp('Insufficient memory for factorizing G_bar...further reduce the pivot threshold to 0.0001');
+                [L_lu, U_lu, P_lu, Q_lu, R_lu] = lu(G_bar, 0.0001);
+            end
+        end
+        R_bar_p = [sparse(m+dim_x+2,1); -tau*kappa; -x];
+        pred_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar_p))));
+        % dtau_p and dkappa_p are used to formulate the RHS in the system for the combined direction
+        dtau_p = pred_dir(2*dim_x+m+1); 
+        dkappa_p = pred_dir(2*dim_x+m+2);
     end
-    
-    % Compute dy_pred, dx_pred, ...
-    dy_pred = dy_hat_pred(1:m);
-    dtau_pred = dy_hat_pred(m+1);
-    dtheta_pred = dy_hat_pred(m+2);
-    dz_pred = Rd - A_hat'*dy_hat_pred; % 2nd equation of (27)
-    dx_pred = Rc - H * dz_pred; % 3rd equation of (27)
-    dkappa_pred = Rt - (kappa/tau)*dtau_pred; % 4th equation of (27)
-    pred_dir = [dx_pred; dy_pred; dz_pred; dtau_pred; dkappa_pred; dtheta_pred];
 
     % if (iter_idx==5) keyboard; end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -420,34 +441,41 @@ for iter_idx =1:max_iter_count
     x_bar = [x; y; z; tau; kappa; theta];
     alpha_p = find_alpha_max(x_bar, pred_dir, dimension_info);
     % Set sigma (parameter for the system for the combined search direction)
-    sigma = min(1,(1-alpha_p)^3);
+    sigma_param = min(0.9,(1-alpha_p)^2+0.1);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find Rc = [Rcl, Rcq; Rce] and solve for the combined search direction from (28) and (27) with 
     % the above sigma (centering parameter)
     % Solve for the combined direction using either BiCGSTAB or LU factorization
-    Rc = -x - sigma*mu_hat*g_dual(z, dimension_info);
-    Rt = sigma*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
-    h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
     if is_lu
-        h_hat_aug = [h_hat; zeros(num_dc+4,1)];
-        dy_hat_aug = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\h_hat_aug))));
-        dy_hat = dy_hat_aug(1:m+2);
-    else % Otherwise, still use preconditioned BiGSTAB, Cholesky and LU factors already computed
+        % Make use of the previously computed LU factors, permutations and scaling factors 
+        R_bar = [sparse(dim_x+m+2, 1); -tau*kappa + sigma_param*theta - dtau_p*dkappa_p; -x - sigma_param*theta*g_dual(z, dimension_info)]; 
+        comb_dir = Q_lu*(U_lu\(L_lu\(P_lu*(R_lu\R_bar)))); % comb_dir = G_bar\R_bar; % linsolve(G_bar,R_bar);
+        dtheta = comb_dir(2*dim_x+m+3); % for printing
+    else
+        % Otherwise, still use preconditioned BiGSTAB, Cholesky and LU factors already computed
         % dy_hat = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
+        Rc = -x - sigma_param*mu_hat*g_dual(z, dimension_info);
+        Rt = sigma_param*mu_hat/tau - kappa - dkappa_pred*dtau_pred/tau;
+        h_hat = sparse(Rp_hat + A_hat*(H*Rd-Rc) + [sparse(m,1); Rt; 0]);
+        warning('off','all');
         [dy_hat, flag] = bicgstab(M, h_hat, tol_bicgstab, max_iter_bicgstab, precond_func);
-    end      
-    dy = dy_hat(1:m);
-    dtau = dy_hat(m+1);
-    dtheta = dy_hat(m+2);
-    dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
-    dx = Rc - H*dz; % 3rd equation of (27)
-    dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
-    comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
+        if flag ~= 0
+            [dy_hat, flag] = bicgstab(M, h_hat, new_tol_bicgstab, max_iter_bicgstab, precond_func);
+        end
+        warning('on','all');
+        dy = dy_hat(1:m);
+        dtau = dy_hat(m+1);
+        dtheta = dy_hat(m+2);
+        dz = Rd - A_hat'*dy_hat; % 2nd equation od (27)
+        dx = Rc - H*dz; % 3rd equation of (27)
+        dkappa = Rt - (kappa/tau)*dtau - dkappa_pred*dtau_pred/tau; % 4th equation of (27)
+        comb_dir = [dx; dy; dz; dtau; dkappa; dtheta];
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Approximately find the step-length along the combined search direction and update the current iterate
     % alpha = (0.5+0.5*max(1-alpha_p,alpha_p))*find_alpha_max(x_bar, comb_dir, dimension_info);
-    alpha_combined = 0.8*find_alpha_max(x_bar, comb_dir, dimension_info);
+    alpha_combined = (0.9-sigma_param^3/2)*find_alpha_max(x_bar, comb_dir, dimension_info);
     % alpha = max(1-alpha_p, 0.8)*find_alpha_max(x_bar, comb_dir, dimension_info);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Update the iterate
@@ -460,20 +488,25 @@ for iter_idx =1:max_iter_count
         % disp(['size(G_bar) = [' num2str(dim_x_bar) ', ' num2str(dim_x_bar) ']']);
         %disp(['Initial nnz and density of G_bar = [' num2str(nnz(G_bar)) ', ' num2str(nnz(G_bar)/numel(G_bar)) ']']);
         disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% The main loop %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-        disp(' theta  pinfeas dinfeas dualgap  primalobj    dualobj     steplen   tau    kappa  iter');
+        disp(' theta   pinfeas  dinfeas  dualgap    primalobj      dualobj    steplen    tau     kappa   iter');
     end
-    if rem(iter_idx,5) == 0
+    if rem(iter_idx, 1) == 0
         pinfeas = norm(A*x/tau-b,Inf)/max(1,norm([A,b],Inf)); % primal infeasibility
         dinfeas = norm(A'*y/tau+z/tau-c,Inf)/max(1,norm([A',speye(dim_x),-c], Inf)); % dual infeasibility
         reldualgap = abs(c'*x/tau - b'*y/tau)/(1+abs(b'*y/tau)); % relative duality gap
-        fprintf('%5.1d|%5.1d|%5.1d|%5.1d|%12.6d|%12.6d|%5.1d|%5.1d|%5.1d|%3d \n', ...
-            theta, pinfeas, dinfeas, reldualgap, c'*x/tau, b'*y/tau, alpha_combined, tau, kappa, iter_idx);
+        fprintf('%+5.1d|%+5.1d|%+5.1d|%+5.1d|%+12.6d|%+12.6d|%+5.1d|%+5.1d|%+5.1d|%3d \n', ...
+            theta+eps, pinfeas+eps, dinfeas+10*eps, reldualgap+10*eps, c'*x/tau+eps, b'*y/tau+eps, alpha_combined+eps, tau+eps, kappa+eps, iter_idx);
     end
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check whether the program gets stuck halfway
-    if dtheta*alpha_combined == 0
-        display('No more progress possible! The value of theta cannot decrease anymore! Algorithm terminates now!');
+    if alpha_combined == 0
+        disp('Zero step length...');
+        if dtheta>0
+            disp('Theta does not decrease...');
+        end
+        display('No more progress possible! Algorithm terminates...');
+        % keyboard;
         res1 = norm(A*x/tau-b, Inf)/norm([A, b], Inf); 
         res2 = norm(A'*y/tau + z/tau -c, Inf)/norm([A' speye(dim_x) c], Inf); 
         res3 = abs(b'*y/tau - c'*x/tau)/(1+abs(b'*y/tau));

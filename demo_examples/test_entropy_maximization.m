@@ -16,7 +16,7 @@ ensure_feasible = true;
 % Constraints: Ax = b, v(j) = 1, [u(j); v(j); x(j)] in K_exp, j = 1, ..., N
 
 disp('Constructing a random (feasible) instance...');
-N = 1000; mA = 250;
+N = 3000; mA = 500;
 d = abs(randn(N,1));
 A = sprandn(mA, N, 0.05);
 b = randn(mA, 1);
@@ -61,8 +61,8 @@ blk{1,1} = 'e'; blk{1,2} = 3*ones(N,1); A_cell{1} = A_tilde; c_cell{1} = c_tilde
 disp('Calling the solvers...');
 input_options.rel_eps = 1e-8;
 %[pd_obj, xre, yre, zre, info] = hsd_lqeu_fast(blk, A_cell, c_cell, b_input, input_options);
-[pd_obj, xre, yre, zre, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b_input, input_options);
-[pd_obj, xre, yre, zre, info] = hsd_lqeu(blk, A_cell, c_cell, b_input, input_options);
+% [pd_obj, xre, yre, zre, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b_input, input_options);
+[pd_obj, xre, yre, zre, info] = hsd_lqeu_Schur_bicgstab(blk, A_cell, c_cell, b_input, input_options);
 
 % Retrive the optimal decision variables
 x_sol = zeros(N,1);

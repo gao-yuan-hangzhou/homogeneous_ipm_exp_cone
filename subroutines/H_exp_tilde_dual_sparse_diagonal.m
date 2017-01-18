@@ -1,4 +1,4 @@
-function H = H_exp_tilde_dual(input_vec)
+function H = H_exp_tilde_dual_sparse_diagonal(input_vec)
 % Compute the Hessian of the dual exp barrier (from the second pair)
 % where N is the number of dual exp cones
 Ne = length(input_vec)/3;

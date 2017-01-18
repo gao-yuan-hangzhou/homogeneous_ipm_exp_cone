@@ -18,7 +18,7 @@ for k = 1:length(Nq)
     H_q(curr_indices, curr_indices) = H_lorentz(z(Nl+1+sum(Nq(1:k-1)):Nl+sum(Nq(1:k)))); 
 end;
 % disp(['density(H_q)=' num2str(nnz(H_q)/numel(H_q))]); 
-H_e = H_exp_tilde_dual_sparse_diagonal(z(end-3*Ne+1:end));
+H_e = H_exp_tilde_dual_spconvert(z(end-3*Ne+1:end));
 H = sparse(blkdiag(H_l, H_q, H_e)); % blkdiag(H_l, H_q, H_e) should already be sparse
 end
 
