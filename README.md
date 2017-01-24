@@ -2,7 +2,7 @@
 
 Presentation slides are available at https://goo.gl/vTK0WA, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented. In short, it solves for the search directions though solving the Schur complement equations of the original linear systems using the preconditioned BiCGSTAB. The preconditioner is formed using the Sherman-Morrison-Woodburry formua applied on the Schur complement matrix, which is the sum of its sparse positive semidefinite part plus a low-rank perturbation term. This allows the solver to make use of the highly efficient and robust Cholesky factorization subroutine (on the sparse PSD part of the Schur complement matrix).
 
-The main program is [hsd_lqeu.m] which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
+The main program is [hsd_lqeu.p] which takes in SDPT3-style (http://www.optimization-online.org/DB_FILE/2010/06/2654.pdf) cell array inputs. It solves problems coded in the following format:
 
 min c{1}' * x{1} + ... + c{N}' * x{N}
 
@@ -47,4 +47,4 @@ input_options.initial_z: a cell array specifying z as part of the initial iterat
 
 Please refer to the references in the presentation slides.
 
-Please email queries to gaoyuan@u.nus.edu or comment on the webpage.
+If you have any question, please contact Yuan Gao at gaoyuan@u.nus.edu or comment on the webpage.
