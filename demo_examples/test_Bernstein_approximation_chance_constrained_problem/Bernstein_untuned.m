@@ -10,7 +10,7 @@ is_using_cvx = false;
 % https://github.com/gao-yuan-hangzhou/homogeneous_ipm_exp_cone/blob/master/test_Bernstein_approximation_chance_constrained_problem/note_PDF/bernstein_example.pdf
 
 % Set the number of risky assets and number of underlying factors
-n = 50;
+n = 64;
 q = 8; 
 disp(['number_of_risky_assets = ' num2str(n)]);
 disp(['number_of_common_factors = ' num2str(q)]);
@@ -22,7 +22,7 @@ alpha_risk = 0.05;
 r0 = 1;
 % eta(i) ~ LN(mu(i), sigma(i)^2), i = 1, ..., n_risky_assets
 % zeta(l) ~ LN(v(l), theta(l)^2), l = 1, ..., n_factors
-nu = 0.15*randn(q,1); theta = 0.15*rand(q,1);
+nu = 0.2*randn(q,1); theta = 0.15*rand(q,1);
 gamma = abs(randn(n,q));
 % Make sure 0<=rho<=0.1 and rho(1)<=...<=rho(n)
 rho = sort(0.1*rand(n,1));
@@ -35,16 +35,15 @@ log_E_eta = log(1 + rho/2); % E(eta(i)) = exp(mu(i)+sigma(i)^2/2), mu(i) = sigma
 mu = -1 + (2*log_E_eta+1).^(1/2); sig = 0.01*rand(n,1) .* mu; mu = log_E_eta - sig.^2/2;
 
 % Save the parameters for debugging
-% save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
-% load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
-%load('text_example_CVX_failed_2.mat', 'n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+save('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
+load('n', 'q', 'nu', 'theta', 'mu', 'sig', 'rho', 'gamma');
 
 % Total number of random variables
 d = n+q;
 
 % Construct the discrete distributions
-eps_th = 1e-5;
-Del_resol = 0.005;
+eps_th = 1e-4;
+Del_resol = 0.0025;
 N = zeros(d,1);
 for j = 1:n
     discrete_LN_vars{j} = xi_hat_discrete_LN(mu(j), sig(j), eps_th, Del_resol);
@@ -187,9 +186,9 @@ disp('Done constructing blk, A_cell, c_cell, b!');
 
 % ============== Call the solver ==============
 %[obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b);
-opt.rel_eps = 1e-5;
+opt.rel_eps = 1e-8;
 [obj_val, x_re, y_re, z_re, info] = hsd_lqeu(blk, A_cell, c_cell, b, opt);
-[obj_val, x_re, y_re, z_re, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b, opt);
+% [obj_val, x_re, y_re, z_re, info] = hsd_lqeu_lu(blk, A_cell, c_cell, b, opt);
 % =============================================
 obj_tau_minus_one = -obj_val(2) - 1;
 hsd_lqeu_x_opt = x_re{2}(2:end-1);
