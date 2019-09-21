@@ -1,6 +1,6 @@
 # homogeneous_ipm_exp_cone
 
-Thanks for checking this out. If you have any question or would like to view the Matlab codes, please contact Yuan Gao at gaoyuan@u.nus.edu or comment on the webpage!
+Please email me at gaoyuan@u.nus.edu for the latest codes. 
 
 Presentation slides are available at https://goo.gl/vTK0WA, which include several important examples involving exponential cone constraints and a brief description of the algorithm implemented. In short, it solves for the search directions though solving the Schur complement equations of the original linear systems using the preconditioned BiCGSTAB. The preconditioner is formed using the Sherman-Morrison-Woodburry formua applied on the Schur complement matrix, which is the sum of its sparse positive semidefinite part plus a low-rank perturbation term. This allows the solver to make use of the highly efficient and robust Cholesky factorization subroutine (on the sparse PSD part of the Schur complement matrix).
 
